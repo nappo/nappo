@@ -10,8 +10,8 @@ Welcome to nappo's documentation!
    :maxdepth: 3
    :caption: Contents:
 
-intro
-nappo
+   intro
+   nappo
 
 Indices and tables
 ==================
