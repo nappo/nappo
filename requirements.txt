@@ -1,0 +1,6 @@
+gym
+ray
+ray[debug]
+numpy
+pandas
+baselines
