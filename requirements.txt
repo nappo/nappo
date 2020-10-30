@@ -2,6 +2,6 @@ numpy
 pandas
 ray
 ray[debug]
-Tensorflow # just for logging
-TensorBoard # just for logging
-stable-baselines
+# Tensorflow # just for logging
+# TensorBoard # just for logging
+# stable-baselines
