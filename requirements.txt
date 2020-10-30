@@ -4,4 +4,4 @@ ray
 ray[debug]
 Tensorflow # just for logging
 TensorBoard # just for logging
-stable-baselines
+git+git://github.com/openai/baselines.git

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-WORKING_DIR=$PWD
 LOG_DIR=/tmp/pybullet_ppo
 INTER=10000
 DEVICES="0"
@@ -26,8 +25,6 @@ FRAME_SKIP=0
 FRAME_STACK=1
 
 ###############################################################################
-
-cd $WORKING_DIR
 
 CUDA_VISIBLE_DEVICES=$DEVICES python example_scripts/train_3cs/ppo/continuous/train.py  \
 --lr $LR --clip-param $CLIP_PARAM --num-steps $NUM_STEPS --num-mini-batch $NUM_MINI_BATCH \
