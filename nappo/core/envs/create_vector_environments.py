@@ -106,6 +106,7 @@ def vec_envs_factory(env_fn, env_kwargs, num_processes, log_dir=None, info_keywo
 
         if mode == "train": env_indexes = range(0, num_processes)
         else: env_indexes = range(num_processes, 2 * num_processes)
+        index_worker *= num_processes # to avoid repeating seeds between workers
 
         envs = [make_env(
             env_fn=env_fn, env_kwargs=env_kwargs, index_worker=index_worker,

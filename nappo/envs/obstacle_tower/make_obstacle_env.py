@@ -7,9 +7,30 @@ from .wrappers import (ReducedActionEnv, BasicObstacleEnv,
 
 # info_keywords=('floor', 'start', 'seed'),
 
-def make_obstacle_train_env(realtime=False, seed=0, frame_skip=0, frame_stack=1):
-    """_"""
+def make_obstacle_train_env(index_worker=0, index_env=0, realtime=False, seed=0, frame_skip=0, frame_stack=1):
+    """
+    Create train Obstacle Tower Unity3D challenge environment.
 
+    Parameters
+    ----------
+    index_worker : int
+        Index of the worker running this environment.
+    index_env : int
+        Index of this environment withing the vector of environments.
+    seed : int
+        Used as base worker id.
+    frame_skip : int
+        Return only every `frame_skip`-th observation.
+    frame_stack : int
+        Observations composed of last `frame_stack` frames stacked.
+    realtime : bool
+        Visualise environment.
+
+    Returns
+    -------
+    env : gym.Env
+        Train environment.
+    """
     if 'DISPLAY' not in os.environ.keys():
         os.environ['DISPLAY'] = ':0'
 
@@ -17,8 +38,9 @@ def make_obstacle_train_env(realtime=False, seed=0, frame_skip=0, frame_stack=1)
         os.path.dirname(obstacle_tower_env.__file__),
         'ObstacleTower/obstacletower')
 
+    id = seed + index_worker + index_env
     env = ObstacleTowerEnv(
-        environment_filename=exe, retro=True, worker_id=seed, greyscale=False,
+        environment_filename=exe, retro=True, worker_id=id, greyscale=False,
         docker_training=False, realtime_mode=realtime)
 
     env = ReducedActionEnv(env)
@@ -33,16 +55,38 @@ def make_obstacle_train_env(realtime=False, seed=0, frame_skip=0, frame_stack=1)
 
     return env
 
-def make_obstacle_test_env(realtime=False, seed=0, frame_skip=0, frame_stack=1):
-    """_"""
+def make_obstacle_test_env(index_worker=0, index_env=0, realtime=False, seed=0, frame_skip=0, frame_stack=1):
+    """
+    Create test Obstacle Tower Unity3D challenge environment.
 
+    Parameters
+    ----------
+    index_worker : int
+        Index of the worker running this environment.
+    index_env : int
+        Index of this environment withing the vector of environments.
+    seed : int
+        Used as base worker id.
+    frame_skip : int
+        Return only every `frame_skip`-th observation.
+    frame_stack : int
+        Observations composed of last `frame_stack` frames stacked.
+    realtime : bool
+        Visualise environment.
+
+    Returns
+    -------
+    env : gym.Env
+        Test environment.
+    """
     if 'DISPLAY' not in os.environ.keys():
         os.environ['DISPLAY'] = ':0'
 
     exe = os.path.join(os.path.dirname(obstacle_tower_env.__file__),
                        'ObstacleTower/obstacletower')
+    id = seed + index_worker + index_env
     env = ObstacleTowerEnv(
-        environment_filename=exe, retro=True, worker_id=seed, greyscale=False,
+        environment_filename=exe, retro=True, worker_id=id, greyscale=False,
         docker_training=False, realtime_mode=realtime)
 
     env = ReducedActionEnv(env)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 WORKING_DIR=$PWD
-LOG_DIR=/tmp/trifinger_robot_ppo
+LOG_DIR=/tmp/pybullet_ppo
 INTER=10000
 DEVICES="0"
 MAX_TIME=86400

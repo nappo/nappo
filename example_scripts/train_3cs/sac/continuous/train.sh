@@ -1,7 +1,7 @@
 #!/bin/bash
 
 WORKING_DIR=$PWD
-LOG_DIR=/tmp/trifinger_robot_sac
+LOG_DIR=/tmp/pybullet_sac
 INTER=50000
 DEVICES="0"
 MAX_TIME=8640000000000
@@ -10,18 +10,19 @@ ENV_ID=HalfCheetahBulletEnv-v0
 
 ###############################################################################
 
-LR=0.001
+LR=3e-4
 MODEL=MLP
-NUM_PROC=32
+NUM_PROC=1
 GAMMA=0.99
 POLYAK=0.995
 MINI_BATCH_SIZE=256
 UPDATE_EVERY=1
-NUM_UPDATES=8
-START_STEPS=1000 # 20000
-BUFFER_SIZE=50000 # 500000
-FRAME_SKIP=3
-FRAME_STACK=3
+NUM_UPDATES=1
+START_STEPS=20000
+BUFFER_SIZE=1000000
+FRAME_SKIP=0
+FRAME_STACK=1
+NUM_WORKERS=1
 
 ###############################################################################
 
