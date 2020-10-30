@@ -1,4 +1,5 @@
 import gym
+import pybullet_envs
 from ..common import FrameStack, FrameSkip
 
 def make_pybullet_train_env(env_id, index_worker=0, index_env=0, seed=0, frame_skip=0, frame_stack=1):

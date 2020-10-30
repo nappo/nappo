@@ -2,6 +2,7 @@ numpy
 pandas
 ray
 ray[debug]
+pybullet
 Tensorflow # just for logging
 TensorBoard # just for logging
 git+git://github.com/openai/baselines.git

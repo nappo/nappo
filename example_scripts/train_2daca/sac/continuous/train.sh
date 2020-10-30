@@ -1,7 +1,7 @@
 #!/bin/bash
 
 WORKING_DIR=$PWD
-LOG_DIR=/tmp/pybullet_sac
+LOG_DIR=/tmp/pybullet_robot_sac
 INTER=50000
 DEVICES="0,1,2,3"
 MAX_TIME=100000000000000000
