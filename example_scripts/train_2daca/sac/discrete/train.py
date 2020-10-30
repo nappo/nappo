@@ -5,17 +5,14 @@ import time
 import json
 import argparse
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../../..')
-
 from nappo import utils
 from nappo import Learner
 from nappo.core.algos import SAC
+from nappo.core.storage import ReplayBuffer
 from nappo.core.envs import vec_envs_factory
 from nappo.core.models import OffPolicyActorCritic, get_model
-from nappo.core.storage import ReplayBuffer, HindsightExperienceReplayBuffer
 from nappo.schemes.workers_2daca import CGWorkerSet, UWorker
-
-from example_environments import make_atari_train_env, make_atari_test_env
+from nappo.envs import make_atari_train_env, make_atari_test_env
 
 
 def main():

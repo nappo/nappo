@@ -6,8 +6,6 @@ import json
 import argparse
 import numpy as np
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../../..')
-
 from nappo import utils
 from nappo import Learner
 from nappo.core.algos import PPO
@@ -15,8 +13,7 @@ from nappo.core.envs import vec_envs_factory
 from nappo.core.storage import OnPolicyGAEBuffer
 from nappo.schemes.workers_da2cs import CWorkerSet, GUWorker
 from nappo.core.models import OnPolicyActorCritic, get_model
-
-from example_environments import make_atari_train_env, make_atari_test_env
+from nappo.envs import make_atari_train_env, make_atari_test_env
 
 
 def main():

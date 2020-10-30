@@ -1,2 +1,0 @@
-from envs.obstacle_tower.make_obstacle_env import make_obstacle_env
-from envs.obstacle_tower.utils import action_lookup, reduced_action_lookup_6, reduced_action_lookup_7

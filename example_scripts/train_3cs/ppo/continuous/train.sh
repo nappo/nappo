@@ -6,6 +6,7 @@ INTER=10000
 DEVICES="0"
 MAX_TIME=86400
 STEPS=100000000000
+ENV_ID=HalfCheetahBulletEnv-v0
 
 ###############################################################################
 
@@ -33,4 +34,5 @@ CUDA_VISIBLE_DEVICES=$DEVICES python example_scripts/train_3cs/ppo/continuous/tr
 --num-env-steps $STEPS --log-dir $LOG_DIR --nn $MODEL --gamma $GAMMA --save-interval $INTER \
 --ppo-epoch $PPO_EPOCH --gae-lambda $GAE_LAMBDA --use-gae --num-env-processes $NUM_PROC \
 --value-loss-coef $VALUE_LOSS_COEF --entropy-coef $ENTROPY_COEF --eps $EPS --max-time $MAX_TIME \
---use_clipped_value_loss --frame-skip $FRAME_SKIP --frame-stack $FRAME_STACK --recurrent-policy
+--use_clipped_value_loss --frame-skip $FRAME_SKIP --frame-stack $FRAME_STACK --recurrent-policy \
+--env-id $ENV_ID

@@ -5,8 +5,6 @@ import time
 import json
 import argparse
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../../..')
-
 from nappo import utils
 from nappo import Learner
 from nappo.core.algos import PPO
@@ -14,8 +12,7 @@ from nappo.core.envs import vec_envs_factory
 from nappo.core.storage import OnPolicyGAEBuffer
 from nappo.schemes.workers_dadaca import CWorkerSet, GWorkerSet, UWorker
 from nappo.core.models import OnPolicyActorCritic, get_model
-
-from example_environments import make_real_robot_train_env, make_real_robot_test_env
+from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
 
 
 def main():
@@ -38,16 +35,18 @@ def main():
     # 1. Define Train Vector of Envs
     create_train_envs, action_space, obs_space = vec_envs_factory(
         num_processes=args.num_env_processes, log_dir=args.log_dir,
-        env_fn=make_real_robot_train_env,
-        env_kwargs={"frame_skip": args.frame_skip, "frame_stack":args.frame_stack},
-        info_keywords=('r0','r1','goal'))
+        env_fn=make_pybullet_train_env, env_kwargs={
+            "env_id": args.env_id,
+            "frame_skip": args.frame_skip,
+            "frame_stack": args.frame_stack})
 
     # 2. Define Test Vector of Envs (Optional)
     create_test_envs, _, _ = vec_envs_factory(
         num_processes=args.num_env_processes, log_dir=args.log_dir,
-        env_fn=make_real_robot_test_env,
-        env_kwargs={"frame_skip": args.frame_skip, "frame_stack":args.frame_stack},
-        info_keywords=('r0', 'r1', 'goal'))
+        env_fn=make_pybullet_test_env, env_kwargs={
+            "env_id": args.env_id,
+            "frame_skip": args.frame_skip,
+            "frame_stack": args.frame_stack})
 
     # 3. Define RL Policy
     create_actor_critic = OnPolicyActorCritic.actor_critic_factory(
@@ -112,6 +111,9 @@ def get_args():
     parser = argparse.ArgumentParser(description='RL', conflict_handler='resolve')
 
     # Environment specs
+    parser.add_argument(
+        '--env-id', type=str, default=None,
+        help='Gym environment id (default None)')
     parser.add_argument(
         '--frame-skip', type=int, default=0,
         help='Number of frame to skip for each action')
