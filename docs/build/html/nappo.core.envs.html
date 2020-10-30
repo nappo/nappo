@@ -15,7 +15,9 @@
     <script src="_static/language_data.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="nappo.core.models package" href="nappo.core.models.html" />
+    <link rel="prev" title="nappo.core.algos package" href="nappo.core.algos.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -23,7 +25,18 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="nappo.core.models.html" title="nappo.core.models package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nappo.core.algos.html" title="nappo.core.algos package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="nappo.html" >nappo package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="nappo.core.html" accesskey="U">nappo.core package</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -37,17 +50,141 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="nappo-core-envs-create-vector-environments-module">
-<h2>nappo.core.envs.create_vector_environments module<a class="headerlink" href="#nappo-core-envs-create-vector-environments-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nappo.core.envs.create_vector_environments">
+<span id="nappo-core-envs-create-vector-environments-module"></span><h2>nappo.core.envs.create_vector_environments module<a class="headerlink" href="#module-nappo.core.envs.create_vector_environments" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="nappo.core.envs.create_vector_environments.make_env">
+<code class="sig-prename descclassname">nappo.core.envs.create_vector_environments.</code><code class="sig-name descname">make_env</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_fn</span></em>, <em class="sig-param"><span class="n">env_kwargs</span></em>, <em class="sig-param"><span class="n">index_worker</span></em>, <em class="sig-param"><span class="n">index_env</span></em>, <em class="sig-param"><span class="n">log_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">info_keywords</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'train'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.create_vector_environments.make_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function that handles the creating of a single environment, so it
+can be executed in an independent thread.</p>
+<dl class="simple">
+<dt>env_fn<span class="classifier">func</span></dt><dd><p>Function to create the environment.</p>
+</dd>
+<dt>env_kwargs<span class="classifier">dict</span></dt><dd><p>keyword arguments of env_fn.</p>
+</dd>
+<dt>log_dir<span class="classifier">str</span></dt><dd><p>Target path for bench.Monitor logger values.</p>
+</dd>
+<dt>info_keywords<span class="classifier">tuple</span></dt><dd><p>Information keywords to be logged stored by bench.Monitor.</p>
+</dd>
+<dt>index_worker<span class="classifier">int</span></dt><dd><p>Index of the worker running this environment.</p>
+</dd>
+<dt>index_env<span class="classifier">int</span></dt><dd><p>Index of this environment withing the vector of environments.</p>
+</dd>
+<dt>mode<span class="classifier">str</span></dt><dd><p>“train” or “test”</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>_thunk<span class="classifier">func</span></dt><dd><p>A function to create and return the environment. It also sets up the
+Monitor logging and used a TransposeImage wrapper if environment obs
+are images.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="nappo.core.envs.create_vector_environments.vec_envs_factory">
+<code class="sig-prename descclassname">nappo.core.envs.create_vector_environments.</code><code class="sig-name descname">vec_envs_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_fn</span></em>, <em class="sig-param"><span class="n">env_kwargs</span></em>, <em class="sig-param"><span class="n">num_processes</span></em>, <em class="sig-param"><span class="n">log_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">info_keywords</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.create_vector_environments.vec_envs_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function to create a vector of environments of size
+num_processes, so it can be executed by any worker, remote or not.</p>
+<dl class="simple">
+<dt>env_fn<span class="classifier">func</span></dt><dd><p>Function to create the environment.</p>
+</dd>
+<dt>env_kwargs<span class="classifier">dict</span></dt><dd><p>keyword arguments of env_fn.</p>
+</dd>
+<dt>num_processes<span class="classifier">int</span></dt><dd><p>size of the vector of environments.</p>
+</dd>
+<dt>log_dir<span class="classifier">str</span></dt><dd><p>Target path for envs to log information through bench.Monitor class.</p>
+</dd>
+<dt>info_keywords<span class="classifier">tuple</span></dt><dd><p>Information keywords to be logged stored by bench.Monitor class.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>make_vec_env<span class="classifier">func</span></dt><dd><p>Function to create a vector of environments.</p>
+</dd>
+<dt>dummy_env.action_space<span class="classifier">gym.Space</span></dt><dd><p>Environments action space.</p>
+</dd>
+<dt>dummy_env.observation_space: gym.Space</dt><dd><p>Environments observation space.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
-<div class="section" id="nappo-core-envs-env-wrappers-module">
-<h2>nappo.core.envs.env_wrappers module<a class="headerlink" href="#nappo-core-envs-env-wrappers-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nappo.core.envs.env_wrappers">
+<span id="nappo-core-envs-env-wrappers-module"></span><h2>nappo.core.envs.env_wrappers module<a class="headerlink" href="#module-nappo.core.envs.env_wrappers" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="nappo.core.envs.env_wrappers.TransposeImage">
+<em class="property">class </em><code class="sig-prename descclassname">nappo.core.envs.env_wrappers.</code><code class="sig-name descname">TransposeImage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">op</span><span class="o">=</span><span class="default_value">[2, 0, 1]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.env_wrappers.TransposeImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.core.ObservationWrapper</span></code></p>
+<p>When environment observations are images, this wrapper allows to transpose
+the axis. It is useful when the images have shape (W,H,C), as they can be
+transposed “on the fly” to (C,W,H) for PyTorch convolutions to be applied.</p>
+<dl class="simple">
+<dt>env<span class="classifier">gym.Env</span></dt><dd><p>Original Gym environment, previous to applying the wrapper.</p>
+</dd>
+<dt>op<span class="classifier">list</span></dt><dd><p>New axis ordering.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>op<span class="classifier">list</span></dt><dd><p>New axis ordering.</p>
+</dd>
+<dt>observation_space<span class="classifier">gym.Space</span></dt><dd><p>New observation space</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="nappo.core.envs.env_wrappers.TransposeImage.observation">
+<code class="sig-name descname">observation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ob</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.env_wrappers.TransposeImage.observation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transpose observation</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="nappo-core-envs-vector-wrappers-module">
-<h2>nappo.core.envs.vector_wrappers module<a class="headerlink" href="#nappo-core-envs-vector-wrappers-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nappo.core.envs.vector_wrappers">
+<span id="nappo-core-envs-vector-wrappers-module"></span><h2>nappo.core.envs.vector_wrappers module<a class="headerlink" href="#module-nappo.core.envs.vector_wrappers" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="nappo.core.envs.vector_wrappers.VecPyTorch">
+<em class="property">class </em><code class="sig-prename descclassname">nappo.core.envs.vector_wrappers.</code><code class="sig-name descname">VecPyTorch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">venv</span></em>, <em class="sig-param"><span class="n">device</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.vector_wrappers.VecPyTorch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">baselines.common.vec_env.vec_env.VecEnvWrapper</span></code></p>
+<p>This wrapper turns obs, reward’s and done’s from numpy arrays to pytorch
+tensors and places them in the specified device, facilitating interaction
+between the environment and the actor critic function approximators (NNs).</p>
+<dl class="simple">
+<dt>venv<span class="classifier">VecEnv</span></dt><dd><p>Original vector environment, previous to applying the wrapper.</p>
+</dd>
+<dt>device<span class="classifier">torch.device</span></dt><dd><p>CPU or specific GPU where obs, reward’s and done’s are placed after
+being transformed into pytorch tensors.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>device<span class="classifier">torch.device</span></dt><dd><p>CPU or specific GPU where obs, reward’s and done’s are placed after
+being transformed into pytorch tensors.</p>
+</dd>
+<dt>num_envs<span class="classifier">int</span></dt><dd><p>Size of vector environment.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="nappo.core.envs.vector_wrappers.VecPyTorch.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.vector_wrappers.VecPyTorch.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>New vec env reset function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.core.envs.vector_wrappers.VecPyTorch.step_async">
+<code class="sig-name descname">step_async</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">actions</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.vector_wrappers.VecPyTorch.step_async" title="Permalink to this definition">¶</a></dt>
+<dd><p>New vec env step_async function</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.core.envs.vector_wrappers.VecPyTorch.step_wait">
+<code class="sig-name descname">step_wait</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.vector_wrappers.VecPyTorch.step_wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>New vec env step_wait function</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nappo.core.envs">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nappo.core.envs" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -61,14 +198,20 @@
   <ul>
 <li><a class="reference internal" href="#">nappo.core.envs package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#nappo-core-envs-create-vector-environments-module">nappo.core.envs.create_vector_environments module</a></li>
-<li><a class="reference internal" href="#nappo-core-envs-env-wrappers-module">nappo.core.envs.env_wrappers module</a></li>
-<li><a class="reference internal" href="#nappo-core-envs-vector-wrappers-module">nappo.core.envs.vector_wrappers module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-nappo.core.envs.create_vector_environments">nappo.core.envs.create_vector_environments module</a></li>
+<li><a class="reference internal" href="#module-nappo.core.envs.env_wrappers">nappo.core.envs.env_wrappers module</a></li>
+<li><a class="reference internal" href="#module-nappo.core.envs.vector_wrappers">nappo.core.envs.vector_wrappers module</a></li>
+<li><a class="reference internal" href="#module-nappo.core.envs">Module contents</a></li>
 </ul>
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nappo.core.algos.html"
+                        title="previous chapter">nappo.core.algos package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nappo.core.models.html"
+                        title="next chapter">nappo.core.models package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -96,7 +239,18 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="nappo.core.models.html" title="nappo.core.models package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nappo.core.algos.html" title="nappo.core.algos package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="nappo.html" >nappo package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="nappo.core.html" >nappo.core package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -15,7 +15,9 @@
     <script src="_static/language_data.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="nappo.schemes.workers_da2cs package" href="nappo.schemes.workers_da2cs.html" />
+    <link rel="prev" title="nappo.schemes.workers_3cs package" href="nappo.schemes.workers_3cs.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -23,7 +25,18 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="nappo.schemes.workers_da2cs.html" title="nappo.schemes.workers_da2cs package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nappo.schemes.workers_3cs.html" title="nappo.schemes.workers_3cs package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="nappo.html" >nappo package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="nappo.schemes.html" accesskey="U">nappo.schemes package</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -37,17 +50,261 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="nappo-schemes-workers-3ds-cgu-worker-module">
-<h2>nappo.schemes.workers_3ds.cgu_worker module<a class="headerlink" href="#nappo-schemes-workers-3ds-cgu-worker-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nappo.schemes.workers_3ds.cgu_worker">
+<span id="nappo-schemes-workers-3ds-cgu-worker-module"></span><h2>nappo.schemes.workers_3ds.cgu_worker module<a class="headerlink" href="#module-nappo.schemes.workers_3ds.cgu_worker" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker">
+<em class="property">class </em><code class="sig-prename descclassname">nappo.schemes.workers_3ds.cgu_worker.</code><code class="sig-name descname">CGUWorker</code><span class="sig-paren">(</span><em class="sig-param">index_worker</em>, <em class="sig-param">create_algo_instance</em>, <em class="sig-param">create_storage_instance</em>, <em class="sig-param">create_train_envs_instance</em>, <em class="sig-param">create_actor_critic_instance</em>, <em class="sig-param">create_test_envs_instance=&lt;function CGUWorker.&lt;lambda&gt;&gt;</em>, <em class="sig-param">initial_weights=None</em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="nappo.schemes.base.html#nappo.schemes.base.worker.Worker" title="nappo.schemes.base.worker.Worker"><code class="xref py py-class docutils literal notranslate"><span class="pre">nappo.schemes.base.worker.Worker</span></code></a></p>
+<p>Worker class handling remote data collection, gradient computation and
+policy updates.</p>
+<p>This class wraps an actor_critic instance, a storage class instance and a
+train and a test vector of environments. It collects data, computes gradients,
+updates the networks and evaluates network versions following a logic
+defined in function self.step(), which will be called from the Learner.</p>
+<dl class="simple">
+<dt>index_worker<span class="classifier">int</span></dt><dd><p>Worker index.</p>
+</dd>
+<dt>create_algo_instance<span class="classifier">func</span></dt><dd><p>A function that creates an algorithm class.</p>
+</dd>
+<dt>create_storage_instance<span class="classifier">func</span></dt><dd><p>A function that create a rollouts storage.</p>
+</dd>
+<dt>create_train_envs_instance<span class="classifier">func</span></dt><dd><p>A function to create train environments.</p>
+</dd>
+<dt>create_actor_critic_instance<span class="classifier">func</span></dt><dd><p>A function that creates a policy.</p>
+</dd>
+<dt>create_test_envs_instance<span class="classifier">func</span></dt><dd><p>A function to create test environments.</p>
+</dd>
+<dt>initial_weights<span class="classifier">ray object ID</span></dt><dd><p>Initial model weights.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>index_worker<span class="classifier">int</span></dt><dd><p>Index assigned to this worker.</p>
+</dd>
+<dt>actor_critic<span class="classifier">nn.Module</span></dt><dd><p>An actor_critic class instance.</p>
+</dd>
+<dt>algo<span class="classifier">an algorithm class</span></dt><dd><p>An algorithm class instance.</p>
+</dd>
+<dt>envs_train<span class="classifier">VecEnv</span></dt><dd><p>A VecEnv class instance with the train environments.</p>
+</dd>
+<dt>envs_test<span class="classifier">VecEnv</span></dt><dd><p>A VecEnv class instance with the test environments.</p>
+</dd>
+<dt>storage<span class="classifier">a rollout storage class</span></dt><dd><p>A Storage class instance.</p>
+</dd>
+<dt>iter<span class="classifier">int</span></dt><dd><p>Times actor critic has been updated.</p>
+</dd>
+<dt>update_every<span class="classifier">int</span></dt><dd><p>Number of data samples to collect between network update stages.</p>
+</dd>
+<dt>obs<span class="classifier">torch.tensor</span></dt><dd><p>Latest train environment observation.</p>
+</dd>
+<dt>rhs<span class="classifier">torch.tensor</span></dt><dd><p>Latest policy recurrent hidden state.</p>
+</dd>
+<dt>done<span class="classifier">torch.tensor</span></dt><dd><p>Latest train environment done flag.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.collect_data">
+<code class="sig-name descname">collect_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_steps</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">min_fraction</span><span class="o">=</span><span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.collect_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect data from interactions with the environments.</p>
+<dl class="simple">
+<dt>num_steps<span class="classifier">int</span></dt><dd><p>Target number of train environment steps to take.</p>
+</dd>
+<dt>min_steps<span class="classifier">int</span></dt><dd><p>Minimum number of train environment steps to stop at if other
+workers have finished their collection task.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.compute_gradients">
+<code class="sig-name descname">compute_gradients</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.compute_gradients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate actor critic gradients and average them with grads from
+other workers.</p>
+<dl class="simple">
+<dt>batch<span class="classifier">dict</span></dt><dd><p>data batch containing all required tensors to compute algo loss.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>info<span class="classifier">dict</span></dt><dd><p>Summary dict of relevant gradient-related information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.evaluate">
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test current actor_critic version in self.envs_test.</p>
+<dl class="simple">
+<dt>mean_test_perf<span class="classifier">float</span></dt><dd><p>Average accumulated reward over all tested episodes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.find_free_port">
+<code class="sig-name descname">find_free_port</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.find_free_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a free port on the current node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.get_node_ip">
+<code class="sig-name descname">get_node_ip</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.get_node_ip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the IP address of the current node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.set_weights">
+<code class="sig-name descname">set_weights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weights</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.set_weights" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the worker actor_critic version with provided weights.</p>
+<dl class="simple">
+<dt>weights: dict of tensors</dt><dd><p>Dict containing actor_critic weights to be set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.setup_torch_data_parallel">
+<code class="sig-name descname">setup_torch_data_parallel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">world_rank</span></em>, <em class="sig-param"><span class="n">world_size</span></em>, <em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.setup_torch_data_parallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Join a torch process group for distributed SGD.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform logical learning step. Training proceeds interleaving collection
+of data samples with gradient computations and policy updates.</p>
+<dl class="simple">
+<dt>info<span class="classifier">dict</span></dt><dd><p>Summary dict with relevant step information.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.update_algo_parameter">
+<code class="sig-name descname">update_algo_parameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameter_name</span></em>, <em class="sig-param"><span class="n">new_parameter_value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.update_algo_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <cite>parameter_name</cite> is an attribute of Worker.algo, change its value to
+<cite>new_parameter_value value</cite>.</p>
+<dl class="simple">
+<dt>parameter_name<span class="classifier">str</span></dt><dd><p>Algorithm attribute name</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker.CGUWorker.update_networks">
+<code class="sig-name descname">update_networks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker.CGUWorker.update_networks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update Actor Critic model</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="nappo-schemes-workers-3ds-cgu-worker-set-module">
-<h2>nappo.schemes.workers_3ds.cgu_worker_set module<a class="headerlink" href="#nappo-schemes-workers-3ds-cgu-worker-set-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nappo.schemes.workers_3ds.cgu_worker_set">
+<span id="nappo-schemes-workers-3ds-cgu-worker-set-module"></span><h2>nappo.schemes.workers_3ds.cgu_worker_set module<a class="headerlink" href="#module-nappo.schemes.workers_3ds.cgu_worker_set" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="nappo.schemes.workers_3ds.cgu_worker_set.CGUWorkerSet">
+<em class="property">class </em><code class="sig-prename descclassname">nappo.schemes.workers_3ds.cgu_worker_set.</code><code class="sig-name descname">CGUWorkerSet</code><span class="sig-paren">(</span><em class="sig-param">create_algo_instance</em>, <em class="sig-param">create_storage_instance</em>, <em class="sig-param">create_train_envs_instance</em>, <em class="sig-param">create_actor_critic_instance</em>, <em class="sig-param">create_test_envs_instance=&lt;function CGUWorkerSet.&lt;lambda&gt;&gt;</em>, <em class="sig-param">worker_remote_config={'num_cpus': 1</em>, <em class="sig-param">'num_gpus': 0.5}</em>, <em class="sig-param">fraction_workers=0.8</em>, <em class="sig-param">fraction_samples=0.5</em>, <em class="sig-param">num_workers=1</em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker_set.CGUWorkerSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="nappo.schemes.base.html#nappo.schemes.base.worker_set.WorkerSet" title="nappo.schemes.base.worker_set.WorkerSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">nappo.schemes.base.worker_set.WorkerSet</span></code></a></p>
+<p>Class to better handle the operations of ensembles of workers.</p>
+<dl class="simple">
+<dt>create_algo_instance<span class="classifier">func</span></dt><dd><p>A function that creates an algorithm class.</p>
+</dd>
+<dt>create_storage_instance<span class="classifier">func</span></dt><dd><p>A function that create a rollouts storage.</p>
+</dd>
+<dt>create_train_envs_instance<span class="classifier">func</span></dt><dd><p>A function to create train environments.</p>
+</dd>
+<dt>create_actor_critic_instance<span class="classifier">func</span></dt><dd><p>A function that creates a policy.</p>
+</dd>
+<dt>create_test_envs_instance<span class="classifier">func</span></dt><dd><p>A function to create test environments.</p>
+</dd>
+<dt>worker_remote_config<span class="classifier">dict</span></dt><dd><p>Ray resource specs for the remote workers.</p>
+</dd>
+<dt>fraction_workers<span class="classifier">float</span></dt><dd><p>Minimum fraction of the remote workers to complete the data collection
+task to stop collection phase.</p>
+</dd>
+<dt>fraction_samples<span class="classifier">float</span></dt><dd><p>Minimum fraction of the target steps allowed in a data collection.</p>
+</dd>
+<dt>num_workers<span class="classifier">int</span></dt><dd><p>Number of remote workers in the worker set.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>worker_class<span class="classifier">python class</span></dt><dd><p>Worker class to be instantiated to create Ray remote actors.</p>
+</dd>
+<dt>remote_config<span class="classifier">dict</span></dt><dd><p>Ray resource specs for the remote workers.</p>
+</dd>
+<dt>worker_params<span class="classifier">dict</span></dt><dd><p>Keyword arguments of the worker_class.</p>
+</dd>
+<dt>num_workers<span class="classifier">int</span></dt><dd><p>Number of remote workers in the worker set.</p>
+</dd>
+<dt>num_updates<span class="classifier">int</span></dt><dd><p>Times step() function has been called.</p>
+</dd>
+<dt>fraction_workers<span class="classifier">float</span></dt><dd><p>Minimum fraction of the remote workers to complete the data collection
+task to stop collection phase.</p>
+</dd>
+<dt>fraction_samples<span class="classifier">float</span></dt><dd><p>Minimum fraction of the target steps allowed in a data collection.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker_set.CGUWorkerSet.save_model">
+<code class="sig-name descname">save_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker_set.CGUWorkerSet.save_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save current version of actor_critic as a torch loadable checkpoint.</p>
+<dl class="simple">
+<dt>fname<span class="classifier">str</span></dt><dd><p>Filename given to the checkpoint.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>save_name<span class="classifier">str</span></dt><dd><p>Path to saved file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker_set.CGUWorkerSet.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker_set.CGUWorkerSet.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a logical optimization step.</p>
+<dl class="simple">
+<dt>info<span class="classifier">dict</span></dt><dd><p>Summary dict of relevant information about the update process.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.workers_3ds.cgu_worker_set.CGUWorkerSet.update_algo_parameter">
+<code class="sig-name descname">update_algo_parameter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameter_name</span></em>, <em class="sig-param"><span class="n">new_parameter_value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.cgu_worker_set.CGUWorkerSet.update_algo_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <cite>parameter_name</cite> is an attribute of Worker.algo, change its value to
+<cite>new_parameter_value value</cite>.</p>
+<dl class="simple">
+<dt>parameter_name<span class="classifier">str</span></dt><dd><p>Algorithm attribute name</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="nappo-schemes-workers-3ds-utils-module">
-<h2>nappo.schemes.workers_3ds.utils module<a class="headerlink" href="#nappo-schemes-workers-3ds-utils-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nappo.schemes.workers_3ds.utils">
+<span id="nappo-schemes-workers-3ds-utils-module"></span><h2>nappo.schemes.workers_3ds.utils module<a class="headerlink" href="#module-nappo.schemes.workers_3ds.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="nappo.schemes.workers_3ds.utils.broadcast_message">
+<code class="sig-prename descclassname">nappo.schemes.workers_3ds.utils.</code><code class="sig-name descname">broadcast_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.utils.broadcast_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>_</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="nappo.schemes.workers_3ds.utils.check_message">
+<code class="sig-prename descclassname">nappo.schemes.workers_3ds.utils.</code><code class="sig-name descname">check_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.utils.check_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>_</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="nappo.schemes.workers_3ds.utils.find_free_port">
+<code class="sig-prename descclassname">nappo.schemes.workers_3ds.utils.</code><code class="sig-name descname">find_free_port</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.workers_3ds.utils.find_free_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>from <a class="reference external" href="https://github.com/ray-project/ray/blob/master/python/ray/util/sgd/utils.py">https://github.com/ray-project/ray/blob/master/python/ray/util/sgd/utils.py</a></p>
+</dd></dl>
+
 </div>
-<div class="section" id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-nappo.schemes.workers_3ds">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nappo.schemes.workers_3ds" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -61,14 +318,20 @@
   <ul>
 <li><a class="reference internal" href="#">nappo.schemes.workers_3ds package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#nappo-schemes-workers-3ds-cgu-worker-module">nappo.schemes.workers_3ds.cgu_worker module</a></li>
-<li><a class="reference internal" href="#nappo-schemes-workers-3ds-cgu-worker-set-module">nappo.schemes.workers_3ds.cgu_worker_set module</a></li>
-<li><a class="reference internal" href="#nappo-schemes-workers-3ds-utils-module">nappo.schemes.workers_3ds.utils module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-nappo.schemes.workers_3ds.cgu_worker">nappo.schemes.workers_3ds.cgu_worker module</a></li>
+<li><a class="reference internal" href="#module-nappo.schemes.workers_3ds.cgu_worker_set">nappo.schemes.workers_3ds.cgu_worker_set module</a></li>
+<li><a class="reference internal" href="#module-nappo.schemes.workers_3ds.utils">nappo.schemes.workers_3ds.utils module</a></li>
+<li><a class="reference internal" href="#module-nappo.schemes.workers_3ds">Module contents</a></li>
 </ul>
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nappo.schemes.workers_3cs.html"
+                        title="previous chapter">nappo.schemes.workers_3cs package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nappo.schemes.workers_da2cs.html"
+                        title="next chapter">nappo.schemes.workers_da2cs package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -96,7 +359,18 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li> 
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="nappo.schemes.workers_da2cs.html" title="nappo.schemes.workers_da2cs package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nappo.schemes.workers_3cs.html" title="nappo.schemes.workers_3cs package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="nappo.html" >nappo package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="nappo.schemes.html" >nappo.schemes package</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
