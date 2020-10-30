@@ -1,7 +1,5 @@
 ray
 ray[debug]
 pybullet
-numpy==1.19.0
-stable-baselines
 Tensorflow # just for logging
 TensorBoard # just for logging
