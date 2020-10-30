@@ -1,6 +1,7 @@
-# gym
 ray
 ray[debug]
 numpy
 pandas
-# baselines
+git+git://github.com/openai/baselines.git
+Tensorflow # just for logging
+TensorBoard # just for logging
