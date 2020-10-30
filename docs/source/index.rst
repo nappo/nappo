@@ -9,8 +9,8 @@ Welcome to nappo's documentation!
 .. toctree::
    :maxdepth: 3
    :caption: Contents:
-intro
-nappo
+   intro
+   nappo
 
 Indices and tables
 ==================
