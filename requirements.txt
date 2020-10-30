@@ -1,7 +1,7 @@
-ray
-ray[debug]
 numpy
 pandas
-git+git://github.com/openai/baselines.git
+ray
+ray[debug]
 Tensorflow # just for logging
 TensorBoard # just for logging
+stable-baselines

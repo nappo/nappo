@@ -10,20 +10,20 @@ ENV_ID=HalfCheetahBulletEnv-v0
 
 ###############################################################################
 
-EPS=1e-8
+EPS=2e-4
 LR=0.00025
 MODEL=MLP
-NUM_PROC=20
-NUM_STEPS=6000
-NUM_MINI_BATCH=40
+NUM_PROC=1
+NUM_STEPS=2048
+NUM_MINI_BATCH=32
 CLIP_PARAM=0.2
 GAMMA=0.99
-PPO_EPOCH=4
+PPO_EPOCH=10
 GAE_LAMBDA=0.95
 VALUE_LOSS_COEF=0.5
-ENTROPY_COEF=0.01
-FRAME_SKIP=3
-FRAME_STACK=4
+ENTROPY_COEF=0.0
+FRAME_SKIP=0
+FRAME_STACK=1
 NUM_WORKERS=1
 
 ###############################################################################
