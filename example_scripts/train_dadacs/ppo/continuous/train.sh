@@ -37,4 +37,4 @@ CUDA_VISIBLE_DEVICES=$DEVICES python example_scripts/train_dadacs/ppo/continuous
 --ppo-epoch $PPO_EPOCH --gae-lambda $GAE_LAMBDA --use-gae --num-env-processes $NUM_PROC \
 --value-loss-coef $VALUE_LOSS_COEF --entropy-coef $ENTROPY_COEF --eps $EPS --max-time $MAX_TIME \
 --use_clipped_value_loss --frame-skip $FRAME_SKIP --frame-stack $FRAME_STACK \
---num-grad-workers $NUM_GWORKERS --num-col-workers $NUM_CWORKERS
+--num-grad-workers $NUM_GWORKERS --num-col-workers $NUM_CWORKERS --env-id $ENV_ID

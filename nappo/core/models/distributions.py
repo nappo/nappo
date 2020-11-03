@@ -112,7 +112,7 @@ class Categorical(nn.Module):
 
 class DiagGaussian(nn.Module):
     """
-    Gaussian action distribution.
+    Isotropic gaussian action distribution.
 
     Parameters
     ----------

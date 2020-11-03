@@ -8,9 +8,9 @@ import argparse
 from nappo import utils
 from nappo import Learner
 from nappo.core.algos import SAC
+from nappo.core.storage import ReplayBuffer
 from nappo.core.envs import vec_envs_factory
 from nappo.core.models import OffPolicyActorCritic, get_model
-from nappo.core.storage import ReplayBuffer, HindsightExperienceReplayBuffer
 from nappo.schemes.workers_3ds import CGUWorkerSet
 from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
 
@@ -64,9 +64,7 @@ def main():
         restart_model=args.restart_model)
 
     # 5. Define rollouts storage
-    # create_buffer = ReplayBuffer.storage_factory(size=args.buffer_size)
-    create_buffer = HindsightExperienceReplayBuffer.storage_factory(
-       size=args.buffer_size, her_function=her_function_robot)
+    create_buffer = ReplayBuffer.storage_factory(size=args.buffer_size)
 
     # 6. Define workers
     cgu_workers = CGUWorkerSet(

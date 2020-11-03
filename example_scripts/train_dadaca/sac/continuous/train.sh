@@ -22,7 +22,8 @@ START_STEPS=20000
 BUFFER_SIZE=1000000
 FRAME_SKIP=0
 FRAME_STACK=1
-NUM_WORKERS=1
+NUM_GWORKERS=1
+NUM_CWORKERS=1
 
 ###############################################################################
 
@@ -34,4 +35,4 @@ CUDA_VISIBLE_DEVICES=$DEVICES python example_scripts/train_dadaca/sac/continuous
 --mini-batch-size $MINI_BATCH_SIZE --update-every $UPDATE_EVERY --num-updates $NUM_UPDATES \
 --start-steps $START_STEPS --buffer-size $BUFFER_SIZE --lr $LR --nn $MODEL \
 --frame-skip $FRAME_SKIP --frame-stack $FRAME_STACK --num-col-workers $NUM_CWORKERS \
---num-grad-workers $NUM_GWORKERS
+--num-grad-workers $NUM_GWORKERS --env-id $ENV_ID

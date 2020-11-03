@@ -104,8 +104,6 @@ def get_args():
 
     # SAC specs
     parser.add_argument(
-        '--env-id', type=str, default=None, help='Gym environment id (default None)')
-    parser.add_argument(
         '--lr', type=float, default=7e-4, help='learning rate (default: 7e-4)')
     parser.add_argument(
         '--eps', type=float, default=1e-8,
