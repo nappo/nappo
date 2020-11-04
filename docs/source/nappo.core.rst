@@ -1,8 +1,5 @@
-nappo.core package
-==================
-
-Subpackages
------------
+nappo.core
+==========
 
 .. toctree::
    :maxdepth: 4
@@ -11,11 +8,3 @@ Subpackages
    nappo.core.envs
    nappo.core.models
    nappo.core.storage
-
-Module contents
----------------
-
-.. automodule:: nappo.core
-   :members:
-   :undoc-members:
-   :show-inheritance:
