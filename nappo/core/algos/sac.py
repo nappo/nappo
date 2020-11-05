@@ -205,10 +205,12 @@ class SAC(Algo):
                      gamma=0.99,
                      polyak=0.995,
                      num_updates=50,
+                     test_every=5000,
                      update_every=50,
                      start_steps=20000,
                      mini_batch_size=64,
                      reward_scaling=1.0,
+                     num_test_episodes=0,
                      target_update_interval=1.0):
         """
         Returns a function to create new SAC instances.
@@ -255,12 +257,14 @@ class SAC(Algo):
                        alpha=alpha,
                        device=device,
                        polyak=polyak,
+                       test_every=test_every,
                        start_steps=start_steps,
                        num_updates=num_updates,
                        update_every=update_every,
                        actor_critic=actor_critic,
                        reward_scaling=reward_scaling,
                        mini_batch_size=mini_batch_size,
+                       num_test_episodes=num_test_episodes,
                        target_update_interval=target_update_interval)
         return create_algo_instance
 

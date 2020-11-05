@@ -230,9 +230,9 @@ class CGUWorker:
         self.update_networks()
 
         # Add extra information to info dict
-        info.update({"ac_update_num": self.num_updates})
         info.update({"collected_samples": collected_samples})
         info.update({"scheme/seconds_to/collect": collect_time})
+        info.update({"scheme/metrics/gradient_update_delay": 0})
         info.update({"scheme/metrics/collection_gradient_delay": self.num_updates - self.storage.ac_version})
         if self.num_updates == 0: info["collected_samples"] += self.start_steps
 
