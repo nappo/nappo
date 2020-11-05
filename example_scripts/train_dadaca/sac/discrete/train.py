@@ -47,10 +47,10 @@ def main():
 
     # 3. Define RL training algorithm
     create_algo = SAC.algo_factory(
-        lr=args.lr, eps=args.eps, alpha=args.alpha, gamma=args.gamma,
-        polyak=args.polyak, num_updates=args.num_updates, update_every=args.update_every,
-        start_steps=args.start_steps, mini_batch_size=args.mini_batch_size,
-        target_update_interval=args.target_update_interval)
+        lr_pi=args.lr, lr_q=args.lr, lr_alpha=args.lr, initial_alpha=args.alpha,
+        gamma=args.gamma, polyak=args.polyak, num_updates=args.num_updates,
+        update_every=args.update_every, start_steps=args.start_steps,
+        mini_batch_size=args.mini_batch_size)
 
     # 4. Define RL Policy
     create_actor_critic = OffPolicyActorCritic.actor_critic_factory(

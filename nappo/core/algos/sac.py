@@ -23,14 +23,16 @@ class SAC(Algo):
         CPU or specific GPU where class computations will take place.
     actor_critic : ActorCritic
         Actor_critic class instance.
-    lr : float
-        Optimizers learning rate.
-    eps : float
-        Optimizers epsilon parameter.
+    lr_pi : float
+        Policy optimizer learning rate.
+    lr_q : float
+        Q-nets optimizer learning rate.
+    lr_alpha : float
+        Alpha optimizer learning rate.
     gamma : float
         Discount factor parameter.
-    alpha: float
-        Initial entropy coefficient value.
+    initial_alpha: float
+        Initial entropy coefficient value (temperature).
     polyak: float
         SAC polyak averaging parameter.
     num_updates: int
@@ -97,32 +99,34 @@ class SAC(Algo):
     --------
     >>> ac = ActorCritic(...)
     >>> create_algo = SAC.algo_factory(
-            lr=1e-4, eps=1e-5, gamma=0.99, polyak=0.995, num_updates=50,
-            update_every=50, test_every=5000, start_steps=20000,
-            mini_batch_size=64, alpha=1.0, reward_scaling=1.0,
-            num_test_episodes=0, target_update_interval=1)
+            lr_q=1e-4, lr_pi=1e-4, lr_alpha=1e-4, gamma=0.99, polyak=0.995,
+            num_updates=50, update_every=50, test_every=5000, start_steps=20000,
+            mini_batch_size=64, alpha=1.0, reward_scaling=1.0, num_test_episodes=0,
+             target_update_interval=1)
     >>> sac1 = create_algo(actor_critic=ac, device=torch.device("cuda:1"))
     >>> sac2 = create_algo(actor_critic=ac, device=torch.device("cuda:2"))
 
     >>> ac = ActorCritic(...)
-    >>> sac = SAC(device=torch.device("cuda:1"), actor_critic=ac, lr=1e-4,
-                  eps=1e-5, gamma=0.99, polyak=0.995, num_updates=50,
-                  update_every=50, test_every=5000, start_steps=20000,
-                  mini_batch_size=64, alpha=1.0, reward_scaling=1.0,
-                  num_test_episodes=0, target_update_interval=1)
+    >>> sac = SAC(device=torch.device("cuda:1"), actor_critic=ac, lr_q=1e-4,
+                  lr_pi=1e-4, lr_alpha=1e-4 gamma=0.99, polyak=0.995,
+                  num_updates=50, update_every=50, test_every=5000,
+                  start_steps=20000, mini_batch_size=64, alpha=1.0,
+                  reward_scaling=1.0, num_test_episodes=0,
+                  target_update_interval=1)
     """
 
     def __init__(self,
                  device,
                  actor_critic,
-                 lr=1e-4,
-                 eps=1e-5,
-                 alpha=1.0,
+                 lr_q=1e-4,
+                 lr_pi=1e-4,
+                 lr_alpha=1e-4,
                  gamma=0.99,
                  polyak=0.995,
                  num_updates=50,
                  update_every=50,
                  test_every=5000,
+                 initial_alpha=1.0,
                  start_steps=20000,
                  mini_batch_size=64,
                  reward_scaling=1.0,
@@ -166,7 +170,7 @@ class SAC(Algo):
             raise ValueError("SAC requires double q critic")
 
         self.log_alpha = torch.tensor(
-            data=[np.log(alpha)], dtype=torch.float32,
+            data=[np.log(initial_alpha)], dtype=torch.float32,
             requires_grad=True, device=device)
         self.alpha = self.log_alpha.detach().exp()
 
@@ -193,21 +197,22 @@ class SAC(Algo):
 
         # ----- Optimizers ----------------------------------------------------
 
-        self.pi_optimizer = optim.Adam(p_params, lr=lr, eps=eps)
-        self.q_optimizer = optim.Adam(q_params, lr=lr, eps=eps)
-        self.alpha_optimizer = optim.Adam([self.log_alpha], lr=lr, eps=eps)
+        self.pi_optimizer = optim.Adam(p_params, lr=lr_pi)
+        self.q_optimizer = optim.Adam(q_params, lr=lr_q)
+        self.alpha_optimizer = optim.Adam([self.log_alpha], lr=lr_alpha)
 
     @classmethod
     def algo_factory(cls,
-                     lr=1e-4,
-                     eps=1e-5,
-                     alpha=1.0,
+                     lr_q=1e-4,
+                     lr_pi=1e-4,
+                     lr_alpha=1e-4,
                      gamma=0.99,
                      polyak=0.995,
                      num_updates=50,
                      test_every=5000,
                      update_every=50,
                      start_steps=20000,
+                     initial_alpha=1.0,
                      mini_batch_size=64,
                      reward_scaling=1.0,
                      num_test_episodes=0,
@@ -217,13 +222,15 @@ class SAC(Algo):
 
         Parameters
         ----------
-        lr : float
-            Optimizers learning rate.
-        eps : float
-            Optimizers epsilon parameter.
+        lr_pi : float
+            Policy optimizer learning rate.
+        lr_q : float
+            Q-nets optimizer learning rate.
+        lr_alpha : float
+            Alpha optimizer learning rate.
         gamma : float
             Discount factor parameter.
-        alpha: float
+        initial_alpha: float
             Initial entropy coefficient value.
         polyak: float
             SAC polyak averaging parameter.
@@ -251,10 +258,10 @@ class SAC(Algo):
         """
 
         def create_algo_instance(actor_critic, device):
-            return cls(lr=lr,
-                       eps=eps,
+            return cls(lr_q=lr_q,
+                       lr_pi=lr_pi,
+                       lr_alpha=lr_alpha,
                        gamma=gamma,
-                       alpha=alpha,
                        device=device,
                        polyak=polyak,
                        test_every=test_every,
@@ -262,6 +269,7 @@ class SAC(Algo):
                        num_updates=num_updates,
                        update_every=update_every,
                        actor_critic=actor_critic,
+                       initial_alpha=initial_alpha,
                        reward_scaling=reward_scaling,
                        mini_batch_size=mini_batch_size,
                        num_test_episodes=num_test_episodes,
