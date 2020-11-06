@@ -22,7 +22,8 @@ START_STEPS=20000
 BUFFER_SIZE=1000000
 FRAME_SKIP=0
 FRAME_STACK=1
-NUM_WORKERS=1
+NUM_GWORKERS=1
+NUM_CWORKERS=1
 
 ###############################################################################
 
