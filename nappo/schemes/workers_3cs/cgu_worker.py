@@ -236,14 +236,14 @@ class CGUWorker:
         info.update({"scheme/metrics/collection_gradient_delay": self.num_updates - self.storage.ac_version})
         if self.num_updates == 0: info["collected_samples"] += self.start_steps
 
-        # Update counter
-        self.num_updates += 1
-
         # Evaluate current network
         if self.num_updates % self.algo.test_every == 0:
             if self.envs_test and self.algo.num_test_episodes > 0:
                 test_perf = self.evaluate()
                 info.update({"scheme/metrics/test_performance": test_perf})
+
+        # Update counter
+        self.num_updates += 1
 
         return info
 

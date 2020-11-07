@@ -161,14 +161,14 @@ class CWorker(W):
             info.update({"collected_samples": num_samples * self.envs_train.num_envs})
             if self.iter == 0: info["collected_samples"] += (self.algo.start_steps * self.envs_train.num_envs)
 
-            # Update counter
-            self.iter += 1
-
             # Evaluate current network
             if self.iter % self.algo.test_every == 0:
                 if self.envs_test and self.algo.num_test_episodes > 0:
                     test_perf = self.evaluate()
                     info.update({"scheme/metrics/test_performance": test_perf})
+
+            # Update counter
+            self.iter += 1
 
             rollouts = {"data": data, "info": info}
 
