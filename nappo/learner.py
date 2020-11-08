@@ -101,8 +101,6 @@ class Learner:
         for k, v in self.get_metrics().items():
             if k.split("/")[0] == "algo":
                 s += "{} {}, ".format(k.split("/")[-1], v)
-        if "test" in self.get_metrics().keys():
-            s += "test_perf {}, ".format(self.get_metrics()["test"][-1])
         print(s[:-2], flush=True)
 
     def update_algo_parameter(self, parameter_name, new_parameter_value):

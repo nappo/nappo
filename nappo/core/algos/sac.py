@@ -130,7 +130,7 @@ class SAC(Algo):
                  start_steps=20000,
                  mini_batch_size=64,
                  reward_scaling=1.0,
-                 num_test_episodes=0,
+                 num_test_episodes=5,
                  target_update_interval=1):
 
         # ---- General algo attributes ----------------------------------------
@@ -215,7 +215,7 @@ class SAC(Algo):
                      initial_alpha=1.0,
                      mini_batch_size=64,
                      reward_scaling=1.0,
-                     num_test_episodes=0,
+                     num_test_episodes=5,
                      target_update_interval=1.0):
         """
         Returns a function to create new SAC instances.

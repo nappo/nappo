@@ -181,8 +181,7 @@ class CGUWorker:
 
         while len(completed_episodes) < self.algo.num_test_episodes:
             # Predict next action and rnn hidden state
-            act, clip_act, rhs, _ = self.algo.acting_step(obs, rhs, done,
-                                                          deterministic=True)
+            act, clip_act, rhs, _ = self.algo.acting_step(obs, rhs, done, deterministic=True)
 
             # Interact with env with predicted action (clipped within action space)
             obs2, reward, done, _ = self.envs_test.step(clip_act)
