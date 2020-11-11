@@ -25,10 +25,11 @@ class UWorker:
         Set of workers computing and sending gradients to the UWorker.
     """
 
-    def __init__(self, grad_workers):
+    def __init__(self, grad_workers, broadcast_interval=None):
 
         self.num_updates = 0
         self.grad_workers = grad_workers
+        self.broadcast_interval = broadcast_interval or len(self.grad_workers.remote_workers())
 
         # Check remote workers exist
         if len(self.grad_workers.remote_workers()) == 0:
@@ -66,18 +67,19 @@ class UWorker:
         self.grad_workers.local_worker().update_networks(gradients)
         e = self.pending_gradients.pop(future)
 
-        # Update counter
-        self.num_updates += 1
-
         # Update remote worker model version
-        weights = ray.put({
-            "update": self.num_updates,
-            "weights": self.grad_workers.local_worker().get_weights()})
-        e.set_weights.remote(weights)
+        if self.num_updates % self.broadcast_interval == 0:
+            self.weights = ray.put({
+                "update": self.num_updates,
+                "weights": self.grad_workers.local_worker().get_weights()})
+        e.set_weights.remote(self.weights)
 
         # Call compute_gradients in remote worker again
         future = e.step.remote()
         self.pending_gradients[future] = e
+
+        # Update counter
+        self.num_updates += 1
 
         return info
 

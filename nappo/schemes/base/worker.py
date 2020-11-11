@@ -74,7 +74,7 @@ class Worker:
             str(type(self).__name__), self.index_worker)
         if self.index_worker != 0:
             s += ", in machine {} using gpus {}".format(
-                ray.services.get_node_ip_address(),
+                ray._private.services.get_node_ip_address(),
                 ray.get_gpu_ids())
         logger.warning(s)
 

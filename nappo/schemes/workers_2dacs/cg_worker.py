@@ -252,7 +252,7 @@ class CGWorker(W):
 
         # Update counter
         self.iter += 1
-
+        
         return grads, info
 
     def set_weights(self, weights):
