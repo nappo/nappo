@@ -100,7 +100,8 @@ class UWorker:
         self.num_updates += 1
 
         # Update info dict
-        info = {k: v/self.num_workers if k != "collected_samples" else v for k, v in step_metrics.items()}
+        info = {k: v/self.num_workers if k != "collected_samples" else
+        v for k, v in step_metrics.items()}
         info.update({"scheme/seconds_to/avg_grads": avg_grads_t})
         info.update({"scheme/seconds_to/sync_grads": sync_grads_t})
 

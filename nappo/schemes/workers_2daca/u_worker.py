@@ -2,6 +2,7 @@ import os
 import ray
 import torch
 from shutil import copy2
+from collections import defaultdict
 from ..utils import ray_get_and_free
 
 class UWorker:
@@ -35,6 +36,14 @@ class UWorker:
         if len(self.grad_workers.remote_workers()) == 0:
             raise ValueError("""at least 1 grad worker required""")
 
+    def sync_weights(self):
+        """Synchronize gradient worker models with updater worker model"""
+        weights = ray.put({
+            "update": self.num_updates,
+            "weights": self.grad_workers.local_worker().get_weights()})
+        for e in self.grad_workers.remote_workers():
+            e.set_weights.remote(weights)
+
     def step(self):
         """
         Takes a logical asynchronous optimization step.
@@ -45,6 +54,14 @@ class UWorker:
             Summary dict of relevant information about the update process.
         """
 
+        num_gradients = 0
+        step_metrics = defaultdict(float)
+
+        weights = ray.put({
+            "update": self.num_updates,
+            "weights": self.grad_workers.local_worker().get_weights()})
+        self.sync_weights(weights)
+
         # If first call, call for gradients from all workers
         if self.num_updates == 0:
             self.pending_gradients = {}
@@ -52,34 +69,37 @@ class UWorker:
                 future = e.step.remote()
                 self.pending_gradients[future] = e
 
-        # Wait for first gradients ready
-        wait_results = ray.wait(list(self.pending_gradients.keys()))
-        ready_list = wait_results[0]
-        future = ready_list[0]
+        while self.pending_gradients:
 
-        # Get gradients
-        gradients, info = ray_get_and_free(future)
+            # Wait for first gradients ready
+            wait_results = ray.wait(list(self.pending_gradients.keys()))
+            ready_list = wait_results[0]
+            future = ready_list[0]
 
-        # Update info dict
-        info["scheme/metrics/gradient_update_delay"] = self.num_updates - info.pop("ac_update_num")
+            # Get gradients
+            gradients, info = ray_get_and_free(future)
 
-        # Update local worker weights
-        self.grad_workers.local_worker().update_networks(gradients)
-        e = self.pending_gradients.pop(future)
+            # Update local worker weights
+            self.grad_workers.local_worker().update_networks(gradients)
+            e = self.pending_gradients.pop(future)
 
-        # Update remote worker model version
-        if self.num_updates % self.broadcast_interval == 0:
-            self.weights = ray.put({
-                "update": self.num_updates,
-                "weights": self.grad_workers.local_worker().get_weights()})
-        e.set_weights.remote(self.weights)
+            # Update info dict
+            info["scheme/metrics/gradient_update_delay"] = self.num_updates - info.pop("ac_update_num")
 
-        # Call compute_gradients in remote worker again
-        future = e.step.remote()
-        self.pending_gradients[future] = e
+            # Update counters
+            for k, v in info.items(): step_metrics[k] += v
+
+            if num_gradients < self.broadcast_interval:
+                future = e.step.remote()
+                self.pending_gradients[future] = e
+                num_gradients += 1
 
         # Update counter
         self.num_updates += 1
+
+        # Update info dict
+        info = {k: v/self.broadcast_interval if k != "collected_samples"
+        else v for k, v in step_metrics.items()}
 
         return info
 
