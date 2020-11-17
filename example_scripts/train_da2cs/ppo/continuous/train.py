@@ -10,7 +10,7 @@ from nappo import Learner
 from nappo.core.algos import PPO
 from nappo.core.envs import vec_envs_factory
 from nappo.core.storage import OnPolicyGAEBuffer
-from nappo.schemes.workers_da2cs import CWorkerSet, GUWorker
+from nappo.distributed_schemes.scheme_da2cs import Workers
 from nappo.core.models import OnPolicyActorCritic, get_model
 from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
 
@@ -52,7 +52,6 @@ def main():
     create_actor_critic = OnPolicyActorCritic.actor_critic_factory(
         obs_space, action_space,
         feature_extractor_network=get_model(args.nn),
-        feature_extractor_kwargs={"hidden_sizes":[256, 512, 512, 512]},
         recurrent_policy=args.recurrent_policy,
         restart_model=args.restart_model)
 
@@ -68,18 +67,17 @@ def main():
         size=args.num_steps, gae_lambda=args.gae_lambda)
 
     # 6. Define workers
-    collection_workers = CWorkerSet(
-        create_train_envs_instance=create_train_envs,
+    workers = Workers(
+        create_train_envs_instance=create_train_envs, device="cuda:0",
         create_actor_critic_instance=create_actor_critic, create_storage_instance=create_storage,
         create_algo_instance=create_algo, create_test_envs_instance=create_test_envs,
-        num_workers=args.num_workers, worker_remote_config={
+        num_col_workers=args.num_workers, col_worker_remote_config={
             "num_cpus": args.num_env_processes, "num_gpus": 0.25,
             "object_store_memory": 2 * 1024 ** 3, "memory": 5 * 1024 ** 3})
-    grad_update_worker = GUWorker(
-        col_workers=collection_workers, device="cuda:0", use_vtrace=True)
+
 
     # 7. Define learner
-    learner = Learner(grad_update_worker, target_steps=args.num_env_steps, log_dir=args.log_dir)
+    learner = Learner(workers, target_steps=args.num_env_steps, log_dir=args.log_dir)
 
     # 8. Define train loop
     iterations = 0

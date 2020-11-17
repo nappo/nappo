@@ -8,10 +8,11 @@ import argparse
 from nappo import utils
 from nappo import Learner
 from nappo.core.algos import SAC
+from nappo.schemes import Workers_2dacs
 from nappo.core.storage import ReplayBuffer
 from nappo.core.envs import vec_envs_factory
+from nappo.distributed_schemes.scheme_2dacs import Workers
 from nappo.core.models import OffPolicyActorCritic, get_model
-from nappo.schemes.workers_2dacs import CGWorkerSet, UWorker
 from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
 
 
@@ -59,7 +60,6 @@ def main():
     create_actor_critic = OffPolicyActorCritic.actor_critic_factory(
         obs_space, action_space,
         feature_extractor_network=get_model(args.nn),
-        feature_extractor_kwargs={"hidden_sizes": [256, 512, 512, 512]},
         recurrent_policy=args.recurrent_policy,
         restart_model=args.restart_model)
 
@@ -67,15 +67,17 @@ def main():
     create_buffer = ReplayBuffer.storage_factory(size=args.buffer_size)
 
     # 6. Define workers
-    grad_workers = CGWorkerSet(
-        create_storage_instance=create_buffer, num_workers=args.num_workers,
-        create_train_envs_instance=create_train_envs, create_test_envs_instance=create_test_envs,
-        create_actor_critic_instance=create_actor_critic, create_algo_instance=create_algo,
-        worker_remote_config={"num_cpus": args.num_env_processes, "num_gpus": 0.5})
-    update_worker = UWorker(grad_workers=grad_workers)
+    workers = Workers(
+        create_storage_instance=create_buffer,
+        num_cg_workers=args.num_workers,
+        create_train_envs_instance=create_train_envs,
+        create_test_envs_instance=create_test_envs,
+        create_actor_critic_instance=create_actor_critic,
+        create_algo_instance=create_algo,
+        worker_remote_config={"num_cpus": args.num_env_processes, "num_gpus": 1.0})
 
     # 7. Define learner
-    learner = Learner(update_worker, target_steps=args.num_env_steps, log_dir=args.log_dir)
+    learner = Learner(workers, target_steps=args.num_env_steps, log_dir=args.log_dir)
 
     # 8. Define train loop
     iterations = 0

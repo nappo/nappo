@@ -39,11 +39,11 @@ class Learner:
         Training start time.
     """
 
-    def __init__(self, update_workers, target_steps, log_dir=None):
+    def __init__(self, workers, target_steps, log_dir=None):
 
         # Input attributes
         self.log_dir = log_dir
-        self.update_workers = update_workers
+        self.update_workers = workers.updater_workers()
         self.target_steps = target_steps
 
         # Counters and metrics

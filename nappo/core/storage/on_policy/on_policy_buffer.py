@@ -123,7 +123,7 @@ class OnPolicyBuffer:
 
         Parameters
         ----------
-        actor_critic : nn.Module
+        actor_critic : ActorCritic
             An actor_critic class instance.
         algo : an algorithm class
             An algorithm class instance.

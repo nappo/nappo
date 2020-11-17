@@ -9,7 +9,7 @@ from nappo import Learner
 from nappo.core.algos import SAC
 from nappo.core.storage import ReplayBuffer
 from nappo.core.envs import vec_envs_factory
-from nappo.schemes.workers_3cs import CGUWorker
+from nappo.distributed_schemes.scheme_3cs import Worker
 from nappo.core.models import OffPolicyActorCritic, get_model
 from nappo.envs import make_atari_train_env, make_atari_test_env
 
@@ -52,7 +52,7 @@ def main():
     create_storage = ReplayBuffer.storage_factory(size=args.buffer_size)
 
     # 6. Define worker
-    worker = CGUWorker(
+    worker = Worker(
         index_worker=0, create_train_envs_instance=create_train_envs, device=args.device,
         create_actor_critic_instance=create_actor_critic, create_storage_instance=create_storage,
         create_algo_instance=create_algo, create_test_envs_instance=create_test_envs)

@@ -7,10 +7,10 @@ import argparse
 from nappo import utils
 from nappo import Learner
 from nappo.core.algos import SAC
+from nappo.core.storage import ReplayBuffer
 from nappo.core.envs import vec_envs_factory
-from nappo.schemes.workers_3cs import CGUWorker
+from nappo.distributed_schemes.scheme_3cs import Worker
 from nappo.core.models import OffPolicyActorCritic, get_model
-from nappo.core.storage import ReplayBuffer, HindsightExperienceReplayBuffer
 from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
 
 
@@ -48,17 +48,14 @@ def main():
     create_actor_critic = OffPolicyActorCritic.actor_critic_factory(
         obs_space, action_space,
         feature_extractor_network=get_model(args.nn),
-        feature_extractor_kwargs={"hidden_sizes":[256, 512, 512, 512]},
         recurrent_policy=args.recurrent_policy,
         restart_model=args.restart_model)
 
     # 5. Define rollouts storage
     create_buffer = ReplayBuffer.storage_factory(size=args.buffer_size)
-    # create_buffer = HindsightExperienceReplayBuffer.storage_factory(
-    #    size=args.buffer_size, her_function=her_function_robot)
 
     # 6. Define worker
-    worker = CGUWorker(
+    worker = Worker(
         index_worker=0, create_train_envs_instance=create_train_envs, device=args.device,
         create_actor_critic_instance=create_actor_critic, create_storage_instance=create_buffer,
         create_algo_instance=create_algo, create_test_envs_instance=create_test_envs)

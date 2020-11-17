@@ -86,8 +86,6 @@ def average_gradients(grads_list):
     avg_grads : list of tensors
         Averaged actor_critic gradients.
     """
-    if len(grads_list) == 1:
-        return grads_list[0]
     avg_grads = [
         sum(d[grad] for d in grads_list) / len(grads_list) if
         grads_list[0][grad] is not None else 0.0

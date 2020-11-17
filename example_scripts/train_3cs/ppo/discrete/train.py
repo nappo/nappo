@@ -11,7 +11,7 @@ from nappo import Learner
 from nappo.core.algos import PPO
 from nappo.core.envs import vec_envs_factory
 from nappo.core.storage import OnPolicyGAEBuffer
-from nappo.schemes.workers_3cs import CGUWorker
+from nappo.distributed_schemes.scheme_3cs import Worker
 from nappo.core.models import OnPolicyActorCritic, get_model
 from nappo.envs import make_atari_train_env, make_atari_test_env
 
@@ -55,7 +55,7 @@ def main():
         size=args.num_steps, gae_lambda=args.gae_lambda)
 
     # 6. Define worker
-    worker = CGUWorker(
+    worker = Worker(
         index_worker=0, create_train_envs_instance=create_train_envs, device=args.device,
         create_actor_critic_instance=create_actor_critic, create_storage_instance=create_storage,
         create_algo_instance=create_algo, create_test_envs_instance=create_test_envs)
@@ -92,6 +92,8 @@ def main():
 
         if args.max_time != -1 and (time.time() - start_time) > args.max_time:
             break
+
+        iterations += 1
 
     print("Finished!")
     sys.exit()
