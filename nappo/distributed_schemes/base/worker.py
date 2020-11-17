@@ -11,6 +11,7 @@ default_remote_config = {
     "num_gpus": 0.5,
 }
 
+
 class Worker:
     """
     Class containing common worker functionality.

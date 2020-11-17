@@ -5,6 +5,7 @@ from shutil import copy2
 from collections import defaultdict
 from ..utils import ray_get_and_free
 
+
 class UWorker:
     """
     Update worker. Handles actor_critic updates.

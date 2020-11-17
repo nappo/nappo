@@ -1,1 +1,1 @@
-from ..scheme_2dacs.cg_worker import CGWorker
+from ..scheme_2dacs.cg_workers import CGWorkerSet

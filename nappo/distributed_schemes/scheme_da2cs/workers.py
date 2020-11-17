@@ -1,4 +1,5 @@
-from nappo.schemes.workers_da2cs import CWorkerSet, GUWorker
+from .gu_worker2 import GUWorker
+from .c_workers import CWorkerSet
 
 class Workers:
     """

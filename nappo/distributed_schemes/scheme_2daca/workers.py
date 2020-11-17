@@ -1,4 +1,6 @@
-from nappo.schemes.workers_2daca import CGWorkerSet, UWorker
+from .u_worker import UWorker
+from .cg_workers import CGWorkerSet
+
 
 class Workers:
     """

@@ -1,2 +1,2 @@
 import ray
-from .cgu_worker_set import CGUWorkerSet as Workers
+from .cgu_workers import CGUWorkerSet as Workers

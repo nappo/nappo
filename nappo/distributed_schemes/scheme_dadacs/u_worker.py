@@ -1,1 +1,1 @@
-from ..workers_2dacs.u_worker import UWorker
+from ..scheme_2dacs.u_worker import UWorker

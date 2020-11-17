@@ -1,6 +1,7 @@
 import ray
 from .worker import default_remote_config
 
+
 class WorkerSet:
     """
     Class to better handle the operations of ensembles of Workers.
