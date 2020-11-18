@@ -13,7 +13,7 @@ class VecEnv:
     """Class to handle creation of environment vectors"""
 
     @classmethod
-    def factory(cls, env_fn, env_kwargs, vec_env_size, log_dir=None, info_keywords=()):
+    def create_factory(cls, env_fn, env_kwargs, vec_env_size, log_dir=None, info_keywords=()):
         """
         Returns a function to create a vector of environments of size
         num_processes, so it can be executed by any worker, remote or not.

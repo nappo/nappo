@@ -37,34 +37,36 @@ ray.init(address="auto")
 
 ```
 
-Define core components. All core components have a `factory` method, which returns a function that allows to later create independent instances in different workers if required by the training scheme. We can start with the environment. Nappo supports by default pybullet, atari and mujoco environments, but it is easy to extend it to any other environment. A detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
+Define core components. All core components have a `create_factory` method, which returns a function that allows to later create independent instances in different workers if required by the training scheme. We can start with the environment. Nappo supports by default pybullet, atari and mujoco environments, but it is easy to extend it to any other environment. A detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
 
 ```
 # 1. Define Train Vector of Envs
-train_env_factory, action_space, obs_space = VecEnv.factory(
+train_env_factory, action_space, obs_space = VecEnv.create_factory(
     vec_env_size=1, log_dir="/tmp/train_example", env_fn=make_pybullet_train_env,
     env_kwargs={"env_id": "HalfCheetahBulletEnv-v0"})
 ```
 
-We can continue defining an on-policy or off-policy set of Actor, Algo and Storage core components (if the set does not match an error will be raised at training execution). One of the main ideas of Nappo is that single within the set of core components can be replaced without creating errors in the rest of the code. We encourage users to create their own core components to extend current functionality, following the base.py templates associated with each one of them.
+We can continue by defining an on-policy or off-policy set of Actor, Algo and Storage core components.
 
-Neural networks used as function approximators in the actor components can also be modified by the used. A more detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
+One of the main ideas behind Nappo is to allow single components to be replaced for experimentation without needing to change anything else. Since in RL not all components are compatible with each other (e.g. an on policy actor with an off-policy algorithm), some libraries advocate or higher level implementations with a single function call with many parameters that handles components creation. This approach might be generally more suitable to generate benchmarks and to use out-of-the-box solutions in industry, but less so for researchers trying to improve the state-of-the-art by switching and changing components. Furthermore, to a certain some components can be reused in different components set, and if the set does not match an error will be raised at training execution.
+
+We encourage users to create their own core components to extend current functionality, following the base.py templates associated with each one of them. Neural networks used as function approximators in the actor components can also be modified by the used. A more detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
 
 
 ```
 
 # 2. Define RL Actor
-actor_critic_factory = OnPolicyActorCritic.factory(
+actor_critic_factory = OnPolicyActorCritic.create_factory(
     obs_space, action_space, feature_extractor_network=get_model("MLP"))
 
 # 3. Define RL training algorithm
-algo_factory = PPO.factory(
+algo_factory = PPO.create_factory(
     lr=1e-4, num_epochs=4, clip_param=0.2, entropy_coef=0.01,
     value_loss_coef=.5, max_grad_norm=.5, num_mini_batch=4,
     use_clipped_value_loss=True, gamma=0.99)
 
 # 4. Define rollouts storage
-storage_factory = OnPolicyGAEBuffer.factory(size=1000, gae_lambda=0.95)
+storage_factory = OnPolicyGAEBuffer.create_factory(size=1000, gae_lambda=0.95)
 ```
 
 Choose the training scheme by instantiating its Workers. Worker components were designed to work for any combination of core components. Different

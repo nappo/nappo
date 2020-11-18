@@ -202,7 +202,7 @@ class SAC(Algo):
         self.alpha_optimizer = optim.Adam([self.log_alpha], lr=lr_alpha)
 
     @classmethod
-    def factory(cls,
+    def create_factory(cls,
                 lr_q=1e-4,
                 lr_pi=1e-4,
                 lr_alpha=1e-4,

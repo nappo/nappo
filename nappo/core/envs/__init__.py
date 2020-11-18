@@ -1,1 +1,1 @@
-from .create_vector_environments import VecEnv
+from .vec_env import VecEnv

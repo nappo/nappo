@@ -7,7 +7,7 @@ class Algo(ABC):
 
     @classmethod
     @abstractmethod
-    def factory(cls):
+    def create_factory(cls):
         """Returns a function to create new Algo instances"""
         raise NotImplementedError
 

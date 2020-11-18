@@ -37,7 +37,7 @@ class OnPolicyBuffer(S):
         self.reset()
 
     @classmethod
-    def factory(cls, size):
+    def create_factory(cls, size):
         """
         Returns a function that creates OnPolicyBuffer instances.
 

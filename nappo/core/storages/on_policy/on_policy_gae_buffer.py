@@ -43,7 +43,7 @@ class OnPolicyGAEBuffer(B):
         self.gae_lambda = gae_lambda
 
     @classmethod
-    def factory(cls, size, gae_lambda=0.95):
+    def create_factory(cls, size, gae_lambda=0.95):
         """
         Returns a function that creates OnPolicyGAEBuffer instances.
 

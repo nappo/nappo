@@ -13,7 +13,7 @@ class Storage(ABC):
 
     @classmethod
     @abstractmethod
-    def factory(cls, *args):
+    def create_factory(cls, *args):
         """Returns a function to create new Storage instances"""
         raise NotImplementedError
 

@@ -120,7 +120,7 @@ class OffPolicyActorCritic(nn.Module):
             raise NotImplementedError
 
     @classmethod
-    def actor_critic_factory(
+    def create_factory(
             cls,
             input_space,
             action_space,
