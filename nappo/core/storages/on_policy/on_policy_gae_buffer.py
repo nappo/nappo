@@ -1,6 +1,7 @@
 import torch
 from .on_policy_buffer import OnPolicyBuffer as B
 
+
 class OnPolicyGAEBuffer(B):
     """
     Storage class for On-Policy algorithms with Generalized Advantage
@@ -42,7 +43,7 @@ class OnPolicyGAEBuffer(B):
         self.gae_lambda = gae_lambda
 
     @classmethod
-    def storage_factory(cls, size, gae_lambda=0.95):
+    def factory(cls, size, gae_lambda=0.95):
         """
         Returns a function that creates OnPolicyGAEBuffer instances.
 

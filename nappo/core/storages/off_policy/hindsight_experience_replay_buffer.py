@@ -40,7 +40,7 @@ class HindsightExperienceReplayBuffer:
         self.reset()
 
     @classmethod
-    def storage_factory(cls, size, her_function=lambda o, rhs, o2, r, goal_state : (o, rhs, o2, r)):
+    def factory(cls, size, her_function=lambda o, rhs, o2, r, goal_state : (o, rhs, o2, r)):
         """
         Returns a function that creates HindsightExperienceReplayBuffer instances.
 

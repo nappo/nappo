@@ -7,10 +7,10 @@ import argparse
 from nappo import utils
 from nappo import Learner
 from nappo.core.algos import PPO
-from nappo.core.envs import vec_envs_factory
-from nappo.core.storage import OnPolicyGAEBuffer
+from nappo.core.envs import VecEnv
+from nappo.core.storages import OnPolicyGAEBuffer
 from nappo.distributed_schemes.scheme_3cs import Worker
-from nappo.core.models import OnPolicyActorCritic, get_model
+from nappo.core.actors import OnPolicyActorCritic, get_model
 from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
 
 
@@ -22,37 +22,37 @@ def main():
     json.dump(args_dict, open(os.path.join(args.log_dir, "training_arguments.json"), "w"), indent=4)
 
     # 1. Define Train Vector of Envs
-    create_train_envs, action_space, obs_space = vec_envs_factory(
-        num_processes=args.num_env_processes, log_dir=args.log_dir,
+    create_train_envs, action_space, obs_space = VecEnv.factory(
+        vec_env_size=args.num_env_processes, log_dir=args.log_dir,
         env_fn=make_pybullet_train_env, env_kwargs={
             "env_id": args.env_id,
             "frame_skip": args.frame_skip,
             "frame_stack": args.frame_stack})
 
     # 2. Define Test Vector of Envs (Optional)
-    create_test_envs, _, _ = vec_envs_factory(
-        num_processes=args.num_env_processes, log_dir=args.log_dir,
+    create_test_envs, _, _ = VecEnv.factory(
+        vec_env_size=args.num_env_processes, log_dir=args.log_dir,
         env_fn=make_pybullet_test_env, env_kwargs={
             "env_id": args.env_id,
             "frame_skip": args.frame_skip,
             "frame_stack": args.frame_stack})
 
     # 3. Define RL Policy
-    create_actor_critic = OnPolicyActorCritic.actor_critic_factory(
+    create_actor_critic = OnPolicyActorCritic.factory(
         obs_space, action_space,
         feature_extractor_network=get_model(args.nn),
         recurrent_policy=args.recurrent_policy,
         restart_model=args.restart_model)
 
     # 4. Define RL training algorithm
-    create_algo = PPO.algo_factory(
+    create_algo = PPO.factory(
         lr=args.lr, eps=args.eps, num_epochs=args.ppo_epoch, clip_param=args.clip_param,
         entropy_coef=args.entropy_coef, value_loss_coef=args.value_loss_coef,
         max_grad_norm=args.max_grad_norm, num_mini_batch=args.num_mini_batch,
         use_clipped_value_loss=args.use_clipped_value_loss, gamma=args.gamma)
 
     # 5. Define rollouts storage
-    create_storage = OnPolicyGAEBuffer.storage_factory(
+    create_storage = OnPolicyGAEBuffer.factory(
         size=args.num_steps, gae_lambda=args.gae_lambda)
 
     # 6. Define worker

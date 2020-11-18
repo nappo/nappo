@@ -7,10 +7,10 @@ import argparse
 from nappo import utils
 from nappo import Learner
 from nappo.core.algos import SAC
-from nappo.core.storage import ReplayBuffer
-from nappo.core.envs import vec_envs_factory
+from nappo.core.envs import VecEnv
+from nappo.core.storages import ReplayBuffer
 from nappo.distributed_schemes.scheme_3cs import Worker
-from nappo.core.models import OffPolicyActorCritic, get_model
+from nappo.core.actors import OffPolicyActorCritic, get_model
 from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
 
 
@@ -22,37 +22,37 @@ def main():
     json.dump(args_dict, open(os.path.join(args.log_dir, "training_arguments.json"), "w"), indent=4)
 
     # 1. Define Train Vector of Envs
-    create_train_envs, action_space, obs_space = vec_envs_factory(
-        num_processes=args.num_env_processes, log_dir=args.log_dir,
+    create_train_envs, action_space, obs_space = VecEnv.factory(
+        vec_env_size=args.num_env_processes, log_dir=args.log_dir,
         env_fn=make_pybullet_train_env, env_kwargs={
             "env_id": args.env_id,
             "frame_skip": args.frame_skip,
             "frame_stack": args.frame_stack})
 
     # 2. Define Test Vector of Envs (Optional)
-    create_test_envs, _, _ = vec_envs_factory(
-        num_processes=args.num_env_processes, log_dir=args.log_dir,
+    create_test_envs, _, _ = VecEnv.factory(
+        vec_env_size=args.num_env_processes, log_dir=args.log_dir,
         env_fn=make_pybullet_test_env, env_kwargs={
             "env_id": args.env_id,
             "frame_skip": args.frame_skip,
             "frame_stack": args.frame_stack})
 
     # 4. Define RL training algorithm
-    create_algo = SAC.algo_factory(
+    create_algo = SAC.factory(
         lr_pi=args.lr, lr_q=args.lr, lr_alpha=args.lr, initial_alpha=args.alpha,
         gamma=args.gamma, polyak=args.polyak, num_updates=args.num_updates,
         update_every=args.update_every, start_steps=args.start_steps,
         mini_batch_size=args.mini_batch_size)
 
     # 4. Define RL Policy
-    create_actor_critic = OffPolicyActorCritic.actor_critic_factory(
+    create_actor_critic = OffPolicyActorCritic.factory(
         obs_space, action_space,
         feature_extractor_network=get_model(args.nn),
         recurrent_policy=args.recurrent_policy,
         restart_model=args.restart_model)
 
     # 5. Define rollouts storage
-    create_buffer = ReplayBuffer.storage_factory(size=args.buffer_size)
+    create_buffer = ReplayBuffer.factory(size=args.buffer_size)
 
     # 6. Define worker
     worker = Worker(

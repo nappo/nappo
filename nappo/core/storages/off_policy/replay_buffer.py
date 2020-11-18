@@ -1,7 +1,9 @@
 import numpy as np
 import torch
+from ..base import Storage as S
 
-class ReplayBuffer:
+
+class ReplayBuffer(S):
     """
     Storage class for Off-Policy algorithms.
 
@@ -35,7 +37,7 @@ class ReplayBuffer:
         self.reset()
 
     @classmethod
-    def storage_factory(cls, size):
+    def factory(cls, size):
         """
         Returns a function that creates ReplayBuffer instances.
 

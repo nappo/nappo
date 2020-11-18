@@ -7,12 +7,12 @@ class Algo(ABC):
 
     @classmethod
     @abstractmethod
-    def algo_factory(cls):
+    def factory(cls):
         """Returns a function to create new Algo instances"""
         raise NotImplementedError
 
     @abstractmethod
-    def acting_step(self, obs, rhs, done, deterministic=False):
+    def acting_step(self, obs, rhs, done, deterministic=False, *args):
         """
         PPO acting function.
 
@@ -42,7 +42,7 @@ class Algo(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def compute_gradients(self, batch, grads_to_cpu=True):
+    def compute_gradients(self, batch, grads_to_cpu=True, *args):
         """
         Compute loss and compute gradients but don't do optimization step,
         return gradients instead.
@@ -65,7 +65,7 @@ class Algo(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def apply_gradients(self, gradients=None):
+    def apply_gradients(self, gradients=None, *args):
         """
         Take an optimization step, previously setting new gradients if provided.
 
@@ -77,7 +77,7 @@ class Algo(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def set_weights(self, weights):
+    def set_weights(self, weights, *args):
         """
         Update actor critic with the given weights
 
@@ -89,7 +89,7 @@ class Algo(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def update_algo_parameter(self, parameter_name, new_parameter_value):
+    def update_algo_parameter(self, parameter_name, new_parameter_value, *args):
         """
         If `parameter_name` is an attribute of the algorithm, change its value
         to `new_parameter_value value`.

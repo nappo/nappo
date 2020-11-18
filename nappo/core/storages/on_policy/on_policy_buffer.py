@@ -1,8 +1,9 @@
 import torch
 from torch.utils.data.sampler import BatchSampler, SubsetRandomSampler, SequentialSampler
+from ..base import Storage as S
 
 
-class OnPolicyBuffer:
+class OnPolicyBuffer(S):
     """
     Storage class for On-Policy algorithms.
 
@@ -36,7 +37,7 @@ class OnPolicyBuffer:
         self.reset()
 
     @classmethod
-    def storage_factory(cls, size):
+    def factory(cls, size):
         """
         Returns a function that creates OnPolicyBuffer instances.
 

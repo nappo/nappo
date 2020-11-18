@@ -1,6 +1,7 @@
 import torch
 from .on_policy_buffer import OnPolicyBuffer as B
 
+
 class OnPolicyVTraceBuffer(B):
     """
     Storage class for On-Policy algorithms with off-policy correction method

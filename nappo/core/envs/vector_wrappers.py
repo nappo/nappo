@@ -1,6 +1,7 @@
 import torch
 from baselines.common.vec_env import VecEnvWrapper
 
+
 class VecPyTorch(VecEnvWrapper):
     """
     This wrapper turns obs, reward's and done's from numpy arrays to pytorch

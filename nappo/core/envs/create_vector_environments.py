@@ -9,6 +9,71 @@ from .vector_wrappers import VecPyTorch
 from .env_wrappers import TransposeImage
 
 
+class VecEnv:
+    """Class to handle creation of environment vectors"""
+
+    @classmethod
+    def factory(cls, env_fn, env_kwargs, vec_env_size, log_dir=None, info_keywords=()):
+        """
+        Returns a function to create a vector of environments of size
+        num_processes, so it can be executed by any worker, remote or not.
+
+        Parameters
+        ----------
+        env_fn : func
+            Function to create the environment.
+        env_kwargs : dict
+            keyword arguments of env_fn.
+        num_processes : int
+            size of the vector of environments.
+        log_dir : str
+            Target path for envs to log information through bench.Monitor class.
+        info_keywords : tuple
+            Information keywords to be logged stored by bench.Monitor class.
+
+        Returns
+        -------
+        make_vec_env : func
+            Function to create a vector of environments.
+        dummy_env.action_space : gym.Space
+            Environments action space.
+        dummy_env.observation_space: gym.Space
+            Environments observation space.
+        """
+
+        def make_vec_env(device=torch.device("cpu"), index_worker=0, mode="train"):
+            """Create and return a vector environment"""
+
+            if mode == "train":
+                env_indexes = range(0, vec_env_size)
+            else:
+                env_indexes = range(vec_env_size, 2 * vec_env_size)
+            index_worker *= vec_env_size  # to avoid repeating seeds between workers
+
+            envs = [make_env(
+                env_fn=env_fn, env_kwargs=env_kwargs,
+                index_worker=index_worker,
+                index_env=i, log_dir=log_dir, mode=mode,
+                info_keywords=info_keywords
+            ) for i in env_indexes]
+
+            if len(envs) > 1:
+                envs = SubprocVecEnv(envs)
+            else:
+                envs = DummyVecEnv(envs)
+
+            envs = VecPyTorch(envs, device)
+
+            return envs
+
+        dummy_env = [make_env(
+            env_fn=env_fn, env_kwargs=env_kwargs, index_worker=0, index_env=0)]
+        dummy_env = DummyVecEnv(dummy_env)
+
+        cls.action_space = dummy_env.action_space
+        cls.observation_space = dummy_env.observation_space
+
+        return make_vec_env, dummy_env.action_space, dummy_env.observation_space
 
 def make_env(env_fn, env_kwargs, index_worker, index_env, log_dir=None, info_keywords=(), mode="train"):
     """
@@ -72,58 +137,3 @@ def make_env(env_fn, env_kwargs, index_worker, index_env, log_dir=None, info_key
         return env
 
     return _thunk
-
-def vec_envs_factory(env_fn, env_kwargs, num_processes, log_dir=None, info_keywords=()):
-    """
-    Returns a function to create a vector of environments of size
-    num_processes, so it can be executed by any worker, remote or not.
-
-    Parameters
-    ----------
-    env_fn : func
-        Function to create the environment.
-    env_kwargs : dict
-        keyword arguments of env_fn.
-    num_processes : int
-        size of the vector of environments.
-    log_dir : str
-        Target path for envs to log information through bench.Monitor class.
-    info_keywords : tuple
-        Information keywords to be logged stored by bench.Monitor class.
-
-    Returns
-    -------
-    make_vec_env : func
-        Function to create a vector of environments.
-    dummy_env.action_space : gym.Space
-        Environments action space.
-    dummy_env.observation_space: gym.Space
-        Environments observation space.
-    """
-
-    def make_vec_env(device=torch.device("cpu"), index_worker=0, mode="train"):
-        """Create and return a vector environment"""
-
-        if mode == "train": env_indexes = range(0, num_processes)
-        else: env_indexes = range(num_processes, 2 * num_processes)
-        index_worker *= num_processes # to avoid repeating seeds between workers
-
-        envs = [make_env(
-            env_fn=env_fn, env_kwargs=env_kwargs, index_worker=index_worker,
-            index_env=i, log_dir=log_dir, mode=mode, info_keywords=info_keywords
-        )  for i in env_indexes]
-
-        if len(envs) > 1:
-            envs = SubprocVecEnv(envs)
-        else:
-            envs = DummyVecEnv(envs)
-
-        envs = VecPyTorch(envs, device)
-
-        return envs
-
-    dummy_env = [make_env(
-        env_fn=env_fn, env_kwargs=env_kwargs, index_worker=0, index_env=0)]
-    dummy_env = DummyVecEnv(dummy_env)
-
-    return make_vec_env, dummy_env.action_space, dummy_env.observation_space

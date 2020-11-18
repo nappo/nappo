@@ -1,1 +1,1 @@
-from .create_vector_environments import vec_envs_factory
+from .create_vector_environments import VecEnv

@@ -202,21 +202,21 @@ class SAC(Algo):
         self.alpha_optimizer = optim.Adam([self.log_alpha], lr=lr_alpha)
 
     @classmethod
-    def algo_factory(cls,
-                     lr_q=1e-4,
-                     lr_pi=1e-4,
-                     lr_alpha=1e-4,
-                     gamma=0.99,
-                     polyak=0.995,
-                     num_updates=50,
-                     test_every=5000,
-                     update_every=50,
-                     start_steps=20000,
-                     initial_alpha=1.0,
-                     mini_batch_size=64,
-                     reward_scaling=1.0,
-                     num_test_episodes=5,
-                     target_update_interval=1.0):
+    def factory(cls,
+                lr_q=1e-4,
+                lr_pi=1e-4,
+                lr_alpha=1e-4,
+                gamma=0.99,
+                polyak=0.995,
+                num_updates=50,
+                test_every=5000,
+                update_every=50,
+                start_steps=20000,
+                initial_alpha=1.0,
+                mini_batch_size=64,
+                reward_scaling=1.0,
+                num_test_episodes=5,
+                target_update_interval=1.0):
         """
         Returns a function to create new SAC instances.
 

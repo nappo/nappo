@@ -159,7 +159,7 @@ class PPO(Algo):
         self.optimizer = optim.Adam(ac_params, lr=lr, eps=eps)
 
     @classmethod
-    def algo_factory(cls,
+    def factory(cls,
                      lr=1e-4,
                      eps=1e-8,
                      gamma=0.99,
