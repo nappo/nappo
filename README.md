@@ -99,34 +99,26 @@ while not learner.done():
 
 ### Available core components and distributed training schemes
 
-* Core components
-    envs: VecEnv
-    algos:
-        * On-policy
-            - PPO
-        * Off-policy
-            - SAC
-    actors:
-        * On-policy
-            - OnPolicyActorCritic
-        * Off-policy
-            - OffPolicyActorCritic
-    storages:
-        * On-policy
-            - OnPolicyBuffer
-            - OnPolicyGAEBuffer
-            - OnPolicyVTraceBuffer
-        * Off-policy
-            - ReplayBuffer
-            - HindsightExperienceReplayBuffer
-* Distributed schemes
-    3cs
-    3ds
-    2dacs
-    2daca
-    da2cs
-    dadacs
-    dadaca
+Core components
+    * envs: VecEnv
+    * algos:
+        * On-policy: PPO
+        * Off-policy: SAC
+    * actors:
+        * On-policy: OnPolicyActorCritic
+        * Off-policy: OffPolicyActorCritic
+    * storages:
+        * On-policy: OnPolicyBuffer, OnPolicyGAEBuffer, OnPolicyVTraceBuffer
+        * Off-policy: ReplayBuffer: HindsightExperienceReplayBuffer
+
+Distributed schemes
+    * 3cs
+    * 3ds
+    * 2dacs
+    * 2daca
+    * da2cs
+    * dadacs
+    * dadaca
 
 A more detailed explanation of the meaning of distributed scheme naming be found [here](http://nappo.readthedocs.io/).
 
