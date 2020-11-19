@@ -68,7 +68,7 @@ One of the main ideas behind Nappo is to allow single components to be replaced 
 
 We encourage users to create their own core components to extend current functionality, following the base.py templates associated with each one of them. Neural networks used as function approximators in the actor components can also be modified by the used. A more detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
 
-Following, we instantiate the Workers of the training scheme of our choice. Worker components were designed to work for any combination of core components. Different
+Following, we instantiate the Workers of the training scheme of our choice. Worker components were designed to work for any combination of core components.
 
 ```
 # 5. Define workers
@@ -100,18 +100,18 @@ while not learner.done():
 ### Available core components and distributed training schemes
 
 * Core components
-    1. envs: VecEnv
-    2. algos:
+    envs: VecEnv
+    algos:
         * On-policy
             - PPO
         * Off-policy
             - SAC
-    3. actors:
+    actors:
         * On-policy
             - OnPolicyActorCritic
         * Off-policy
             - OffPolicyActorCritic
-    4. storages:
+    storages:
         * On-policy
             - OnPolicyBuffer
             - OnPolicyGAEBuffer
@@ -120,13 +120,13 @@ while not learner.done():
             - ReplayBuffer
             - HindsightExperienceReplayBuffer
 * Distributed schemes
-    1. 3cs
-    2. 3ds
-    3. 2dacs
-    4. 2daca
-    5. da2cs
-    6. dadacs
-    7. dadaca
+    3cs
+    3ds
+    2dacs
+    2daca
+    da2cs
+    dadacs
+    dadaca
 
 A more detailed explanation of the meaning of distributed scheme naming be found [here](http://nappo.readthedocs.io/).
 
