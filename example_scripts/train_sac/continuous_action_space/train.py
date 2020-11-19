@@ -11,7 +11,7 @@ from nappo.core.algos import SAC
 from nappo.core.envs import VecEnv
 from nappo.core.storages import ReplayBuffer
 from nappo.distributed_schemes import get_scheme_workers
-from nappo.core.actors import OffPolicyActorCritic, get_model
+from nappo.core.actors import OffPolicyActorCritic, get_feature_extractor
 from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
 
 
@@ -58,7 +58,7 @@ def main():
     # 4. Define RL Policy
     actor_factory = OffPolicyActorCritic.create_factory(
         obs_space, action_space,
-        feature_extractor_network=get_model(args.nn),
+        feature_extractor_network=get_feature_extractor(args.nn),
         recurrent_policy=args.recurrent_policy,
         restart_model=args.restart_model)
 

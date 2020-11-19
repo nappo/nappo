@@ -282,5 +282,8 @@ class CGUWorker:
         """Execute required code to end actor updates"""
         pass
 
+    def update_workers(self):
+        """Return update worker"""
+        return self
 
 

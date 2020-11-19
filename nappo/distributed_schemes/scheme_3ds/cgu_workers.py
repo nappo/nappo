@@ -493,3 +493,7 @@ class CGUWorkerSet(WS):
         save_name = fname + ".{}".format(self.num_updates)
         copy2(fname, save_name)
         return save_name
+
+    def update_workers(self):
+        """Return update workers"""
+        return self

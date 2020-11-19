@@ -60,6 +60,6 @@ class Workers:
             updater_queue_size=updater_queue_size,
             max_collect_requests_pending=max_collect_requests_pending)
 
-    def update_worker(self):
+    def update_workers(self):
         """Return local worker"""
         return self._update_worker

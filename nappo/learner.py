@@ -43,8 +43,8 @@ class Learner:
 
         # Input attributes
         self.log_dir = log_dir
-        self.update_workers = workers.updater_workers()
         self.target_steps = target_steps
+        self.update_workers = workers.updater_workers()
 
         # Counters and metrics
         self.num_samples_collected = 0

@@ -54,6 +54,6 @@ class Workers:
             worker_remote_config=grad_worker_remote_config)
         self._update_worker = UWorker(grad_workers)
 
-    def update_worker(self):
+    def update_workers(self):
         """Return local worker"""
         return self._update_worker
