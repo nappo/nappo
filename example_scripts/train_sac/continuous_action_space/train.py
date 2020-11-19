@@ -11,7 +11,7 @@ from nappo.core.algos import SAC
 from nappo.core.envs import VecEnv
 from nappo.core.storages import ReplayBuffer
 from nappo.distributed_schemes import get_scheme_workers
-from nappo.core.models import OffPolicyActorCritic, get_model
+from nappo.core.actors import OffPolicyActorCritic, get_model
 from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
 
 
