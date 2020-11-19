@@ -39,8 +39,11 @@ class Workers:
                  col_worker_remote_config={"num_cpus": 1, "num_gpus": 0.5},
                  grad_worker_remote_config={"num_cpus": 1, "num_gpus": 0.5}):
 
+        ratio_workers = num_col_workers // num_grad_workers
+        if ratio_workers == 0: ratio_workers = 1
+
         col_workers_factory = CWorkerSet.worker_set_factory(
-            num_workers=num_col_workers//num_grad_workers,
+            num_workers=ratio_workers,
             test_envs_factory=test_envs_factory,
             train_envs_factory=train_envs_factory,
             actor_factory=actor_factory,

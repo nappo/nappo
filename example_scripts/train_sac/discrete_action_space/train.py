@@ -87,12 +87,12 @@ def main():
         workers_params.update({
             "updater_device": "cuda:0",
             "num_col_workers": args.num_workers,
-            "worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 1.0}
+            "col_worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 1.0}
         })
     elif args.scheme in ["dadacs", "dadaca"]:
         workers_params.update({
-            "num_col_workers": args.num_workers,
-            "num_grad_workers": args.num_workers * 2,
+            "num_grad_workers": args.num_workers,
+            "num_col_workers": args.num_workers * 2,
             "grad_worker_remote_config": {"num_cpus": 1, "num_gpus": 0.5},
             "col_worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 0.5},
         })
