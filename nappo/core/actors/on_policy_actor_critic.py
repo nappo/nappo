@@ -4,7 +4,7 @@ import torch.nn as nn
 from .utils import Scale, Unscale
 from .neural_networks import NNBase
 from .distributions import get_dist
-from .neural_networks.feature_extractors import get_model
+from .neural_networks.feature_extractors import get_feature_extractor
 
 
 class OnPolicyActorCritic(nn.Module):
@@ -56,7 +56,7 @@ class OnPolicyActorCritic(nn.Module):
     def __init__(self,
                  input_space,
                  action_space,
-                 feature_extractor_network=get_model("MLP"),
+                 feature_extractor_network=get_feature_extractor("MLP"),
                  feature_extractor_kwargs={},
                  recurrent_policy=False,
                  recurrent_hidden_size=512,
@@ -113,7 +113,7 @@ class OnPolicyActorCritic(nn.Module):
             recurrent_hidden_size=512,
             feature_extractor_kwargs={},
             shared_policy_value_network=False,
-            feature_extractor_network=get_model("MLP")):
+            feature_extractor_network=get_feature_extractor("MLP")):
         """
         Returns a function that creates actor critic instances.
 
