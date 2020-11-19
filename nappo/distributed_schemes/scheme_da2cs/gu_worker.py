@@ -48,7 +48,8 @@ class GUWorker:
                  col_workers,
                  device="cpu",
                  broadcast_interval=1,
-                 max_collect_requests_pending=2):
+                 max_collect_requests_pending=2,
+                 updater_queue_size = None):
 
         self.ps = col_workers.local_worker()
         self.ps.actor.to(device)

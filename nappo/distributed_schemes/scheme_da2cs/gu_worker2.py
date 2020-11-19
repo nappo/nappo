@@ -100,12 +100,18 @@ class GUWorker:
 
         # Check results in parameter server output queue
         step_metrics = defaultdict(float)
+        num_outputs = 0
+
+        while self.outqueue.empty():
+            pass
+
         while not self.outqueue.empty():
             info = self.outqueue.get()
             for k, v in info.items(): step_metrics[k] += v
+            num_outputs += 1
 
         # Update info dict
-        info = {k: v / self.num_workers if k != "collected_samples"
+        info = {k: v / num_outputs if k != "collected_samples"
         else v for k, v in step_metrics.items()}
 
         return info
@@ -192,7 +198,7 @@ class CollectorThread(threading.Thread):
         self.collector_tasks = TaskPool()
         for ev in self.remote_workers:
             for _ in range(max_collect_requests_pending):
-                self.collector_tasks.add(ev, ev.collect.remote())
+                self.collector_tasks.add(ev, ev.collect_data.remote())
 
         self.stopped = False
 
@@ -218,7 +224,7 @@ class CollectorThread(threading.Thread):
                 self.broadcast_new_weights()
 
             # Request more data from worker
-            self.collector_tasks.add(e, e.collect.remote())
+            self.collector_tasks.add(e, e.collect_data.remote())
 
     def should_broadcast(self):
         """Returns whether broadcast() should be called to update weights."""

@@ -254,7 +254,7 @@ class CGUWorker:
         save_name : str
             Path to saved file.
         """
-        torch.save(self.algo.actor.state_dict(), fname + ".tmp")
+        torch.save(self.actor.state_dict(), fname + ".tmp")
         os.rename(fname + '.tmp', fname)
         save_name = fname + ".{}".format(self.num_updates)
         copy2(fname, save_name)

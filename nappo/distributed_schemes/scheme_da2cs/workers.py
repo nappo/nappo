@@ -1,5 +1,6 @@
-from .gu_worker2 import GUWorker
+from .gu_worker import GUWorker
 from .c_workers import CWorkerSet
+
 
 class Workers:
     """
