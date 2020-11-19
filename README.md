@@ -36,7 +36,7 @@ ray.init(address="auto")
 
 ```
 
-The first part in any Nappo training script consist in defining the core components, the lower level modules. All core components have a `create_factory` method, which returns a function that allows to later create independent instances in different workers if required by the training scheme.
+The first part in any Nappo training script consists in defining the core components, the lower level modules. All core components have a `create_factory` method, which returns a function that allows to later create independent instances in different workers if required by the training scheme.
 
 We can start with the environment. Nappo supports by default pybullet, atari and mujoco environments, but it is easy to extend it to any other environment. A detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
 
