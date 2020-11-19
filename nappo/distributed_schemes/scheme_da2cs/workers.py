@@ -40,7 +40,7 @@ class Workers:
                  train_envs_factory,
                  broadcast_interval=1,
                  updater_queue_size=100,
-                 updater_device="cuda:0",
+                 updater_device="cpu",
                  max_collect_requests_pending=2,
                  test_envs_factory=lambda x, y, c: None,
                  col_worker_remote_config={"num_cpus": 1, "num_gpus": 0.5}):

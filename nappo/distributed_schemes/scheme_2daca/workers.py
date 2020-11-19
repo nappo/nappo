@@ -25,7 +25,7 @@ class Workers:
         operations.
     """
     def __init__(self,
-                 num_cg_workers,
+                 num_col_grad_workers,
                  algo_factory,
                  actor_factory,
                  storage_factory,
@@ -34,7 +34,7 @@ class Workers:
                  worker_remote_config={"num_cpus": 1, "num_gpus": 0.5}):
 
         col_grad_workers = CGWorkerSet(
-            num_workers=num_cg_workers,
+            num_workers=num_col_grad_workers,
             algo_factory=algo_factory,
             actor_factory=actor_factory,
             storage_factory=storage_factory,

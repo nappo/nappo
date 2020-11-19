@@ -16,8 +16,6 @@ class CGUWorker:
 
     Parameters
     ----------
-    index_worker : int
-        Worker index.
     algo_factory : func
         A function that creates an algorithm class.
     storage_factory : func
@@ -33,8 +31,6 @@ class CGUWorker:
 
     Attributes
     ----------
-    index_worker : int
-        Index assigned to this worker.
     actor : nn.Module
         An actor class instance.
     algo : an algorithm class
@@ -58,15 +54,13 @@ class CGUWorker:
     """
 
     def __init__(self,
-                 index_worker,
                  algo_factory,
                  actor_factory,
                  storage_factory,
                  train_envs_factory,
                  test_envs_factory=lambda x, y, c: None,
-                 device="cuda:0"):
+                 device="cpu"):
 
-        self.index_worker = index_worker
         device = torch.device(device)
 
         # Create Actor Critic instance
@@ -77,11 +71,11 @@ class CGUWorker:
         self.algo = algo_factory(self.actor, device)
 
         # Create train environments, define initial train states
-        self.envs_train = train_envs_factory(device, index_worker)
+        self.envs_train = train_envs_factory(device, index_worker=0)
         self.obs, self.rhs, self.done = self.actor.policy_initial_states(self.envs_train.reset())
 
         # Create test environments (if creation function available)
-        self.envs_test = test_envs_factory(device, index_worker, mode="test")
+        self.envs_test = test_envs_factory(device, index_worker=0, mode="test")
 
         # Create Storage instance
         self.storage = storage_factory(device)
