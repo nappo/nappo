@@ -20,7 +20,6 @@ NAPPO documentation can be found [here](http://nappo.readthedocs.io/).
 
 ### Minimal code example
 
-Imports and ray init
 
 ```
 import ray
@@ -37,7 +36,9 @@ ray.init(address="auto")
 
 ```
 
-Define core components. All core components have a `create_factory` method, which returns a function that allows to later create independent instances in different workers if required by the training scheme. We can start with the environment. Nappo supports by default pybullet, atari and mujoco environments, but it is easy to extend it to any other environment. A detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
+The first part in any Nappo training script consist in defining the core components, the lower level modules. All core components have a `create_factory` method, which returns a function that allows to later create independent instances in different workers if required by the training scheme.
+
+We can start with the environment. Nappo supports by default pybullet, atari and mujoco environments, but it is easy to extend it to any other environment. A detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
 
 ```
 # 1. Define Train Vector of Envs
