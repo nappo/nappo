@@ -12,7 +12,7 @@ class HindsightExperienceReplayBuffer:
     device: torch.device
         CPU or specific GPU where data tensors will be placed and class
         computations will take place. Should be the same device where the
-        actor critic model is located.
+        actor model is located.
     her_function : func
         Function to update obs, rhs, obs2 and rew according to HER paper.
 
@@ -160,14 +160,14 @@ class HindsightExperienceReplayBuffer:
 
             self.last_episode_start = self.step
 
-    def before_update(self, actor_critic, algo):
+    def before_update(self, actor, algo):
         """
         Steps required before updating actor policy model.
 
         Parameters
         ----------
-        actor_critic : ActorCritic
-            An actor_critic class instance.
+        actor : ActorCritic
+            An actor class instance.
         algo : an algorithm class
             An algorithm class instance.
         """
@@ -180,7 +180,7 @@ class HindsightExperienceReplayBuffer:
     def generate_batches(self, num_mini_batch, mini_batch_size, num_epochs=1,
                          recurrent_ac=False):
         """
-        Returns a batch iterator to update actor critic.
+        Returns a batch iterator to update actor.
 
         Parameters
         ----------
@@ -191,7 +191,7 @@ class HindsightExperienceReplayBuffer:
         num_epochs : int
             Number of epochs.
         recurrent_ac : bool
-            Whether actor critic policy is a RNN or not.
+            Whether actor policy is a RNN or not.
         shuffle : bool
             Whether to shuffle collected data or generate sequential
 
@@ -202,10 +202,10 @@ class HindsightExperienceReplayBuffer:
         """
         num_proc = self.data["obs"].shape[1]
 
-        if recurrent_ac:  # Batches for a feed recurrent actor critic
+        if recurrent_ac:  # Batches for a feed recurrent actor
             raise NotImplementedError
 
-        else:  # Batches for a feed forward actor critic
+        else:  # Batches for a feed forward actor
             for _ in range(num_mini_batch):
                 idxs = np.random.randint(0, num_proc * self.size, size=mini_batch_size)
                 batch = dict(

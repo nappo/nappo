@@ -167,3 +167,70 @@ class Actor(nn.Module, ABC):
             Entropy of the predicted action distribution.
         """
         raise NotImplementedError
+
+    def evaluate_actions(self, obs, rhs, done, action):
+        """
+        Evaluate log likelihood of action given obs and the current
+        policy network. Returns also entropy distribution.
+
+        Parameters
+        ----------
+        obs : torch.tensor
+            Environment observation.
+        rhs : torch.tensor
+            Recurrent hidden state.
+        done : torch.tensor
+            Done tensor, indicating if episode has finished.
+        action : torch.tensor
+            Evaluated action.
+
+        Returns
+        -------
+        logp_action : torch.tensor
+            Log probability of `action` according to the action distribution
+            predicted with current version of the policy_net.
+        entropy_dist : torch.tensor
+            Entropy of the action distribution predicted with current version
+            of the policy_net.
+        rhs : torch.tensor
+            Updated recurrent hidden state.
+        """
+        raise NotImplementedError
+
+    def get_q_scores(self, obs, actions=None):
+        """
+        If actor has Q-networks, return Q scores of the given observations
+        and actions.
+
+        Parameters
+        ----------
+        obs : torch.tensor
+            Environment observation.
+        actions : torch.tensor
+             Evaluated actions.
+
+        Returns
+        -------
+        q1 : torch.tensor
+            Q score according to current q1 network version.
+        q2 : torch.tensor
+            Q score according to current q2 network version. If there is no
+            q2 network, return None
+        """
+        raise NotImplementedError
+
+    def get_value(self, obs):
+        """
+        if actor has V-network, return value score of given observation.
+
+        Parameters
+        ----------
+        obs : torch.tensor
+            Environment observation.
+
+        Returns
+        -------
+        value : torch.tensor
+            value score according to current value_net version.
+        """
+        raise NotImplementedError

@@ -233,7 +233,7 @@ class OnPolicyActorCritic(nn.Module):
     def evaluate_actions(self, obs, rhs, done, action):
         """
         Evaluate log likelihood of action given obs and the current
-        policy network. Returns also value prediction and entropy distribution.
+        policy network. Returns also entropy distribution.
 
         Parameters
         ----------
@@ -248,8 +248,6 @@ class OnPolicyActorCritic(nn.Module):
 
         Returns
         -------
-        value : torch.tensor
-            Value score according to current value_net version.
         logp_action : torch.tensor
             Log probability of `action` according to the action distribution
             predicted with current version of the policy_net.
@@ -265,13 +263,9 @@ class OnPolicyActorCritic(nn.Module):
 
         actor_features, rhs = self.policy_net(obs, rhs, done)
         logp_action, entropy_dist = self.dist.evaluate_actions(actor_features, action)
+        self.last_actor_features = actor_features
 
-        if self.shared_policy_value_network:
-            value = self.value_net(actor_features)
-        else:
-            value, _ = self.value_net(obs)
-
-        return value, logp_action, entropy_dist, rhs
+        return logp_action, entropy_dist, rhs
 
     def get_value(self, obs):
         """

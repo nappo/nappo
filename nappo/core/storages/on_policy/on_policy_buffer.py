@@ -14,7 +14,7 @@ class OnPolicyBuffer(S):
     device: torch.device
         CPU or specific GPU where data tensors will be placed and class
         computations will take place. Should be the same device where the
-        actor critic model is located.
+        actor model is located.
 
     Attributes
     ----------
@@ -118,23 +118,23 @@ class OnPolicyBuffer(S):
         self.step = (self.step + 1) % self.max_size
         self.size = min(self.size + 1, self.max_size)
 
-    def before_update(self, actor_critic, algo):
+    def before_update(self, actor, algo):
         """
         Before updating actor policy model, compute returns and advantages.
 
         Parameters
         ----------
-        actor_critic : ActorCritic
-            An actor_critic class instance.
+        actor : Actor
+            An actor class instance.
         algo : an algorithm class
             An algorithm class instance.
         """
         with torch.no_grad():
-            _ = actor_critic.get_action(
+            _ = actor.get_action(
                 self.data["obs"][self.step - 1],
                 self.data["rhs"][self.step - 1],
                 self.data["done"][self.step - 1])
-            next_value = actor_critic.get_value(self.data["obs"][self.step - 1])
+            next_value = actor.get_value(self.data["obs"][self.step - 1])
 
         self.data["ret"][self.step] = next_value
         self.compute_returns(algo.gamma)
@@ -170,7 +170,7 @@ class OnPolicyBuffer(S):
 
     def generate_batches(self, num_mini_batch, mini_batch_size, num_epochs=1, recurrent_ac=False, shuffle=True):
         """
-        Returns a batch iterator to update actor critic.
+        Returns a batch iterator to update actor.
 
         Parameters
         ----------
@@ -181,7 +181,7 @@ class OnPolicyBuffer(S):
         num_epochs : int
             Number of epochs.
         recurrent_ac : bool
-            Whether actor critic policy is a RNN or not.
+            Whether actor policy is a RNN or not.
         shuffle : bool
             Whether to shuffle collected data or generate sequential
 
@@ -194,7 +194,7 @@ class OnPolicyBuffer(S):
         num_proc = self.data["obs"].shape[1]
         l = self.step if self.step != 0 else self.max_size
 
-        if recurrent_ac:  # Batches for a feed recurrent actor critic
+        if recurrent_ac:  # Batches for a feed recurrent actor
             num_envs_per_batch = num_proc // num_mini_batch
             assert num_proc >= num_mini_batch, "number processes greater than  mini batches"
             perm = torch.randperm(num_proc) if shuffle else list(range(num_proc))

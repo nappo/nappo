@@ -1,4 +1,3 @@
-import torch
 from abc import ABC, abstractmethod
 
 
@@ -7,9 +6,6 @@ class Storage(ABC):
     Base class for all storage components. It should serve as a template to
     create new Storage classes with new or extended features.
     """
-
-    # Set of data keys inserted samples can contain
-    accepted_data_fields = ("obs", "obs2", "rhs", "act", "rew", "done")
 
     @classmethod
     @abstractmethod
@@ -32,7 +28,7 @@ class Storage(ABC):
     @abstractmethod
     def get_data(self, *args):
         """Return currently stored data."""
-        return {k: v.cpu() for k, v in self.data.items() if v is not None}
+        raise NotImplementedError
 
     @abstractmethod
     def add_data(self, new_data, *args):
@@ -44,13 +40,12 @@ class Storage(ABC):
         new_data : dict
             Dictionary of env transition samples to replace self.data with.
         """
-        self.data = {k: v.to(self.device) for k, v in new_data.items()}
+        raise NotImplementedError
 
     @abstractmethod
     def reset(self, *args):
         """Set class counters to zero and remove stored data"""
-        self.step, self.size = 0, 0
-        self.data = {k: None for k in self.accepted_data_fields} # lazy init
+        raise NotImplementedError
 
     @abstractmethod
     def insert(self, sample, *args):

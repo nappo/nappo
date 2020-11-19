@@ -16,7 +16,7 @@ class OnPolicyGAEBuffer(B):
     device: torch.device
         CPU or specific GPU where data tensors will be placed and class
         computations will take place. Should be the same device where the
-        actor critic model is located.
+        actor model is located.
 
     Attributes
     ----------
@@ -64,23 +64,23 @@ class OnPolicyGAEBuffer(B):
             return cls(size, gae_lambda, device)
         return create_buffer_instance
 
-    def before_update(self, actor_critic, algo):
+    def before_update(self, actor, algo):
         """
         Before updating actor policy model, compute returns and advantages.
 
         Parameters
         ----------
-        actor_critic : ActorCritic
-            An actor_critic class instance.
+        actor : ActorCritic
+            An actor class instance.
         algo : an algorithm class
             An algorithm class instance.
         """
         with torch.no_grad():
-            _ = actor_critic.get_action(
+            _ = actor.get_action(
                 self.data["obs"][self.step - 1],
                 self.data["rhs"][self.step - 1],
                 self.data["done"][self.step - 1])
-            next_value = actor_critic.get_value(self.data["obs"][self.step - 1])
+            next_value = actor.get_value(self.data["obs"][self.step - 1])
 
         self.data["val"][self.step] = next_value
         self.compute_returns(algo.gamma)

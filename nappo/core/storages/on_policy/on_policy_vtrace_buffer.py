@@ -14,7 +14,7 @@ class OnPolicyVTraceBuffer(B):
     device: torch.device
         CPU or specific GPU where data tensors will be placed and class
         computations will take place. Should be the same device where the
-        actor critic model is located.
+        actor model is located.
 
     Attributes
     ----------
@@ -36,30 +36,30 @@ class OnPolicyVTraceBuffer(B):
             size=size,
             device=device)
 
-    def before_update(self, actor_critic, algo):
+    def before_update(self, actor, algo):
         """
         Before updating actor policy model, compute returns and advantages.
 
         Parameters
         ----------
-        actor_critic : ActorCritic
-            An actor_critic class instance.
+        actor : ActorCritic
+            An actor class instance.
         algo : Algo
             An algorithm class instance.
         """
-        self.compute_vtrace(self, actor_critic, algo)
+        self.compute_vtrace(self, actor, algo)
 
     @torch.no_grad()
-    def get_updated_action_log_probs(self, actor_critic, algo):
+    def get_updated_action_log_probs(self, actor, algo):
         """
         Computes new log probabilities of actions stored in `storage`
-        according to current `actor_critic` version. It also uses the current
-        `actor_critic` version to update the value predictions.
+        according to current `actor` version. It also uses the current
+        `actor` version to update the value predictions.
 
         Parameters
         ----------
-        actor_critic : ActorCritic
-            An actor_critic class instance.
+        actor : ActorCritic
+            An actor class instance.
         algo : Algo
             An algorithm class instance.
 
@@ -74,19 +74,19 @@ class OnPolicyVTraceBuffer(B):
         # Create batches without shuffling data
         batches = self.generate_batches(
             algo.num_mini_batch, algo.mini_batch_size,
-            num_epochs=1, recurrent_ac=actor_critic.is_recurrent, shuffle=False)
+            num_epochs=1, recurrent_ac=actor.is_recurrent, shuffle=False)
 
         # Obtain new value and log probability predictions
         new_val = []
         new_logp = []
         for batch in batches:
             obs, rhs, act, done = batch["obs"], batch["rhs"], batch["act"], batch["done"]
-            (val, logp, _, _) = actor_critic.evaluate_actions(obs, rhs, done, act)
+            (val, logp, _, _) = actor.evaluate_actions(obs, rhs, done, act)
             new_val.append(val)
             new_logp.append(logp)
 
         # Concatenate results
-        if actor_critic.is_recurrent:
+        if actor.is_recurrent:
             new_val = [p.view(len, num_proc // algo.num_mini_batch, -1) for p in new_val]
             self.data["val"][:-1] = torch.cat(new_val, dim=1)
             new_logp = [p.view(len, num_proc // algo.num_mini_batch, -1) for p in new_logp]
@@ -105,8 +105,8 @@ class OnPolicyVTraceBuffer(B):
 
         Parameters
         ----------
-        new_policy : ActorCritic
-            An actor_critic class instance.
+        new_policy : Actor
+            An actor class instance.
         algo : Algo
             An algorithm class instance.
         """

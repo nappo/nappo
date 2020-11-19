@@ -289,7 +289,8 @@ class PPO(Algo):
         o, rhs, a, old_v = data["obs"], data["rhs"], data["act"],  data["val"]
         r, d, old_logp, adv = data["ret"], data["done"], data["logp"], data["adv"]
 
-        new_v, new_logp, dist_entropy, _ = self.actor_critic.evaluate_actions(o, rhs, d, a)
+        new_logp, dist_entropy, _ = self.actor_critic.evaluate_actions(o, rhs, d, a)
+        new_v = self.actor_critic.get_value(o)
 
         ratio = torch.exp(new_logp - old_logp)
         surr1 = ratio * adv
