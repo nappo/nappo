@@ -99,7 +99,7 @@ while not learner.done():
 
 ### Available core components and distributed training schemes
 
-Core components
+* Core components
     * envs: VecEnv
     * algos:
         * On-policy: PPO
@@ -111,7 +111,7 @@ Core components
         * On-policy: OnPolicyBuffer, OnPolicyGAEBuffer, OnPolicyVTraceBuffer
         * Off-policy: ReplayBuffer: HindsightExperienceReplayBuffer
 
-Distributed schemes
+* Distributed schemes
     * 3cs
     * 3ds
     * 2dacs
