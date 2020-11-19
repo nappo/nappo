@@ -25,13 +25,13 @@ class Worker:
     ----------
     index_worker : int
         Index assigned to this worker.
-    actor_critic : nn.Module
-        An actor_critic class instance.
+    actor : nn.Module
+        An actor class instance.
     """
 
     def __init__(self, index_worker):
         self.index_worker = index_worker
-        self.actor_critic = None # Initialize in inherited class
+        self.actor = None # Initialize in inherited class
 
     @classmethod
     def as_remote(cls,
@@ -80,12 +80,12 @@ class Worker:
         logger.warning(s)
 
     def get_weights(self):
-        """Returns current actor_critic.state_dict() weights"""
-        return {k: v.cpu() for k, v in self.actor_critic.state_dict().items()}
+        """Returns current actor.state_dict() weights"""
+        return {k: v.cpu() for k, v in self.actor.state_dict().items()}
 
     def save_model(self, fname, iter):
         """
-        Save current version of actor_critic as a torch loadable checkpoint.
+        Save current version of actor as a torch loadable checkpoint.
 
         Parameters
         ----------
@@ -99,7 +99,7 @@ class Worker:
         save_name : str
             Path to saved file.
         """
-        torch.save(self.actor_critic.state_dict(), fname + ".tmp")
+        torch.save(self.actor.state_dict(), fname + ".tmp")
         os.rename(fname + '.tmp', fname)
         save_name = fname + ".{}".format(iter)
         copy2(fname, save_name)

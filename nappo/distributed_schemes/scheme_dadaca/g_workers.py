@@ -1,1 +1,1 @@
-from ..workers_dadacs.g_worker_set import GWorkerSet
+from ..scheme_dadacs.g_workers import GWorkerSet

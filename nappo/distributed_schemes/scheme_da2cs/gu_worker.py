@@ -10,9 +10,9 @@ from ..utils import TaskPool, ray_get_and_free
 
 class GUWorker:
     """
-    Update worker. Handles actor_critic updates.
+    Update worker. Handles actor updates.
 
-    This class coordinates sequential central actor_critic optimization, using
+    This class coordinates sequential central actor optimization, using
     rollouts collected by distributed workers to compute gradients and update
     the models.
 
@@ -37,7 +37,7 @@ class GUWorker:
     col_workers : list of Workers
         Set of workers collecting and sending rollouts to the UWorker.
     num_updates : int
-        Number of times the actor_critic model has been updated.
+        Number of times the actor model has been updated.
     num_workers : int
         number of remote workers computing gradients.
     broadcast_interval : int
@@ -51,7 +51,7 @@ class GUWorker:
                  max_collect_requests_pending=2):
 
         self.ps = col_workers.local_worker()
-        self.ps.actor_critic.to(device)
+        self.ps.actor.to(device)
         self.latest_weights = ray.put({"update": 0, "weights": self.ps.get_weights()})
         self.col_workers = col_workers.remote_workers()
         self.num_workers = len(self.col_workers)
@@ -75,7 +75,7 @@ class GUWorker:
 
     def compute_gradients(self, batch):
         """
-        Calculate actor critic gradients.
+        Calculate actor gradients.
 
         Parameters
         ----------
@@ -137,12 +137,12 @@ class GUWorker:
 
             self.ps.storage.add_data(new_rollouts["data"])
             self.rollouts_info = new_rollouts["info"]
-            self.ps.storage.before_update(self.ps.actor_critic, self.ps.algo)
+            self.ps.storage.before_update(self.ps.actor, self.ps.algo)
 
             # Prepare data batches
             self.batches = self.ps.storage.generate_batches(
                 self.ps.algo.num_mini_batch, self.ps.algo.mini_batch_size,
-                self.ps.algo.num_epochs, self.ps.actor_critic.is_recurrent)
+                self.ps.algo.num_epochs, self.ps.actor.is_recurrent)
 
         # Compute grads
         info = self.compute_gradients(self.batches.__next__())
@@ -167,12 +167,12 @@ class GUWorker:
             e.terminate_worker.remote()
 
     def get_weights(self):
-        """Returns current actor_critic.state_dict() weights"""
-        return {k: v.cpu() for k, v in self.ps.actor_critic.state_dict().items()}
+        """Returns current actor.state_dict() weights"""
+        return {k: v.cpu() for k, v in self.ps.actor.state_dict().items()}
 
     def save_model(self, fname):
         """
-        Save current version of actor_critic as a torch loadable checkpoint.
+        Save current version of actor as a torch loadable checkpoint.
 
         Parameters
         ----------
@@ -184,7 +184,7 @@ class GUWorker:
         save_name : str
             Path to saved file.
         """
-        torch.save(self.ps.actor_critic.state_dict(), fname + ".tmp")
+        torch.save(self.ps.actor.state_dict(), fname + ".tmp")
         os.rename(fname + '.tmp', fname)
         save_name = fname + ".{}".format(self.num_updates)
         copy2(fname, save_name)

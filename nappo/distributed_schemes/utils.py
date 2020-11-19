@@ -80,11 +80,11 @@ def average_gradients(grads_list):
     Parameters
     ----------
     grads_list : list of lists of tensors
-        List of actor_critic gradients from different workers.
+        List of actor gradients from different workers.
     Returns
     -------
     avg_grads : list of tensors
-        Averaged actor_critic gradients.
+        Averaged actor gradients.
     """
     avg_grads = [
         sum(d[grad] for d in grads_list) / len(grads_list) if

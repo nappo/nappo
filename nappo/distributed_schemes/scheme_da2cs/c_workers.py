@@ -11,7 +11,7 @@ class CWorker(W):
     """
      Worker class handling data collection.
 
-    This class wraps an actor_critic instance, a storage class instance and a
+    This class wraps an actor instance, a storage class instance and a
     train and a test vector of environments. It collects data samples, sends
     them to a central node for processing and and evaluates network versions.
 
@@ -19,15 +19,15 @@ class CWorker(W):
     ----------
     index_worker : int
         Worker index.
-    create_algo_instance : func
+    algo_factory : func
         A function that creates an algorithm class.
-    create_storage_instance : func
+    storage_factory : func
         A function that create a rollouts storage.
-    create_train_envs_instance : func
+    train_envs_factory : func
         A function to create train environments.
-    create_actor_critic_instance : func
+    actor_factory : func
         A function that creates a policy.
-    create_test_envs_instance : func
+    test_envs_factory : func
         A function to create test environments.
     initial_weights : ray object ID
         Initial model weights.
@@ -36,8 +36,8 @@ class CWorker(W):
     ----------
     index_worker : int
         Index assigned to this worker.
-    actor_critic : nn.Module
-        An actor_critic class instance.
+    actor : nn.Module
+        An actor class instance.
     algo : an algorithm class
         An algorithm class instance.
     envs_train : VecEnv
@@ -49,7 +49,7 @@ class CWorker(W):
     iter : int
          Number of times gradients have been computed and sent.
     ac_version : int
-        Number of times the current actor critic version been has been updated.
+        Number of times the current actor version been has been updated.
     update_every : int
         Number of data samples to collect between network update stages.
     obs : torch.tensor
@@ -61,11 +61,11 @@ class CWorker(W):
     """
     def __init__(self,
                  index_worker,
-                 create_algo_instance,
-                 create_storage_instance,
-                 create_train_envs_instance,
-                 create_actor_critic_instance,
-                 create_test_envs_instance=lambda x, y, c: None,
+                 algo_factory,
+                 actor_factory,
+                 storage_factory,
+                 train_envs_factory,
+                 test_envs_factory=lambda x, y, c: None,
                  initial_weights=None):
 
         super(CWorker, self).__init__(index_worker)
@@ -74,14 +74,14 @@ class CWorker(W):
         self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
         # Create Actor Critic instance
-        self.actor_critic = create_actor_critic_instance(self.device)
-        self.actor_critic.to(self.device)
+        self.actor = actor_factory(self.device)
+        self.actor.to(self.device)
 
         # Create Algorithm instance
-        self.algo = create_algo_instance(self.actor_critic, self.device)
+        self.algo = algo_factory(self.actor, self.device)
 
         # Create Storage instance and set world initial state
-        self.storage = create_storage_instance(self.device)
+        self.storage = storage_factory(self.device)
 
         # Define counters and other attributes
         self.iter, self.ac_version = 0, 0
@@ -90,11 +90,11 @@ class CWorker(W):
         if initial_weights: # if remote worker
 
             # Create train environments, define initial train states
-            self.envs_train = create_train_envs_instance(self.device, index_worker)
-            self.obs, self.rhs, self.done = self.actor_critic.policy_initial_states(self.envs_train.reset())
+            self.envs_train = train_envs_factory(self.device, index_worker)
+            self.obs, self.rhs, self.done = self.actor.policy_initial_states(self.envs_train.reset())
 
             # Create test environments (if creation function available)
-            self.envs_test = create_test_envs_instance(self.device, index_worker, mode="test")
+            self.envs_test = test_envs_factory(self.device, index_worker, mode="test")
 
             # Print worker information
             self.print_worker_info()
@@ -179,7 +179,7 @@ class CWorker(W):
 
     def evaluate(self):
         """
-        Test current actor_critic version in self.envs_test.
+        Test current actor version in self.envs_test.
 
         Returns
         -------
@@ -190,7 +190,7 @@ class CWorker(W):
         completed_episodes = []
         obs = self.envs_test.reset()
         rewards = np.zeros(obs.shape[0])
-        obs, rhs, done = self.actor_critic.policy_initial_states(obs)
+        obs, rhs, done = self.actor.policy_initial_states(obs)
 
         while len(completed_episodes) < self.algo.num_test_episodes:
 
@@ -211,13 +211,13 @@ class CWorker(W):
 
     def set_weights(self, weights):
         """
-        Update the worker actor_critic version with provided weights.
+        Update the worker actor version with provided weights.
 
         weights: dict of tensors
-            Dict containing actor_critic weights to be set.
+            Dict containing actor weights to be set.
         """
         self.ac_version = weights["update"]
-        self.actor_critic.load_state_dict(weights["weights"])
+        self.actor.load_state_dict(weights["weights"])
 
     def update_algo_parameter(self, parameter_name, new_parameter_value):
         """
@@ -238,15 +238,15 @@ class CWorkerSet(WS):
 
     Parameters
     ----------
-    create_algo_instance : func
+    algo_factory : func
         A function that creates an algorithm class.
-    create_storage_instance : func
+    storage_factory : func
         A function that create a rollouts storage.
-    create_train_envs_instance : func
+    train_envs_factory : func
         A function to create train environments.
-    create_actor_critic_instance : func
+    actor_factory : func
         A function that creates a policy.
-    create_test_envs_instance : func
+    test_envs_factory : func
         A function to create test environments.
     worker_remote_config : dict
         Ray resource specs for the remote workers.
@@ -266,23 +266,23 @@ class CWorkerSet(WS):
     """
 
     def __init__(self,
-                 create_algo_instance,
-                 create_storage_instance,
-                 create_train_envs_instance,
-                 create_actor_critic_instance,
+                 algo_factory,
+                 actor_factory,
+                 storage_factory,
+                 train_envs_factory,
+                 test_envs_factory=lambda x, y, c: None,
                  worker_remote_config=default_remote_config,
-                 create_test_envs_instance=lambda x, y, c: None,
-                 local_device="cuda:0",
                  num_workers=1):
+
         self.worker_class = CWorker
         default_remote_config.update(worker_remote_config)
         self.remote_config = default_remote_config
         self.worker_params = {
-            "create_algo_instance": create_algo_instance,
-            "create_storage_instance": create_storage_instance,
-            "create_test_envs_instance": create_test_envs_instance,
-            "create_train_envs_instance": create_train_envs_instance,
-            "create_actor_critic_instance": create_actor_critic_instance,
+            "algo_factory": algo_factory,
+            "storage_factory": storage_factory,
+            "test_envs_factory": test_envs_factory,
+            "train_envs_factory": train_envs_factory,
+            "actor_factory": actor_factory,
         }
 
         super(CWorkerSet, self).__init__(

@@ -10,9 +10,9 @@ from ..utils import TaskPool, ray_get_and_free
 
 class GUWorker:
     """
-    Update worker. Handles actor_critic updates.
+    Update worker. Handles actor updates.
 
-    This class coordinates sequential central actor_critic optimization, using
+    This class coordinates sequential central actor optimization, using
     rollouts collected by distributed workers to compute gradients and update
     the models.
 
@@ -38,7 +38,7 @@ class GUWorker:
     remote_workers : list of Workers
         Set of workers collecting and sending rollouts.
     num_updates : int
-        Number of times the actor_critic model has been updated.
+        Number of times the actor model has been updated.
     num_workers : int
         number of remote workers computing gradients.
     inqueue : queue.Queue
@@ -54,7 +54,7 @@ class GUWorker:
                  max_collect_requests_pending=2):
 
         self.local_worker = workers.local_worker()
-        self.local_worker.actor_critic.to(device)
+        self.local_worker.actor.to(device)
         self.remote_workers = workers.remote_workers()
         self.num_workers = len(self.remote_workers)
 
@@ -241,7 +241,7 @@ class CollectorThread(threading.Thread):
 
 class UpdaterThread(threading.Thread):
     """
-    This class receives data from the workers and continuously updates central actor_critic.
+    This class receives data from the workers and continuously updates central actor.
 
     Parameters
     ----------
@@ -282,7 +282,7 @@ class UpdaterThread(threading.Thread):
 
     def compute_gradients(self, batch):
         """
-        Calculate actor critic gradients.
+        Calculate actor gradients.
 
         Parameters
         ----------
@@ -306,7 +306,7 @@ class UpdaterThread(threading.Thread):
     def step(self):
         """
         Continuously pulls data from the input queue, computes gradients,
-        updates the local actor_critic model and places information in the
+        updates the local actor model and places information in the
         output queue.
         """
 
@@ -317,12 +317,12 @@ class UpdaterThread(threading.Thread):
             self.local_worker.storage.add_data(new_rollouts["data"])
             self.rollouts_info = new_rollouts["info"]
             self.local_worker.storage.before_update(
-                self.local_worker.actor_critic, self.local_worker.algo)
+                self.local_worker.actor, self.local_worker.algo)
 
             # Prepare data batches
             self.batches = self.local_worker.storage.generate_batches(
                 self.local_worker.algo.num_mini_batch, self.local_worker.algo.mini_batch_size,
-                self.local_worker.algo.num_epochs, self.local_worker.actor_critic.is_recurrent)
+                self.local_worker.algo.num_epochs, self.local_worker.actor.is_recurrent)
 
         # Compute grads
         info = self.compute_gradients(self.batches.__next__())

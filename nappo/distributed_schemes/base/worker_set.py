@@ -9,20 +9,16 @@ class WorkerSet:
 
     Parameters
     ----------
-    create_algo_instance : func
-        A function that creates an algorithm class.
-    create_storage_instance : func
-        A function that create a rollouts storage.
-    create_train_envs_instance : func
-        A function to create train environments.
-    create_actor_critic_instance : func
-        A function that creates a policy.
-    create_test_envs_instance : func
-        A function to create test environments.
+    worker : func
+        A function that creates a worker class.
+    worker_params : dict
+        Worker class kwargs.
     worker_remote_config : dict
         Ray resource specs for the remote workers.
     num_workers : int
-        Number of remote workers in the worker set.
+        Num workers replicas in the worker_set.
+    add_local_worker : bool
+        Whether or not to include have a non-remote worker in the worker set.
 
     Attributes
     ----------

@@ -2,6 +2,7 @@ from ..scheme_da2cs.c_workers import CWorker
 from ..base.worker_set import WorkerSet as WS
 from ..base.worker import default_remote_config
 
+
 class CWorkerSet(WS):
     """
     Class to better handle the operations of ensembles of workers.
@@ -10,15 +11,15 @@ class CWorkerSet(WS):
     ----------
     initial_weights : ray object ID
         Initial model weights.
-    create_algo_instance : func
+    algo_factory : func
         A function that creates an algorithm class.
-    create_storage_instance : func
+    storage_factory : func
         A function that create a rollouts storage.
-    create_train_envs_instance : func
+    train_envs_factory : func
         A function to create train environments.
-    create_actor_critic_instance : func
+    actor_factory : func
         A function that creates a policy.
-    create_test_envs_instance : func
+    test_envs_factory : func
         A function to create test environments.
     worker_remote_config : dict
         Ray resource specs for the remote workers.
@@ -38,11 +39,11 @@ class CWorkerSet(WS):
     """
     def __init__(self,
                  initial_weights,
-                 create_algo_instance,
-                 create_storage_instance,
-                 create_test_envs_instance,
-                 create_train_envs_instance,
-                 create_actor_critic_instance,
+                 algo_factory,
+                 actor_factory,
+                 storage_factory,
+                 train_envs_factory,
+                 test_envs_factory=lambda x, y, c: None,
                  worker_remote_config=default_remote_config,
                  num_workers=1):
 
@@ -51,11 +52,11 @@ class CWorkerSet(WS):
         self.remote_config = default_remote_config
         self.worker_params = {
             "initial_weights": initial_weights,
-            "create_algo_instance": create_algo_instance,
-            "create_storage_instance": create_storage_instance,
-            "create_test_envs_instance": create_test_envs_instance,
-            "create_train_envs_instance": create_train_envs_instance,
-            "create_actor_critic_instance": create_actor_critic_instance,
+            "algo_factory": algo_factory,
+            "storage_factory": storage_factory,
+            "test_envs_factory": test_envs_factory,
+            "train_envs_factory": train_envs_factory,
+            "actor_factory": actor_factory,
         }
 
         super(CWorkerSet, self).__init__(
@@ -67,9 +68,9 @@ class CWorkerSet(WS):
 
     @classmethod
     def worker_set_factory(cls,
-                           create_test_envs_instance,
-                           create_train_envs_instance,
-                           create_actor_critic_instance,
+                           actor_factory,
+                           test_envs_factory,
+                           train_envs_factory,
                            worker_remote_config=default_remote_config,
                            num_workers=1):
         """
@@ -77,12 +78,12 @@ class CWorkerSet(WS):
 
         Parameters
         ----------
-        create_test_envs_instance : func
-            A function to create test environments.
-        create_train_envs_instance : func
+        train_envs_factory : func
             A function to create train environments.
-        create_actor_critic_instance : func
+        actor_factory : func
             A function that creates a policy.
+        test_envs_factory : func
+            A function to create test environments.
         worker_remote_config : dict
             Ray resource specs for the remote workers.
         num_workers : int
@@ -95,14 +96,14 @@ class CWorkerSet(WS):
         """
         def create_worker_set_instance(
                 initial_weights,
-                create_algo_instance,
-                create_storage_instance):
+                algo_factory,
+                storage_factory):
             return cls(num_workers=num_workers,
                        initial_weights=initial_weights,
                        worker_remote_config=worker_remote_config,
-                       create_algo_instance=create_algo_instance,
-                       create_storage_instance=create_storage_instance,
-                       create_test_envs_instance=create_test_envs_instance,
-                       create_train_envs_instance=create_train_envs_instance,
-                       create_actor_critic_instance=create_actor_critic_instance)
+                       algo_factory=algo_factory,
+                       actor_factory=actor_factory,
+                       storage_factory=storage_factory,
+                       test_envs_factory=test_envs_factory,
+                       train_envs_factory=train_envs_factory)
         return create_worker_set_instance

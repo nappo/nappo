@@ -11,7 +11,7 @@ class GWorker(W):
     """
     Worker class handling gradient computation.
 
-    This class wraps an actor_critic instance, a storage class instance and a
+    This class wraps an actor instance, a storage class instance and a
     worker set of remote data collection workers. It receives data from the
     collection workers and computes gradients following a logic defined in
     function self.step(), which will be called from the Learner class.
@@ -20,12 +20,14 @@ class GWorker(W):
     ----------
     index_worker : int
         Worker index.
-    create_algo_instance : func
+    algo_factory : func
         A function that creates an algorithm class.
-    create_storage_instance : func
+    storage_factory : func
         A function that create a rollouts storage.
-    create_actor_critic_instance : func
+    actor_factory : func
         A function that creates a policy.
+    collection_workers_factory : func
+        A function that creates a sets of data collection workers.
     initial_weights : ray object ID
         Initial model weights.
     max_collect_requests_pending : int
@@ -36,8 +38,8 @@ class GWorker(W):
     ----------
     index_worker : int
         Index assigned to this worker.
-    actor_critic : nn.Module
-        An actor_critic class instance.
+    actor : nn.Module
+        An actor class instance.
     algo : an algorithm class
         An algorithm class instance.
     storage : a rollout storage class
@@ -45,7 +47,7 @@ class GWorker(W):
     iter : int
         Times gradients have been computed and sent.
     ac_version : int
-        Number of times the current actor critic version been has been updated.
+        Number of times the current actor version been has been updated.
     latest_weights : ray object ID
         Last received model weights.
     collector_tasks : TaskPool
@@ -54,10 +56,10 @@ class GWorker(W):
 
     def __init__(self,
                  index_worker,
-                 create_algo_instance,
-                 create_storage_instance,
-                 create_actor_critic_instance,
-                 create_collection_worker_set_instance,
+                 algo_factory,
+                 actor_factory,
+                 storage_factory,
+                 collection_workers_factory,
                  max_collect_requests_pending=2,
                  initial_weights=None):
 
@@ -67,11 +69,11 @@ class GWorker(W):
         device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
         # Create Actor Critic instance
-        self.actor_critic = create_actor_critic_instance(device)
-        self.actor_critic.to(device)
+        self.actor = actor_factory(device)
+        self.actor.to(device)
 
         # Create Algorithm instance
-        self.algo = create_algo_instance(self.actor_critic, device)
+        self.algo = algo_factory(self.actor, device)
 
         # Define counters and other attributes
         self.iter = 0
@@ -80,12 +82,12 @@ class GWorker(W):
         if initial_weights:  # if remote worker
 
             # Create CWorkerSet instance
-            self.c_workers = create_collection_worker_set_instance(
-                initial_weights, create_algo_instance, create_storage_instance,
+            self.c_workers = collection_workers_factory(
+                initial_weights, algo_factory, storage_factory,
                 ).remote_workers()
 
             # Create Storage instance and set world initial state
-            self.storage = create_storage_instance(device)
+            self.storage = storage_factory(device)
 
             # Print worker information
             self.print_worker_info()
@@ -101,7 +103,7 @@ class GWorker(W):
 
     def compute_gradients(self, batch):
         """
-        Calculate actor critic gradients and update networks.
+        Calculate actor gradients and update networks.
 
         Parameters
         ----------
@@ -111,7 +113,7 @@ class GWorker(W):
         Returns
         -------
         grads: list of tensors
-            List of actor_critic gradients.
+            List of actor gradients.
         info : dict
             Summary dict with relevant gradient-related information.
         """
@@ -134,7 +136,7 @@ class GWorker(W):
         Returns
         -------
         grads: list of tensors
-            List of actor_critic gradients.
+            List of actor gradients.
         info : dict
             Summary dict of relevant step information.
         """
@@ -150,10 +152,10 @@ class GWorker(W):
 
             self.collect_info = new_rollouts["info"]
             self.storage.add_data(new_rollouts["data"])
-            self.storage.before_update(self.actor_critic, self.algo)
+            self.storage.before_update(self.actor, self.algo)
             self.batches = self.storage.generate_batches(
                 self.algo.num_mini_batch, self.algo.mini_batch_size,
-                self.algo.num_epochs, self.actor_critic.is_recurrent)
+                self.algo.num_epochs, self.actor.is_recurrent)
 
         else:
             collect_info = {}
@@ -175,10 +177,10 @@ class GWorker(W):
 
     def set_weights(self, weights):
         """
-        Update the worker actor_critic version with provided weights.
+        Update the worker actor version with provided weights.
 
         weights: dict of tensors
-            Dict containing actor_critic weights to be set.
+            Dict containing actor weights to be set.
         """
         self.latest_weights = weights
         self.ac_version = weights["update"]
@@ -211,14 +213,14 @@ class GWorkerSet(WS):
 
     Parameters
     ----------
-    create_algo_instance : func
+    algo_factory : func
         A function that creates an algorithm class.
-    create_storage_instance : func
+    storage_factory : func
         A function that create a rollouts storage.
-    create_actor_critic_instance : func
+    actor_factory : func
         A function that creates a policy.
-    create_collection_worker_set_instance : func
-        A function that creates worker sets of data collection workers.
+    collection_workers_factory : func
+        A function that creates a sets of data collection workers.
     worker_remote_config : dict
         Ray resource specs for the remote workers.
     max_collector_workers_requests_pending : int
@@ -240,34 +242,23 @@ class GWorkerSet(WS):
     """
 
     def __init__(self,
-                 create_algo_instance,
-                 create_storage_instance,
-                 create_actor_critic_instance,
-                 create_collection_worker_set_instance,
+                 algo_factory,
+                 actor_factory,
+                 storage_factory,
+                 collection_workers_factory,
                  worker_remote_config=default_remote_config,
                  max_collector_workers_requests_pending=2,
                  num_workers=1):
-        """
-        Initialize a WorkerSet.
-
-        Arguments:
-            create_algo_instance (func): a function that creates an algorithm class.
-            create_storage_instance (func): a function that create a rollouts storage.
-            create_actor_critic_instance (func): a function that creates a policy.
-            max_collector_workers_requests_pending (int): maximum number of collect() tasks to schedule for each collection worker.
-            worker_remote_config (dict): ray resources specs for the gradient workers.
-            num_workers (int): number of gradient computing workers.
-        """
 
         self.worker_class = GWorker
         default_remote_config.update(worker_remote_config)
         self.remote_config = default_remote_config
         self.worker_params = {
-            "create_algo_instance": create_algo_instance,
-            "create_storage_instance": create_storage_instance,
-            "create_actor_critic_instance": create_actor_critic_instance,
+            "algo_factory": algo_factory,
+            "actor_factory": actor_factory,
+            "storage_factory": storage_factory,
+            "collection_workers_factory": collection_workers_factory,
             "max_collect_requests_pending": max_collector_workers_requests_pending,
-            "create_collection_worker_set_instance": create_collection_worker_set_instance,
         }
 
         super(GWorkerSet, self).__init__(

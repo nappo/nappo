@@ -1,1 +1,1 @@
-from ..workers_dadacs.c_worker_set import CWorkerSet
+from ..scheme_dadacs.c_workers import CWorkerSet

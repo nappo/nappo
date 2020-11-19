@@ -8,10 +8,10 @@ from ..utils import ray_get_and_free
 
 class UWorker:
     """
-    Update worker. Handles actor_critic updates.
+    Update worker. Handles actor updates.
 
     This worker receives gradients from gradient workers and then updates the
-    its actor_critic model. Updated weights are asynchronously sent back
+    its actor model. Updated weights are asynchronously sent back
     to gradient workers.
 
     Parameters
@@ -22,7 +22,7 @@ class UWorker:
     Attributes
     ----------
     num_updates : int
-        Number of times the actor_critic model has been updated.
+        Number of times the actor model has been updated.
     grad_workers : WorkerSet
         Set of workers computing and sending gradients to the UWorker.
     """
@@ -151,7 +151,7 @@ class UWorker:
 
     def save_model(self, fname):
         """
-        Save current version of actor_critic as a torch loadable checkpoint.
+        Save current version of actor as a torch loadable checkpoint.
 
         Parameters
         ----------
@@ -163,7 +163,7 @@ class UWorker:
         save_name : str
             Path to saved file.
         """
-        torch.save(self.grad_workers.local_worker().actor_critic.state_dict(), fname + ".tmp")
+        torch.save(self.grad_workers.local_worker().actor.state_dict(), fname + ".tmp")
         os.rename(fname + '.tmp', fname)
         save_name = fname + ".{}".format(self.num_updates)
         copy2(fname, save_name)

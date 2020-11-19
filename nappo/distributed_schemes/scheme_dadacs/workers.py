@@ -1,4 +1,7 @@
-from nappo.schemes.workers_dadacs import CWorkerSet, GWorkerSet, UWorker
+from .c_workers import CWorkerSet
+from .g_workers import GWorkerSet
+from .u_worker import UWorker
+
 
 class Workers:
     """
@@ -6,15 +9,15 @@ class Workers:
 
     Parameters
     ----------
-    create_algo_instance : func
+    algo_factory : func
         A function that creates an algorithm class.
-    create_storage_instance : func
+    storage_factory : func
         A function that create a rollouts storage.
-    create_train_envs_instance : func
+    train_envs_factory : func
         A function to create train environments.
-    create_actor_critic_instance : func
+    actor_factory : func
         A function that creates a policy.
-    create_test_envs_instance : func
+    test_envs_factory : func
         A function to create test environments.
     num_col_workers : int
         Number of remote workers performing collection operations.
@@ -28,25 +31,25 @@ class Workers:
     def __init__(self,
                  num_col_workers,
                  num_grad_workers,
-                 create_algo_instance,
-                 create_storage_instance,
-                 create_test_envs_instance,
-                 create_train_envs_instance,
-                 create_actor_critic_instance,
+                 algo_factory,
+                 actor_factory,
+                 storage_factory,
+                 train_envs_factory,
+                 test_envs_factory=lambda x, y, c: None,
                  col_worker_remote_config={"num_cpus": 1, "num_gpus": 0.5},
                  grad_worker_remote_config={"num_cpus": 1, "num_gpus": 0.5}):
 
-        col_workers = CWorkerSet.worker_set_factory(
+        col_workers_factory = CWorkerSet.worker_set_factory(
             num_workers=num_col_workers//num_grad_workers,
-            create_test_envs_instance=create_test_envs_instance,
-            create_train_envs_instance=create_train_envs_instance,
-            create_actor_critic_instance=create_actor_critic_instance,
+            test_envs_factory=test_envs_factory,
+            train_envs_factory=train_envs_factory,
+            actor_factory=actor_factory,
             worker_remote_config=col_worker_remote_config)
         grad_workers = GWorkerSet(
-            create_algo_instance=create_algo_instance,
-            create_storage_instance=create_storage_instance,
-            create_actor_critic_instance=create_actor_critic_instance,
-            create_collection_worker_set_instance=col_workers,
+            algo_factory=algo_factory,
+            storage_factory=storage_factory,
+            actor_factory=actor_factory,
+            collection_workers_factory=col_workers_factory,
             num_workers=num_grad_workers,
             worker_remote_config=grad_worker_remote_config)
         self._update_worker = UWorker(grad_workers)

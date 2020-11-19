@@ -9,7 +9,7 @@ class CGUWorker:
     """
     Worker class handling data collection, gradient computation and policy updates.
 
-    This class wraps an actor_critic instance, a storage class instance and a
+    This class wraps an actor instance, a storage class instance and a
     train and a test vector of environments. It collects data, computes gradients,
     updates the networks and evaluates network versions following a logic
     defined in function self.step(), which will be called from the Learner.
@@ -18,15 +18,15 @@ class CGUWorker:
     ----------
     index_worker : int
         Worker index.
-    create_algo_instance : func
+    algo_factory : func
         A function that creates an algorithm class.
-    create_storage_instance : func
+    storage_factory : func
         A function that create a rollouts storage.
-    create_train_envs_instance : func
+    train_envs_factory : func
         A function to create train environments.
-    create_actor_critic_instance : func
+    actor_factory : func
         A function that creates a policy.
-    create_test_envs_instance : func
+    test_envs_factory : func
         A function to create test environments.
     device : torch.device
         CPU or specific GPU to use for computation.
@@ -35,8 +35,8 @@ class CGUWorker:
     ----------
     index_worker : int
         Index assigned to this worker.
-    actor_critic : nn.Module
-        An actor_critic class instance.
+    actor : nn.Module
+        An actor class instance.
     algo : an algorithm class
         An algorithm class instance.
     envs_train : VecEnv
@@ -46,7 +46,7 @@ class CGUWorker:
     storage : a rollout storage class
         A Storage class instance.
     num_updates : int
-        Times actor critic has been updated.
+        Times actor has been updated.
     update_every : int
         Number of data samples to collect between network update stages.
     obs : torch.tensor
@@ -59,32 +59,32 @@ class CGUWorker:
 
     def __init__(self,
                  index_worker,
-                 create_algo_instance,
-                 create_storage_instance,
-                 create_train_envs_instance,
-                 create_actor_critic_instance,
-                 create_test_envs_instance=lambda x, y, c: None,
+                 algo_factory,
+                 actor_factory,
+                 storage_factory,
+                 train_envs_factory,
+                 test_envs_factory=lambda x, y, c: None,
                  device="cuda:0"):
 
         self.index_worker = index_worker
         device = torch.device(device)
 
         # Create Actor Critic instance
-        self.actor_critic = create_actor_critic_instance(device)
-        self.actor_critic.to(device)
+        self.actor = actor_factory(device)
+        self.actor.to(device)
 
         # Create Algorithm instance
-        self.algo = create_algo_instance(self.actor_critic, device)
+        self.algo = algo_factory(self.actor, device)
 
         # Create train environments, define initial train states
-        self.envs_train = create_train_envs_instance(device, index_worker)
-        self.obs, self.rhs, self.done = self.actor_critic.policy_initial_states(self.envs_train.reset())
+        self.envs_train = train_envs_factory(device, index_worker)
+        self.obs, self.rhs, self.done = self.actor.policy_initial_states(self.envs_train.reset())
 
         # Create test environments (if creation function available)
-        self.envs_test = create_test_envs_instance(device, index_worker, mode="test")
+        self.envs_test = test_envs_factory(device, index_worker, mode="test")
 
         # Create Storage instance
-        self.storage = create_storage_instance(device)
+        self.storage = storage_factory(device)
 
         # Define counters and other attributes
         self.num_updates = 0  # times step has been called
@@ -141,7 +141,7 @@ class CGUWorker:
 
     def compute_gradients(self, batch):
         """
-        Calculate actor critic gradients.
+        Calculate actor gradients.
 
         Parameters
         ----------
@@ -166,7 +166,7 @@ class CGUWorker:
 
     def evaluate(self):
         """
-        Test current actor_critic version in self.envs_test.
+        Test current actor version in self.envs_test.
 
         Returns
         -------
@@ -177,7 +177,7 @@ class CGUWorker:
         completed_episodes = []
         obs = self.envs_test.reset()
         rewards = np.zeros(obs.shape[0])
-        obs, rhs, done = self.actor_critic.policy_initial_states(obs)
+        obs, rhs, done = self.actor.policy_initial_states(obs)
 
         while len(completed_episodes) < self.algo.num_test_episodes:
             # Predict next action and rnn hidden state
@@ -212,10 +212,10 @@ class CGUWorker:
         # Collect data and prepare data batches
         if self.num_updates % (self.algo.num_epochs * self.algo.num_mini_batch) == 0:
             collect_time, collected_samples = self.collect_data(self.update_every)
-            self.storage.before_update(self.actor_critic, self.algo)
+            self.storage.before_update(self.actor, self.algo)
             self.batches = self.storage.generate_batches(
                 self.algo.num_mini_batch, self.algo.mini_batch_size,
-                self.algo.num_epochs, self.actor_critic.is_recurrent)
+                self.algo.num_epochs, self.actor.is_recurrent)
         else:
             collect_time, collected_samples = 0.0, 0
 
@@ -248,7 +248,7 @@ class CGUWorker:
 
     def save_model(self, fname):
         """
-        Save current version of actor_critic as a torch loadable checkpoint.
+        Save current version of actor as a torch loadable checkpoint.
 
         Parameters
         ----------
@@ -260,7 +260,7 @@ class CGUWorker:
         save_name : str
             Path to saved file.
         """
-        torch.save(self.algo.actor_critic.state_dict(), fname + ".tmp")
+        torch.save(self.algo.actor.state_dict(), fname + ".tmp")
         os.rename(fname + '.tmp', fname)
         save_name = fname + ".{}".format(self.num_updates)
         copy2(fname, save_name)
@@ -279,7 +279,7 @@ class CGUWorker:
         self.algo.update_algo_parameter(parameter_name, new_parameter_value)
 
     def stop(self):
-        """Execute required code to end actor critic updates"""
+        """Execute required code to end actor updates"""
         pass
 
 

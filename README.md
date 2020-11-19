@@ -41,12 +41,12 @@ Define core components. All core components have a `create_factory` method, whic
 
 ```
 # 1. Define Train Vector of Envs
-train_env_factory, action_space, obs_space = VecEnv.create_factory(
+train_envs_factory, action_space, obs_space = VecEnv.create_factory(
     vec_env_size=1, log_dir="/tmp/train_example", env_fn=make_pybullet_train_env,
     env_kwargs={"env_id": "HalfCheetahBulletEnv-v0"})
 ```
 
-We can continue by defining an on-policy or off-policy set of Actor, Algo and Storage core components.
+We can continue by defining an on-policy or off-policy set of Actor (or ActorCritic), Algo and Storage core components.
 
 One of the main ideas behind Nappo is to allow single components to be replaced for experimentation without needing to change anything else. Since in RL not all components are compatible with each other (e.g. an on policy actor with an off-policy algorithm), some libraries advocate or higher level implementations with a single function call with many parameters that handles components creation. This approach might be generally more suitable to generate benchmarks and to use out-of-the-box solutions in industry, but less so for researchers trying to improve the state-of-the-art by switching and changing components. Furthermore, to a certain extend some components can be reused in different components set, and if the set does not match an error will be raised at training execution.
 
@@ -54,9 +54,8 @@ We encourage users to create their own core components to extend current functio
 
 
 ```
-
 # 2. Define RL Actor
-actor_critic_factory = OnPolicyActorCritic.create_factory(
+actor_factory = OnPolicyActorCritic.create_factory(
     obs_space, action_space, feature_extractor_network=get_model("MLP"))
 
 # 3. Define RL training algorithm
@@ -74,10 +73,10 @@ Choose the training scheme by instantiating its Workers. Worker components were 
 ```
 # 5. Define workers
 workers = Workers(
-    create_algo_instance=algo_factory,
-    create_storage_instance=storage_factory,
-    create_train_envs_instance=train_env_factory,
-    create_actor_critic_instance=actor_critic_factory,
+    algo_factory=algo_factory,
+    actor_factory=actor_factory,
+    storage_factory=storage_factory,
+    train_envs_factory=train_envs_factory,
     num_col_workers=2, num_grad_workers=6)
 ```
 
