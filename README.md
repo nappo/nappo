@@ -49,11 +49,6 @@ train_envs_factory, action_space, obs_space = VecEnv.create_factory(
 
 We can continue by defining an on-policy or off-policy set of Actor (or ActorCritic), Algo and Storage core components.
 
-One of the main ideas behind Nappo is to allow single components to be replaced for experimentation without needing to change anything else. Since in RL not all components are compatible with each other (e.g. an on policy actor with an off-policy algorithm), some libraries advocate or higher level implementations with a single function call with many parameters that handles components creation. This approach might be generally more suitable to generate benchmarks and to use out-of-the-box solutions in industry, but less so for researchers trying to improve the state-of-the-art by switching and changing components. Furthermore, to a certain extend some components can be reused in different components set, and if the set does not match an error will be raised at training execution.
-
-We encourage users to create their own core components to extend current functionality, following the base.py templates associated with each one of them. Neural networks used as function approximators in the actor components can also be modified by the used. A more detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
-
-
 ```
 # 2. Define RL Actor
 actor_factory = OnPolicyActorCritic.create_factory(
@@ -69,7 +64,11 @@ algo_factory = PPO.create_factory(
 storage_factory = OnPolicyGAEBuffer.create_factory(size=1000, gae_lambda=0.95)
 ```
 
-Choose the training scheme by instantiating its Workers. Worker components were designed to work for any combination of core components. Different
+One of the main ideas behind Nappo is to allow single components to be replaced for experimentation without needing to change anything else. Since in RL not all components are compatible with each other (e.g. an on policy actor with an off-policy algorithm), some libraries advocate or higher level implementations with a single function call with many parameters that handles components creation. This approach might be generally more suitable to generate benchmarks and to use out-of-the-box solutions in industry, but less so for researchers trying to improve the state-of-the-art by switching and changing components. Furthermore, to a certain extend some components can be reused in different components set, and if the set does not match an error will be raised at training execution.
+
+We encourage users to create their own core components to extend current functionality, following the base.py templates associated with each one of them. Neural networks used as function approximators in the actor components can also be modified by the used. A more detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
+
+Following, we instantiate the Workers of the training scheme of our choice. Worker components were designed to work for any combination of core components. Different
 
 ```
 # 5. Define workers
@@ -81,7 +80,7 @@ workers = Workers(
     num_col_workers=2, num_grad_workers=6)
 ```
 
-Create the Learner class and define the training loop.
+Finally, we create a Learner class instance and define the training loop.
 
 ```
 # 6. Define learner
