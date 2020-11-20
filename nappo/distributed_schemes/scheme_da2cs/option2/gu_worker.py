@@ -1,7 +1,9 @@
+import os
 import ray
 import time
 import torch
 import threading
+from shutil import copy2
 from six.moves import queue
 from functools import partial
 from collections import defaultdict, deque
@@ -91,8 +93,6 @@ class GUWorker:
         # Start UpdaterThread
         self.updater.start()
 
-        print("lolololololololo num workers is {}".format(self.num_workers))
-
     @property
     def num_updates(self):
         return self.local_worker.num_updates
@@ -104,11 +104,12 @@ class GUWorker:
         step_metrics = defaultdict(float)
         num_outputs = 0
 
-        while self.outqueue.empty():
-            pass
+        info = self.outqueue.get(timeout=300)
+        for k, v in info.items(): step_metrics[k] += v
+        num_outputs += 1
 
         while not self.outqueue.empty():
-            info = self.outqueue.get()
+            info = self.outqueue.get(timeout=30)
             for k, v in info.items(): step_metrics[k] += v
             num_outputs += 1
 
@@ -134,6 +135,26 @@ class GUWorker:
         """Stop collecting data and updating the local policy."""
         self.collector.stop()
         self.updater.stop()
+
+    def save_model(self, fname):
+        """
+        Save current version of actor as a torch loadable checkpoint.
+
+        Parameters
+        ----------
+        fname : str
+            Filename given to the checkpoint.
+
+        Returns
+        -------
+        save_name : str
+            Path to saved file.
+        """
+        torch.save(self.local_worker.actor.state_dict(), fname + ".tmp")
+        os.rename(fname + '.tmp', fname)
+        save_name = fname + ".{}".format(self.num_updates)
+        copy2(fname, save_name)
+        return save_name
 
 
 class CollectorThread(threading.Thread):
@@ -215,7 +236,7 @@ class CollectorThread(threading.Thread):
         """
 
         # Wait to remote workers to complete data collection tasks
-        for e, rollouts in self.collector_tasks.completed(blocking_wait=False, max_yield=1):
+        for e, rollouts in self.collector_tasks.completed(blocking_wait=True, max_yield=1):
 
             # Move new collected rollouts to parameter server input queue
             self.inqueue.put(ray_get_and_free(rollouts))
@@ -246,6 +267,7 @@ class CollectorThread(threading.Thread):
         self.stopped = True
         for e in self.remote_workers.remote_workers():
             e.terminate_worker.remote()
+
 
 class UpdaterThread(threading.Thread):
     """
@@ -319,9 +341,10 @@ class UpdaterThread(threading.Thread):
         """
 
         n = self.local_worker.algo.num_epochs * self.local_worker.algo.num_mini_batch
+
         if self.local_worker.num_updates % n == 0:
 
-            new_rollouts = self.inqueue.get(timeout=30)
+            new_rollouts = self.inqueue.get(timeout=300)
             self.local_worker.storage.add_data(new_rollouts["data"])
             self.rollouts_info = new_rollouts["info"]
             self.local_worker.storage.before_update(
