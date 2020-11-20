@@ -1,2 +1,2 @@
 import ray
-from .workers import Workers
+from .option2.workers import Workers

@@ -5,7 +5,7 @@ import threading
 from six.moves import queue
 from functools import partial
 from collections import defaultdict, deque
-from ..utils import TaskPool, ray_get_and_free
+from nappo.distributed_schemes.utils import TaskPool, ray_get_and_free
 
 
 class GUWorker:
