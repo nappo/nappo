@@ -5,13 +5,13 @@ import torch
 import numpy as np
 from shutil import copy2
 from collections import defaultdict
-from ray.services import get_node_ip_address
 
 from .utils import broadcast_message
 from ..base.worker import Worker as W
 from ..base.worker_set import WorkerSet as WS
 from ..base.worker import default_remote_config
-from .utils import check_message, find_free_port
+from .utils import check_message
+
 
 class CGUWorker(W):
     """
@@ -287,23 +287,6 @@ class CGUWorker(W):
         self.iter += 1
 
         return info
-
-    def setup_torch_data_parallel(self, url, world_rank, world_size, backend):
-        """Join a torch process group for distributed SGD."""
-        torch.distributed.init_process_group(
-            backend=backend,
-            init_method=url,
-            rank=world_rank,
-            world_size=world_size)
-        self.distributed_world_size = world_size
-
-    def get_node_ip(self):
-        """Returns the IP address of the current node."""
-        return get_node_ip_address()
-
-    def find_free_port(self):
-        """Returns a free port on the current node."""
-        return find_free_port()
 
     def set_weights(self, weights):
         """

@@ -5,6 +5,7 @@ import torch
 from shutil import copy2
 from functools import partial
 from collections import defaultdict, deque
+from ray.services import get_node_ip_address
 from nappo.distributed_schemes.base.worker import Worker as W
 from nappo.distributed_schemes.base.worker_set import WorkerSet as WS
 from nappo.distributed_schemes.utils import TaskPool, ray_get_and_free
