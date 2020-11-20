@@ -4,8 +4,8 @@ import time
 import torch
 from shutil import copy2
 from functools import partial
-from nappo.distributed_schemes.base.worker import Worker as W
 from collections import defaultdict, deque
+from nappo.distributed_schemes.base.worker import Worker as W
 from nappo.distributed_schemes.base.worker_set import WorkerSet as WS
 from nappo.distributed_schemes.utils import TaskPool, ray_get_and_free
 from nappo.distributed_schemes.base.worker import default_remote_config
@@ -48,11 +48,14 @@ class GUWorker(W):
         remote collection workers.
     """
     def __init__(self,
+                 index_worker,
                  collection_workers_factory,
                  broadcast_interval=1,
                  max_collect_requests_pending=2,
                  updater_queue_size = None,
                  initial_weights=None):
+
+        super(GUWorker, self).__init__(index_worker)
 
         # worker should only see one GPU or None
         device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
