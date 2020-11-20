@@ -1,3 +1,5 @@
+import ray
+from collections import defaultdict
 from .gu_workers import GUWorkerSet
 from .c_workers import CWorkerSet
 
@@ -55,7 +57,7 @@ class Workers:
             train_envs_factory=train_envs_factory,
             worker_remote_config=col_worker_remote_config)
 
-        self._update_worker = GUWorkerSet(
+        self._update_workers = GUWorkerSet(
             num_workers=5,
             collection_workers_factory=col_workers_factory,
             broadcast_interval=broadcast_interval,
@@ -63,6 +65,35 @@ class Workers:
             worker_remote_config={"num_cpus": 1, "num_gpus": 0.5}
         )
 
+        self.num_workers = len(self._update_workers.remote_workers())
+
     def update_workers(self):
         """Return local worker"""
-        return self._update_worker
+        return self
+
+    def step(self):
+        """
+        Takes a logical optimization step.
+
+        Returns
+        -------
+        info : dict
+            Summary dict of relevant information about the update process.
+        """
+
+        # Compute model updates
+        results = ray.get([e.step.remote() for e in self._update_workers.remote_workers()])
+
+        # Merge worker results
+        step_metrics = defaultdict(float)
+        for info in results:
+            #info["scheme/metrics/gradient_update_delay"] = self.num_updates - info.pop("ac_update_num")
+            for k, v in info.items(): step_metrics[k] += v
+
+        # Update info dict
+        info = {k: v / self.num_workers for k, v in step_metrics.items()}
+
+        # Update counters
+        # self.num_updates += 1
+
+        return info
