@@ -2,9 +2,9 @@ import ray
 import time
 import torch
 import numpy as np
-from ..base.worker import Worker as W
-from ..base.worker_set import WorkerSet as WS
-from ..base.worker import default_remote_config
+from nappo.distributed_schemes.base.worker import Worker as W
+from nappo.distributed_schemes.base.worker_set import WorkerSet as WS
+from nappo.distributed_schemes.base.worker import default_remote_config
 
 
 class CWorker(W):

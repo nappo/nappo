@@ -91,6 +91,8 @@ class GUWorker:
         # Start UpdaterThread
         self.updater.start()
 
+        print("lolololololololo num workers is {}".format(self.num_workers))
+
     @property
     def num_updates(self):
         return self.local_worker.num_updates
