@@ -293,7 +293,7 @@ class CWorkerSet(WS):
             worker_params=self.worker_params,
             worker_remote_config=self.remote_config,
             num_workers=num_workers,
-            add_local_worker=False)
+            add_local_worker=True)
 
     @classmethod
     def worker_set_factory(cls,
