@@ -58,7 +58,7 @@ class Workers:
             worker_remote_config=col_worker_remote_config)
 
         self._update_workers = GUWorkerSet(
-            num_workers=5,
+            num_workers=1,
             collection_workers_factory=col_workers_factory,
             broadcast_interval=broadcast_interval,
             max_collector_workers_requests_pending=max_collect_requests_pending,

@@ -51,6 +51,7 @@ class Workers:
             test_envs_factory=test_envs_factory,
             train_envs_factory=train_envs_factory,
             worker_remote_config=col_worker_remote_config)
+
         grad_workers = GWorkerSet(
             algo_factory=algo_factory,
             actor_factory=actor_factory,
@@ -58,6 +59,7 @@ class Workers:
             storage_factory=storage_factory,
             collection_workers_factory=col_workers_factory,
             worker_remote_config=grad_worker_remote_config)
+
         self._update_worker = UWorker(grad_workers)
 
     def update_workers(self):

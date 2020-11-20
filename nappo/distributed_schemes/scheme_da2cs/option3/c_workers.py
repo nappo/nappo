@@ -280,12 +280,12 @@ class CWorkerSet(WS):
         default_remote_config.update(worker_remote_config)
         self.remote_config = default_remote_config
         self.worker_params = {
-            "initial_weights": initial_weights,
             "algo_factory": algo_factory,
+            "actor_factory": actor_factory,
             "storage_factory": storage_factory,
+            "initial_weights": initial_weights,
             "test_envs_factory": test_envs_factory,
             "train_envs_factory": train_envs_factory,
-            "actor_factory": actor_factory,
         }
 
         super(CWorkerSet, self).__init__(

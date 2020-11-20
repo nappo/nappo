@@ -61,7 +61,7 @@ class GUWorker(W):
         # worker should only see one GPU or None
         device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
-        workers = collection_workers_factory(initial_weights)
+        workers = collection_workers_factory(initial_weights).remote_workers()
 
         self.ps = workers.local_worker()
         self.col_workers = workers.remote_workers()
