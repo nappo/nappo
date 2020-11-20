@@ -68,7 +68,9 @@ class CWorkerSet(WS):
 
     @classmethod
     def worker_set_factory(cls,
+                           algo_factory,
                            actor_factory,
+                           storage_factory,
                            test_envs_factory,
                            train_envs_factory,
                            worker_remote_config=default_remote_config,
@@ -78,12 +80,16 @@ class CWorkerSet(WS):
 
         Parameters
         ----------
-        train_envs_factory : func
-            A function to create train environments.
+        algo_factory : func
+            A function that creates an algorithm class.
         actor_factory : func
             A function that creates a policy.
+        storage_factory : func
+            A function that create a rollouts storage.
         test_envs_factory : func
             A function to create test environments.
+        train_envs_factory : func
+            A function to create train environments.
         worker_remote_config : dict
             Ray resource specs for the remote workers.
         num_workers : int
@@ -94,10 +100,7 @@ class CWorkerSet(WS):
         create_algo_instance : func
             creates a new CWorkerSet class instance.
         """
-        def create_worker_set_instance(
-                initial_weights,
-                algo_factory,
-                storage_factory):
+        def create_worker_set_instance(initial_weights):
             return cls(num_workers=num_workers,
                        initial_weights=initial_weights,
                        worker_remote_config=worker_remote_config,

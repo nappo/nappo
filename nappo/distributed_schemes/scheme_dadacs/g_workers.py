@@ -83,8 +83,7 @@ class GWorker(W):
 
             # Create CWorkerSet instance
             self.c_workers = collection_workers_factory(
-                initial_weights, algo_factory, storage_factory,
-                ).remote_workers()
+                initial_weights).remote_workers()
 
             # Create Storage instance and set world initial state
             self.storage = storage_factory(device)

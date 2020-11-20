@@ -198,7 +198,7 @@ class CGUWorker(W):
 
         #######################################################################
 
-        info.update({"scheme/seconds_to/compute_grads": compute_grads_t})
+        info.update({"scheme/seconds_to/compute_grads_t": compute_grads_t})
         info.update({"scheme/seconds_to/avg_grads_t": avg_grads_t})
 
         return info

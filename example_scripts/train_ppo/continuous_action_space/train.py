@@ -5,6 +5,8 @@ import time
 import json
 import argparse
 
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../..')
+
 from nappo import utils
 from nappo import Learner
 from nappo.core.algos import PPO
