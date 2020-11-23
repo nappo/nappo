@@ -49,9 +49,9 @@ class Workers:
                  col_worker_remote_config={"num_cpus": 1, "num_gpus": 0.5}):
 
         col_workers_factory = CWorkerSet.worker_set_factory(
-            num_workers=num_col_workers,
             algo_factory=algo_factory,
             actor_factory=actor_factory,
+            num_workers=num_col_workers,
             storage_factory=storage_factory,
             test_envs_factory=test_envs_factory,
             train_envs_factory=train_envs_factory,

@@ -160,7 +160,7 @@ class CGUWorker(W):
 
         # Record and return metrics
         self.collect_time = time.time() - t
-        self.collect_samples = num_steps * self.envs_train.num_envs
+        self.collect_samples = self.num_steps_reached * self.envs_train.num_envs
 
     def compute_gradients(self, batch):
         """

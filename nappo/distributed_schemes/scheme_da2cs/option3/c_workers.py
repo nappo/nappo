@@ -331,11 +331,11 @@ class CWorkerSet(WS):
         """
         def create_worker_set_instance(initial_weights):
             return cls(num_workers=num_workers,
-                       initial_weights=initial_weights,
-                       worker_remote_config=worker_remote_config,
                        algo_factory=algo_factory,
                        actor_factory=actor_factory,
                        storage_factory=storage_factory,
+                       initial_weights=initial_weights,
                        test_envs_factory=test_envs_factory,
-                       train_envs_factory=train_envs_factory)
+                       train_envs_factory=train_envs_factory,
+                       worker_remote_config=worker_remote_config)
         return create_worker_set_instance
