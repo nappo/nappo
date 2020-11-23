@@ -62,7 +62,6 @@ class GUWorker(W):
         device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
         workers = collection_workers_factory(initial_weights)
-
         self.ps = workers.local_worker()
         self.col_workers = workers.remote_workers()
 

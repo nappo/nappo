@@ -59,10 +59,10 @@ class Workers:
 
         self._update_workers = GUWorkerSet(
             num_workers=1,
-            collection_workers_factory=col_workers_factory,
             broadcast_interval=broadcast_interval,
+            collection_workers_factory=col_workers_factory,
+            worker_remote_config={"num_cpus": 1, "num_gpus": 0.5},
             max_collector_workers_requests_pending=max_collect_requests_pending,
-            worker_remote_config={"num_cpus": 1, "num_gpus": 0.5}
         )
 
         self.num_workers = len(self._update_workers.remote_workers())

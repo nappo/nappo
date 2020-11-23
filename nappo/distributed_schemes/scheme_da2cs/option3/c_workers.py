@@ -267,16 +267,15 @@ class CWorkerSet(WS):
         Number of remote workers in the worker set.
     """
     def __init__(self,
-                 initial_weights,
                  algo_factory,
                  actor_factory,
                  storage_factory,
+                 initial_weights,
                  train_envs_factory,
                  test_envs_factory=lambda x, y, c: None,
                  worker_remote_config=default_remote_config,
                  num_workers=1):
 
-        self.worker_class = CWorker
         default_remote_config.update(worker_remote_config)
         self.remote_config = default_remote_config
         self.worker_params = {
@@ -285,11 +284,10 @@ class CWorkerSet(WS):
             "storage_factory": storage_factory,
             "initial_weights": initial_weights,
             "test_envs_factory": test_envs_factory,
-            "train_envs_factory": train_envs_factory,
-        }
+            "train_envs_factory": train_envs_factory}
 
         super(CWorkerSet, self).__init__(
-            worker=self.worker_class,
+            worker=CWorker,
             worker_params=self.worker_params,
             worker_remote_config=self.remote_config,
             num_workers=num_workers,
