@@ -317,13 +317,46 @@ class GUWorkerSet(WS):
         # Merge worker results
         step_metrics = defaultdict(float)
         for info in results:
-            info["scheme/metrics/gradient_update_delay"] = self.num_updates - info.pop("ac_update_num")
             for k, v in info.items(): step_metrics[k] += v
 
         # Update info dict
-        info = {k: v / self.num_workers for k, v in step_metrics.items()}
+        info = {k: v / self.num_workers if k != "collected_samples" else v for k, v in step_metrics.items()}
 
         # Update counters
         self.num_updates += 1
 
         return info
+
+    def update_algo_parameter(self, parameter_name, new_parameter_value):
+        """
+        If `parameter_name` is an attribute of Worker.algo, change its value to
+        `new_parameter_value value`.
+
+        Parameters
+        ----------
+        parameter_name : str
+            Algorithm attribute name
+        """
+        for e in self.remote_workers():
+            e.update_algo_parameter.remote(parameter_name, new_parameter_value)
+
+    def save_model(self, fname):
+        """
+        Save current version of actor as a torch loadable checkpoint.
+
+        Parameters
+        ----------
+        fname : str
+            Filename given to the checkpoint.
+
+        Returns
+        -------
+        save_name : str
+            Path to saved file.
+        """
+        model_dict = ray.get(self.remote_workers()[0].get_weights.remote())
+        torch.save(model_dict, fname + ".tmp")
+        os.rename(fname + '.tmp', fname)
+        save_name = fname + ".{}".format(self.num_updates)
+        copy2(fname, save_name)
+        return save_name

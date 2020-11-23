@@ -436,7 +436,7 @@ class CGUWorkerSet(WS):
             for k, v in info.items(): step_metrics[k] += v
 
         # Update info dict
-        info = {k: v / self.num_workers for k, v in step_metrics.items()}
+        info = {k: v / self.num_workers if k != "collected_samples" else v for k, v in step_metrics.items()}
 
         # Update counters
         self.num_updates += 1
