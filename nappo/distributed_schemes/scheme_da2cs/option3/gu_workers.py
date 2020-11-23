@@ -101,7 +101,7 @@ class GUWorker(W):
             Summary dict of relevant gradient-related information.
         """
         t = time.time()
-        grads, info = self.ps.algo.compute_gradients(batch)
+        grads, info = self.ps.algo.compute_gradients(batch, grads_to_cpu=False)
         compute_grads_t = time.time() - t
 
         ###### ALLREDUCE ######################################################
@@ -113,9 +113,10 @@ class GUWorker(W):
         else:
             torch.distributed.all_reduce_coalesced(grads, op=torch.distributed.ReduceOp.SUM)
 
-        for p in self.actor.parameters():
+        for p in self.ps.actor.parameters():
             if p.grad is not None:
                 p.grad /= self.distributed_world_size
+
         avg_grads_t = time.time() - t
 
         #######################################################################
@@ -277,6 +278,7 @@ class GUWorkerSet(WS):
                  broadcast_interval=1,
                  num_workers=1):
 
+        self.num_updates = 0
         self.worker_class = GUWorker
         default_remote_config.update(worker_remote_config)
         self.remote_config = default_remote_config
@@ -289,7 +291,8 @@ class GUWorkerSet(WS):
             worker=self.worker_class,
             worker_params=self.worker_params,
             worker_remote_config=self.remote_config,
-            num_workers=num_workers)
+            num_workers=num_workers,
+            add_local_worker=False)
 
         ip = ray.get(self.remote_workers()[0].get_node_ip.remote())
         port = ray.get(self.remote_workers()[0].find_free_port.remote())
@@ -297,3 +300,30 @@ class GUWorkerSet(WS):
         ray.get([worker.setup_torch_data_parallel.remote(
             address, i, len(self.remote_workers()), "nccl")
                  for i, worker in enumerate(self.remote_workers())])
+
+    def step(self):
+        """
+        Takes a logical optimization step.
+
+        Returns
+        -------
+        info : dict
+            Summary dict of relevant information about the update process.
+        """
+
+        # Compute model updates
+        results = ray.get([e.step.remote() for e in self.remote_workers()])
+
+        # Merge worker results
+        step_metrics = defaultdict(float)
+        for info in results:
+            info["scheme/metrics/gradient_update_delay"] = self.num_updates - info.pop("ac_update_num")
+            for k, v in info.items(): step_metrics[k] += v
+
+        # Update info dict
+        info = {k: v / self.num_workers for k, v in step_metrics.items()}
+
+        # Update counters
+        self.num_updates += 1
+
+        return info

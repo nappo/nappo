@@ -270,8 +270,8 @@ class CWorkerSet(WS):
                  algo_factory,
                  actor_factory,
                  storage_factory,
-                 initial_weights,
                  train_envs_factory,
+                 initial_weights=None,
                  test_envs_factory=lambda x, y, c: None,
                  worker_remote_config=default_remote_config,
                  num_workers=1):
@@ -282,7 +282,7 @@ class CWorkerSet(WS):
             "algo_factory": algo_factory,
             "actor_factory": actor_factory,
             "storage_factory": storage_factory,
-            "initial_weights": initial_weights,
+#            "initial_weights": initial_weights,
             "test_envs_factory": test_envs_factory,
             "train_envs_factory": train_envs_factory}
 
@@ -332,7 +332,7 @@ class CWorkerSet(WS):
                        algo_factory=algo_factory,
                        actor_factory=actor_factory,
                        storage_factory=storage_factory,
-                       initial_weights=initial_weights,
+#                       initial_weights=initial_weights,
                        test_envs_factory=test_envs_factory,
                        train_envs_factory=train_envs_factory,
                        worker_remote_config=worker_remote_config)

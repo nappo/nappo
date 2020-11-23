@@ -38,7 +38,7 @@ ray.init(address="auto")
 
 The first part in any Nappo training script consists in defining the core components, the lower level modules. All core components have a `create_factory` method, which returns a function that allows to later create independent instances in different workers if required by the training scheme.
 
-We can start with the environment. Nappo supports by default pybullet, atari and mujoco environments, but it is easy to extend it to any other environment. A detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
+We can start with **the VecEnv** (vector environment). Nappo supports by default pybullet, atari and mujoco environments, but it is easy to extend it to any other environment. A detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
 
 ```
 # 1. Define Train Vector of Envs
@@ -47,7 +47,7 @@ train_envs_factory, action_space, obs_space = VecEnv.create_factory(
     env_kwargs={"env_id": "HalfCheetahBulletEnv-v0"})
 ```
 
-We can continue by defining an on-policy or off-policy set of Actor (or ActorCritic), Algo and Storage core components.
+We can continue by defining an on-policy or off-policy set of **Actor** (or ActorCritic), **Algo** and **Storage** core components.
 
 ```
 # 2. Define RL Actor
@@ -64,7 +64,7 @@ algo_factory = PPO.create_factory(
 storage_factory = OnPolicyGAEBuffer.create_factory(size=1000, gae_lambda=0.95)
 ```
 
-One of the main ideas behind Nappo is to allow single components to be replaced for experimentation without the need to change anything else. Since in RL not all components are compatible with each other (e.g. an on policy storage with an off-policy algorithm is not expected to work), some libraries advocate or higher level implementations with a single function call that accept many parameters and handle creation of components under the hood. This approach might be generally more suitable to generate benchmarks and to use out-of-the-box solutions in industry, but less so for researchers trying to improve the state-of-the-art by switching and changing components. Furthermore, to a certain extend some components can be reused in different set. If the components within the defined set do not match, a NotImplementedError error will be raised during execution.
+One of the main ideas behind Nappo is to allow single components to be replaced for experimentation without the need to change anything else. Since in RL not all components are compatible with each other (e.g. an on-policy storage with an off-policy algorithm is not expected to work), some libraries advocate or higher level implementations with a single function call that accept many parameters and handle creation of components under the hood. This approach might be generally more suitable to generate benchmarks and to use out-of-the-box solutions in industry, but less so for researchers trying to improve the state-of-the-art by switching and changing components. Furthermore, to a certain extend some components can be reused in a different set. If the components within the defined set do not match, a NotImplementedError error will be raised during execution.
 
 We encourage users to create their own core components to extend current functionality, following the base.py templates associated with each one of them. Neural networks used as function approximators in the actor components can also be modified by the user. A more detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
 

@@ -69,31 +69,4 @@ class Workers:
 
     def update_workers(self):
         """Return local worker"""
-        return self
-
-    def step(self):
-        """
-        Takes a logical optimization step.
-
-        Returns
-        -------
-        info : dict
-            Summary dict of relevant information about the update process.
-        """
-
-        # Compute model updates
-        results = ray.get([e.step.remote() for e in self._update_workers.remote_workers()])
-
-        # Merge worker results
-        step_metrics = defaultdict(float)
-        for info in results:
-            #info["scheme/metrics/gradient_update_delay"] = self.num_updates - info.pop("ac_update_num")
-            for k, v in info.items(): step_metrics[k] += v
-
-        # Update info dict
-        info = {k: v / self.num_workers for k, v in step_metrics.items()}
-
-        # Update counters
-        # self.num_updates += 1
-
-        return info
+        return self._update_workers
