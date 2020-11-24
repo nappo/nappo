@@ -81,25 +81,25 @@ def main():
     elif args.scheme == "3ds":
         workers_params.update({
             "num_workers": args.num_workers,
-            "worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 1.0}
+            "worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 0.125}
         })
     elif args.scheme in ["2dacs", "2daca"]:
         workers_params.update({
             "num_col_grad_workers": args.num_workers,
-            "worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 1.0}
+            "worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 0.125}
         })
     elif args.scheme == "da2cs":
         workers_params.update({
             "updater_device": "cuda:0",
             "num_col_workers": args.num_workers,
-            "col_worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 1.0}
+            "col_worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 0.125}
         })
     elif args.scheme in ["dadacs", "dadaca"]:
         workers_params.update({
             "num_grad_workers": args.num_workers,
             "num_col_workers": args.num_workers * 2,
-            "grad_worker_remote_config": {"num_cpus": 1, "num_gpus": 0.5},
-            "col_worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 0.5},
+            "grad_worker_remote_config": {"num_cpus": 1, "num_gpus": 0.125},
+            "col_worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 0.125},
         })
     else:
         raise ValueError("Scheme {} does not exist".format(args.scheme))

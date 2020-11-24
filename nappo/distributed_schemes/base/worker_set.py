@@ -45,7 +45,7 @@ class WorkerSet:
 
         if add_local_worker:
             self._local_worker = self._make_worker(
-                self.worker_class, index_worker=1,
+                self.worker_class, index_worker=0,
                 worker_params=self.worker_params)
             self.worker_params.update({
                 "initial_weights": ray.put({

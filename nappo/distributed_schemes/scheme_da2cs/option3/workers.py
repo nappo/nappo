@@ -1,5 +1,4 @@
 import ray
-from collections import defaultdict
 from .gu_workers import GUWorkerSet
 from .c_workers import CWorkerSet
 

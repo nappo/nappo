@@ -66,7 +66,7 @@ class GUWorker(W):
         self.col_workers = workers.remote_workers()
 
         self.ps.actor.to(device) # necessary?
-        self.latest_weights = ray.put({"update": 0, "weights": self.ps.get_weights()})
+        self.latest_weights = ray.put({"update": 0, "weights": self.get_weights()})
         self.num_workers = len(self.col_workers)
         self.broadcast_interval = broadcast_interval
 
@@ -85,6 +85,10 @@ class GUWorker(W):
             for _ in range(max_collect_requests_pending):
                 ev.set_weights.remote(self.latest_weights)
                 self.collector_tasks.add(ev, ev.collect_data.remote())
+
+    def get_weights(self):
+        """Returns current actor.state_dict() weights"""
+        return self.ps.get_weights()
 
     def compute_gradients(self, batch):
         """
@@ -138,7 +142,7 @@ class GUWorker(W):
         """Broadcast a new set of weights from the local worker"""
         self.latest_weights = ray.put({
             "update": self.num_updates,
-            "weights": self.ps.get_weights()})
+            "weights": self.get_weights()})
         self.num_sent_since_broadcast = 0
 
     def step(self):
@@ -283,6 +287,7 @@ class GUWorkerSet(WS):
         default_remote_config.update(worker_remote_config)
         self.remote_config = default_remote_config
         self.worker_params = {
+            "broadcast_interval": broadcast_interval,
             "collection_workers_factory": collection_workers_factory,
             "max_collect_requests_pending": max_collector_workers_requests_pending,
         }
@@ -291,8 +296,7 @@ class GUWorkerSet(WS):
             worker=self.worker_class,
             worker_params=self.worker_params,
             worker_remote_config=self.remote_config,
-            num_workers=num_workers,
-            add_local_worker=False)
+            num_workers=num_workers)
 
         ip = ray.get(self.remote_workers()[0].get_node_ip.remote())
         port = ray.get(self.remote_workers()[0].find_free_port.remote())

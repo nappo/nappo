@@ -7,13 +7,13 @@ from shutil import copy2
 from six.moves import queue
 from functools import partial
 from collections import defaultdict, deque
+from nappo.distributed_schemes.base.worker import Worker as W
 from nappo.distributed_schemes.utils import TaskPool, ray_get_and_free
 from nappo.distributed_schemes.base.worker_set import WorkerSet as WS
 from nappo.distributed_schemes.base.worker import default_remote_config
 
 
-
-class GUWorker:
+class GUWorker(W):
     """
     Update worker. Handles actor updates.
 
@@ -52,12 +52,18 @@ class GUWorker:
          Queue to store the info dicts resulting from the model update operation.
     """
     def __init__(self,
-                 workers,
-                 device="cpu",
+                 index_worker,
+                 collection_workers_factory,
                  broadcast_interval=1,
                  updater_queue_size=100,
-                 max_collect_requests_pending=2):
+                 max_collect_requests_pending=2,
+                 initial_weights=None):
 
+        super(GUWorker, self).__init__(index_worker)
+
+        # worker should only see one GPU or None
+        device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        workers = collection_workers_factory(initial_weights)
         self.local_worker = workers.local_worker()
         self.local_worker.actor.to(device)
         self.remote_workers = workers.remote_workers()
@@ -91,7 +97,8 @@ class GUWorker:
         self.updater = UpdaterThread(
             input_queue=self.inqueue,
             output_queue=self.outqueue,
-            local_worker=self.local_worker)
+            local_worker=self.local_worker,
+            num_remote_workers=self.num_workers)
 
         # Start UpdaterThread
         self.updater.start()
@@ -99,6 +106,10 @@ class GUWorker:
     @property
     def num_updates(self):
         return self.local_worker.num_updates
+
+    def get_weights(self):
+        """Returns current actor.state_dict() weights"""
+        return self.local_worker.get_weights()
 
     def step(self):
         """Collect and returns information from executed training steps."""
@@ -300,7 +311,8 @@ class UpdaterThread(threading.Thread):
     def __init__(self,
                  input_queue,
                  output_queue,
-                 local_worker):
+                 local_worker,
+                 num_remote_workers):
 
         threading.Thread.__init__(self)
 
@@ -308,6 +320,7 @@ class UpdaterThread(threading.Thread):
         self.inqueue = input_queue
         self.outqueue = output_queue
         self.local_worker = local_worker
+        self.num_remote_workers = num_remote_workers
 
     def run(self):
         while not self.stopped:
@@ -329,7 +342,7 @@ class UpdaterThread(threading.Thread):
         """
 
         t = time.time()
-        grads, info = self.ps.algo.compute_gradients(batch, grads_to_cpu=False)
+        grads, info = self.local_worker.algo.compute_gradients(batch, grads_to_cpu=False)
         compute_grads_t = time.time() - t
 
         ###### ALLREDUCE ######################################################
@@ -337,15 +350,13 @@ class UpdaterThread(threading.Thread):
         t = time.time()
         if torch.cuda.is_available():
             for g in grads:
-                torch.distributed.all_reduce(g,
-                                             op=torch.distributed.ReduceOp.SUM)
+                torch.distributed.all_reduce(g, op=torch.distributed.ReduceOp.SUM)
         else:
-            torch.distributed.all_reduce_coalesced(grads,
-                                                   op=torch.distributed.ReduceOp.SUM)
+            torch.distributed.all_reduce_coalesced(grads, op=torch.distributed.ReduceOp.SUM)
 
-        for p in self.ps.actor.parameters():
+        for p in self.local_worker.actor.parameters():
             if p.grad is not None:
-                p.grad /= self.distributed_world_size
+                p.grad /= self.num_remote_workers
 
         avg_grads_t = time.time() - t
 
@@ -451,6 +462,7 @@ class GUWorkerSet(WS):
         default_remote_config.update(worker_remote_config)
         self.remote_config = default_remote_config
         self.worker_params = {
+            "broadcast_interval": broadcast_interval,
             "collection_workers_factory": collection_workers_factory,
             "max_collect_requests_pending": max_collector_workers_requests_pending,
         }
@@ -522,9 +534,4 @@ class GUWorkerSet(WS):
         save_name : str
             Path to saved file.
         """
-        model_dict = ray.get(self.remote_workers()[0].get_weights.remote())
-        torch.save(model_dict, fname + ".tmp")
-        os.rename(fname + '.tmp', fname)
-        save_name = fname + ".{}".format(self.num_updates)
-        copy2(fname, save_name)
-        return save_name
+        return ray.get(self.remote_workers()[0].save_model.remote(fname))
