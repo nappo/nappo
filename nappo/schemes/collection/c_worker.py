@@ -91,9 +91,8 @@ class CWorker(W):
         self.iter, self.actor_version, self.samples_collected = 0, 0, 0
         self.update_every = self.algo.update_every or self.storage.max_size
 
-        # Create train environments, define initial train states
+        # Create train environments
         self.envs_train = train_envs_factory(self.device, index_worker)
-        self.obs, self.rhs, self.done = self.actor.policy_initial_states(self.envs_train.reset())
 
         # Create test environments (if creation function available)
         self.envs_test = test_envs_factory(self.device, index_worker, mode="test")
@@ -111,6 +110,10 @@ class CWorker(W):
             # Define train performance tracking variables
             self.train_perf = deque(maxlen=100)
             self.acc_reward = torch.zeros_like(self.done)
+
+            # Define initial train states
+            self.obs, self.rhs, self.done = self.actor.policy_initial_states(
+                self.envs_train.reset())
 
             # Collect initial samples
             print("Collecting initial samples...")
