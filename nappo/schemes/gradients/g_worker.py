@@ -105,7 +105,7 @@ class GWorker(W):
     def actor_version(self):
         return self.local_worker.actor_version
 
-    def step(self, distribute_gradients=False):
+    def step(self, fraction_workers=1.0, fraction_samples=1.0, distribute_gradients=False):
         """
         Perform logical learning step. Training proceeds receiving data samples
         from collection workers and computations policy gradients.
@@ -122,7 +122,7 @@ class GWorker(W):
         if self.iter % (self.algo.num_epochs * self.algo.num_mini_batch) == 0:
 
             if self.communication == "synchronous":
-                self.collector.step()
+                self.collector.step(fraction_workers, fraction_samples)
 
             new_rollouts = self.inqueue.get(timeout=300)
             self.local_worker.storage.add_data(new_rollouts["data"])
@@ -146,7 +146,8 @@ class GWorker(W):
 
         self.iter += 1
 
-        return {"grads": grads, "info": info}
+        return grads, info
+        # return {"grads": grads, "info": info}
 
     def compute_gradients(self, batch):
         """
