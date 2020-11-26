@@ -146,7 +146,7 @@ class GWorker(W):
 
         self.iter += 1
 
-        return (grads, info)
+        return {"grads": grads, "info": info}
 
     def compute_gradients(self, batch):
         """
