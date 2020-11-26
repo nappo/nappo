@@ -65,7 +65,7 @@ class CWorker(W):
                  algo_factory,
                  actor_factory,
                  storage_factory,
-                 train_envs_factory=lambda x, y, z: None,
+                 train_envs_factory=lambda x, y : None,
                  test_envs_factory=lambda x, y, z: None,
                  initial_weights=None,
                  device=None):
@@ -92,7 +92,7 @@ class CWorker(W):
         self.update_every = self.algo.update_every or self.storage.max_size
 
         # Create train environments, define initial train states
-        self.envs_train = train_envs_factory(self.device, index_worker, mode="train")
+        self.envs_train = train_envs_factory(self.device, index_worker)
         self.obs, self.rhs, self.done = self.actor.policy_initial_states(self.envs_train.reset())
 
         # Create test environments (if creation function available)
