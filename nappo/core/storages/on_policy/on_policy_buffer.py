@@ -65,7 +65,7 @@ class OnPolicyBuffer(S):
         sample : dict
             Data sample (containing all tensors of an environment transition)
         """
-        assert set(sample.keys()) == set(self.on_policy_data_fields)
+        assert set(sample.keys()) == set(self.o)
         self.data["obs"] = torch.zeros(self.max_size + 1, *sample["obs"].shape).to(self.device)
         self.data["val"] = torch.zeros(self.max_size + 1, *sample["val"].shape).to(self.device)
         self.data["rhs"] = torch.zeros(self.max_size + 1, *sample["rhs"].shape).to(self.device)
@@ -212,7 +212,8 @@ class OnPolicyBuffer(S):
                         ret.append(self.data["ret"][:l, ind])
                         done.append(self.data["done"][:l, ind])
                         logp.append(self.data["logp"][:l, ind])
-                        adv.append(self.data["adv"][:l, ind])
+                        if "adv" in self.data.keys():
+                            adv.append(self.data["adv"][:l, ind])
 
                     batch = dict(
                         obs=torch.stack(obs, dim=1).view(-1, *self.data["obs"].size()[2:]),
@@ -222,7 +223,8 @@ class OnPolicyBuffer(S):
                         ret=torch.stack(ret, dim=1).view(-1, *self.data["ret"].size()[2:]),
                         done=torch.stack(done, dim=1).view(-1, *self.data["done"].size()[2:]),
                         logp=torch.stack(logp, dim=1).view(-1, *self.data["logp"].size()[2:]),
-                        adv=torch.stack(adv, dim=1).view(-1, *self.data["adv"].size()[2:]))
+                        adv=torch.stack(adv, dim=1).view(-1, *self.data["adv"].size()[2:])
+                        if "adv" in self.data.keys() else None)
 
                     yield batch
 
@@ -239,7 +241,8 @@ class OnPolicyBuffer(S):
                         ret=self.data["ret"][0:l].reshape(-1, *self.data["ret"].shape[2:])[idxs],
                         done=self.data["done"][0:l].reshape(-1, *self.data["done"].shape[2:])[idxs],
                         logp=self.data["logp"][0:l].reshape(-1, *self.data["logp"].shape[2:])[idxs],
-                        adv=self.data["adv"][0:l].reshape(-1, *self.data["adv"].shape[2:])[idxs])
+                        adv=self.data["adv"][0:l].reshape(-1, *self.data["adv"].shape[2:])[idxs]
+                        if "adv" in self.data.keys() else None)
 
                     yield batch
 

@@ -126,7 +126,7 @@ class GWorker(W):
                 self.collector.step(fraction_workers, fraction_samples)
 
             data, self.col_info = self.inqueue.get(timeout=300)
-            self.local_worker.storage.add_data(data)
+            self.storage.add_data(data)
             self.storage.before_update(self.actor, self.algo)
             self.batches = self.storage.generate_batches(
                 self.algo.num_mini_batch, self.algo.mini_batch_size,
