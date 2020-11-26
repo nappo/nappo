@@ -95,7 +95,7 @@ class CWorker(W):
         self.envs_train = train_envs_factory(self.device, index_worker)
 
         # Create test environments (if creation function available)
-        self.envs_test = test_envs_factory(self.device, index_worker, mode="test")
+        self.envs_test = test_envs_factory(self.device, index_worker, "test")
 
         if initial_weights: # if remote worker
 
