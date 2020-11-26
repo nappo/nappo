@@ -30,8 +30,8 @@ class UWorker(W):
     """
 
     def __init__(self,
-                 index_worker,
                  grad_workers_factory,
+                 index_worker=0,
                  grad_execution="decentralised",
                  grad_communication="synchronous",
                  update_execution="centralised",
