@@ -199,10 +199,9 @@ class CWorker(W):
             # Keep track of num collected samples
             self.samples_collected += self.envs_train.num_envs
 
-            if self.index_worker > 0: # Only remote workers
-                # Check stop message for the synchronised case
-                if check_message("sample") == b"stop" and step >= min_steps:
-                    break
+            # Check stop message for the synchronised case
+            if check_message("sample") == b"stop" and step >= min_steps:
+                break
 
         col_time = time.time() - t
         train_perf = 0 if len(self.train_perf) == 0 else sum(self.train_perf) / len(self.train_perf)

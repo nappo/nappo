@@ -321,11 +321,7 @@ class CollectorThread(threading.Thread):
             self.start()
 
         elif col_execution == "decentralised" and col_communication == "synchronous":
-            self.pending_tasks = {}
-            self.broadcast_new_weights()
-            for w in self.remote_workers:
-                future = w.collect_data.remote()
-                self.pending_tasks[future] = w
+            pass
 
         elif col_execution == "decentralised" and col_communication == "asynchronous":
             # Start CollectorThread
@@ -360,6 +356,7 @@ class CollectorThread(threading.Thread):
         """
 
         if self.col_execution == "centralised" and self.col_communication == "synchronous":
+
             rollouts = self.local_worker.collect_data(min_fraction=fraction_samples)
             self.inqueue.put(rollouts)
 
@@ -372,26 +369,24 @@ class CollectorThread(threading.Thread):
             fraction_samples = fraction_samples if self.num_workers > 1 else 1.0
             fraction_workers = fraction_workers if self.num_workers > 1 else 1.0
 
+            # Start data collection in all workers
+            broadcast_message("sample", b"start-continue")
+
+            pending_samples = [e.collect_data.remote(
+                min_fraction=fraction_samples) for e in self.remote_workers]
+
             # Keep checking how many workers have finished until percent% are ready
-            samples_ready, samples_not_ready = ray.wait(list(self.pending_tasks.keys(
-            )), num_returns=len(self.pending_tasks), timeout=0.5)
+            samples_ready, samples_not_ready = ray.wait(pending_samples,
+                num_returns=len(self.pending_tasks), timeout=0.5)
             while len(samples_ready) < (self.num_workers * fraction_workers):
-                samples_ready, samples_not_ready = ray.wait(list(self.pending_tasks.keys(
-                    )), num_returns=len(self.pending_tasks), timeout=0.5)
+                samples_ready, samples_not_ready = ray.wait(pending_samples,
+                    num_returns=len(self.pending_tasks), timeout=0.5)
 
             # Send stop message to the workers
             broadcast_message("sample", b"stop")
 
             # Compute model updates
-            rollouts = ray.get([e.step.remote() for e in self.remote_workers])
-            for r in rollouts: self.inqueue.put(r)
-
-            # Kick-off a new round of data collection tasks
-            broadcast_message("sample", b"start-continue")
-            self.broadcast_new_weights()
-            for w in self.remote_workers:
-                future = w.collect_data.remote(min_fraction=fraction_samples)
-                self.pending_tasks[future] = w
+            for r in pending_samples: self.inqueue.put(ray_get_and_free(r))
 
         elif self.col_execution == "decentralised" and self.col_communication == "asynchronous":
 

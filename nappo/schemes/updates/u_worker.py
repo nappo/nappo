@@ -5,7 +5,7 @@ import threading
 from six.moves import queue
 from collections import defaultdict
 from ..base.worker import Worker as W
-from ..utils import ray_get_and_free, average_gradients
+from ..utils import ray_get_and_free, average_gradients, broadcast_message
 
 
 class UWorker(W):
@@ -182,7 +182,7 @@ class UpdaterThread(threading.Thread):
         while not self.stopped:
             self.step()
 
-    def step(self):
+    def step(self, fraction_workers=1.0, fraction_samples=1.0):
         """
         Continuously pulls data from the input queue, computes gradients,
         updates the local actor model and places information in the
@@ -202,23 +202,29 @@ class UpdaterThread(threading.Thread):
         elif self.grad_execution == "decentralised" and self.grad_communication == "synchronous":
 
             to_average = []
-            pending_gradients = {}
             step_metrics = defaultdict(float)
 
-            # Call for gradients from all workers
-            for e in self.grad_workers.remote_workers():
-                future = e.step.remote()
-                pending_gradients[future] = e
+            fraction_samples = fraction_samples if self.num_workers > 1 else 1.0
+            fraction_workers = fraction_workers if self.num_workers > 1 else 1.0
 
-            # Wait for workers to send back gradients
-            while pending_gradients:
+            # Start data collection in all workers
+            broadcast_message("sample", b"start-continue")
 
-                # Get gradients 1 by 1
-                wait_results = ray.wait(list(pending_gradients.keys()))
-                ready_list = wait_results[0]
-                future = ready_list[0]
-                gradients, info = ray_get_and_free(future)
-                pending_gradients.pop(future)
+            pending_grads = [e.step.remote(fraction_workers, fraction_samples) for e in self.remote_workers]
+
+            # Keep checking how many workers have finished until percent% are ready
+            samples_ready, samples_not_ready = ray.wait(pending_grads,
+              num_returns=len(self.pending_tasks), timeout=0.5)
+            while len(samples_ready) < (self.num_workers * fraction_workers):
+                samples_ready, samples_not_ready = ray.wait(pending_grads,
+                  num_returns=len(self.pending_tasks), timeout=0.5)
+
+            # Send stop message to the workers
+            broadcast_message("sample", b"stop")
+
+            # Compute model updates
+            for grads in pending_grads:
+                gradients, info = ray_get_and_free(grads)
 
                 # Update info dict
                 info["update_version"] = self.local_worker.actor_version
