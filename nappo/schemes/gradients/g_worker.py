@@ -299,6 +299,7 @@ class CollectorThread(threading.Thread):
 
         threading.Thread.__init__(self)
 
+        self.stopped = False
         self.inqueue = input_queue
         self.col_execution = col_execution
         self.col_communication = col_communication
@@ -335,7 +336,6 @@ class CollectorThread(threading.Thread):
         else:
             raise NotImplementedError
 
-        self.stopped = False
 
     def run(self):
         while not self.stopped:
