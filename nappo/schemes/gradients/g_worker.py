@@ -85,7 +85,10 @@ class GWorker(W):
         self.algo = self.local_worker.algo
 
         # Get storage instance
-        self.storage = deepcopy(self.local_worker.storage)
+        if col_communication == "synchronous":
+            self.storage = self.local_worker.storage
+        else:
+            self.storage = deepcopy(self.local_worker.storage)
 
         # Queue
         self.inqueue = queue.Queue(maxsize=100)
