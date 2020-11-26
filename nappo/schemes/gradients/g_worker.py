@@ -4,6 +4,7 @@ import time
 import torch
 import threading
 from shutil import copy2
+from copy import deepcopy
 from six.moves import queue
 from functools import partial
 from collections import defaultdict, deque
@@ -84,7 +85,7 @@ class GWorker(W):
         self.algo = self.local_worker.algo
 
         # Get storage instance
-        self.storage = self.local_worker.storage
+        self.storage = deepcopy(self.local_worker.storage)
 
         # Queue
         self.inqueue = queue.Queue(maxsize=100)
