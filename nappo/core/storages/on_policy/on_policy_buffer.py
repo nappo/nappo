@@ -65,7 +65,7 @@ class OnPolicyBuffer(S):
         sample : dict
             Data sample (containing all tensors of an environment transition)
         """
-        assert set(sample.keys()) == set(self.data.keys())
+        assert set(sample.keys()) == set(self.on_policy_data_fields)
         self.data["obs"] = torch.zeros(self.max_size + 1, *sample["obs"].shape).to(self.device)
         self.data["val"] = torch.zeros(self.max_size + 1, *sample["val"].shape).to(self.device)
         self.data["rhs"] = torch.zeros(self.max_size + 1, *sample["rhs"].shape).to(self.device)
