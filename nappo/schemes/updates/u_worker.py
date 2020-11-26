@@ -266,7 +266,7 @@ class UpdaterThread(threading.Thread):
 
             # Update remote worker model version
             weights = ray.put({
-                "update": self.local_worker.actor_version,
+                "version": self.local_worker.actor_version,
                 "weights": self.local_worker.get_weights()})
             e.set_weights.remote(weights)
 
