@@ -44,7 +44,7 @@ class Learner:
         # Input attributes
         self.log_dir = log_dir
         self.target_steps = target_steps
-        self.update_workers = workers.update_workers()
+        self.update_worker = workers.update_worker()
 
         # Counters and metrics
         self.num_samples_collected = 0
@@ -64,7 +64,7 @@ class Learner:
         """Takes a logical synchronous optimization step."""
 
         # Update step
-        info = self.update_workers.step()
+        info = self.update_worker.step()
 
         # info.update({"scheme/metrics/col_grad_lag": self.ac_version - self.col_info["ac_version"]})
         # grad_update_lag
@@ -91,7 +91,7 @@ class Learner:
             True if training has reached the target number of steps.
         """
         flag = self.num_samples_collected >= self.target_steps
-        if flag: self.update_workers.stop()
+        if flag: self.update_worker.stop()
         return flag
 
     def get_metrics(self):
@@ -101,7 +101,7 @@ class Learner:
     def print_info(self):
         """Print relevant information about the training process"""
         s = "Update {}, num samples collected {}, FPS {}".format(
-            self.update_workers.num_updates, self.num_samples_collected,
+            self.update_worker.num_updates, self.num_samples_collected,
             int(self.num_samples_collected / (time.time() - self.start)))
         s += "\n"
         for k, v in self.get_metrics().items():
@@ -123,7 +123,7 @@ class Learner:
         new_parameter_value : int or float
             New value for `parameter_name`.
         """
-        self.update_workers.update_algo_parameter(parameter_name, new_parameter_value)
+        self.update_worker.update_algo_parameter(parameter_name, new_parameter_value)
 
     def save_model(self):
         """
@@ -135,5 +135,5 @@ class Learner:
             Path to saved file.
         """
         fname = os.path.join(self.log_dir, "actor_critic.state_dict")
-        save_name = self.update_workers.save_model(fname)
+        save_name = self.update_worker.save_model(fname)
         return save_name

@@ -78,13 +78,13 @@ class GWorker(W):
         self.remote_workers = self.c_workers.remote_workers()
 
         # Get Actor Critic instance
-        self.actor = self.local_worker().actor
+        self.actor = self.local_worker.actor
 
         # Get Algorithm instance
-        self.algo = self.local_worker().algo
+        self.algo = self.local_worker.algo
 
         # Get storage instance
-        self.storage = self.local_worker().storage
+        self.storage = self.local_worker.storage
 
         # Print worker information
         if index_worker > 0: self.print_worker_info()
@@ -186,7 +186,7 @@ class GWorker(W):
         avg_grads_t = time.time() - t
         return avg_grads_t
 
-    def apply_gradients(self, gradients):
+    def apply_gradients(self, gradients=None):
         """Update Actor Critic model"""
         self.local_worker.actor_version += 1
         self.algo.apply_gradients(gradients)
@@ -222,7 +222,7 @@ class GWorker(W):
         for e in self.c_workers.remote_workers():
             e.update_algo_parameter.remote(parameter_name, new_parameter_value)
 
-    def save_model(self, fname, args):
+    def save_model(self, fname):
         """
         Save current version of actor as a torch loadable checkpoint.
 

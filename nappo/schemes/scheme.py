@@ -88,6 +88,6 @@ class Scheme:
             update_execution=update_execution,
         )
 
-    def update_workers(self):
+    def update_worker(self):
         """Return local worker"""
         return self._update_worker

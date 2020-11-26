@@ -68,6 +68,10 @@ class UWorker(W):
         # Print worker information
         if index_worker > 0: self.print_worker_info()
 
+    @property
+    def num_updates(self):
+        return self.local_worker.actor_version
+
     def step(self):
         """ _ """
 
@@ -78,7 +82,7 @@ class UWorker(W):
 
         return new_info
 
-    def save_model(self, fname, args):
+    def save_model(self, fname):
         """
         Save current version of actor as a torch loadable checkpoint.
 
@@ -92,7 +96,7 @@ class UWorker(W):
         save_name : str
             Path to saved file.
         """
-        return self.local_worker.save_model()
+        return self.local_worker.save_model(fname)
 
     def stop(self):
         """Stop remote workers"""
@@ -187,10 +191,12 @@ class UpdaterThread(threading.Thread):
 
         if self.grad_execution == "centralised" and self.grad_communication == "synchronous":
             _, info = self.local_worker.step()
+            info["update_version"] = self.local_worker.actor_version
             self.local_worker.apply_gradients()
 
         elif self.grad_execution == "centralised" and self.grad_communication == "asynchronous":
             _, info = self.local_worker.step()
+            info["update_version"] = self.local_worker.actor_version
             self.local_worker.apply_gradients()
 
         elif self.grad_execution == "decentralised" and self.grad_communication == "synchronous":
@@ -225,7 +231,7 @@ class UpdaterThread(threading.Thread):
 
             # Average and apply gradients
             t = time.time()
-            self.grad_workers.local_worker().update_networks(
+            self.grad_workers.local_worker().apply_gradients(
                 average_gradients(to_average))
             avg_grads_t = time.time() - t
 
@@ -262,7 +268,7 @@ class UpdaterThread(threading.Thread):
             info["update_version"] = self.local_worker.actor_version
 
             # Update local worker weights
-            self.local_worker.update_networks(gradients)
+            self.local_worker.apply_gradients(gradients)
 
             # Update remote worker model version
             weights = ray.put({
@@ -276,9 +282,6 @@ class UpdaterThread(threading.Thread):
 
         else:
             raise NotImplementedError
-
-        # Update counter
-        self.local_worker.actor_version += 1
 
         # Add step info to queue
         self.outqueue.put(info)

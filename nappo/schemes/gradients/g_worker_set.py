@@ -40,12 +40,11 @@ class GWorkerSet(WS):
     def create_factory(cls,
                        num_workers,
                        col_workers_factory,
-                       add_local_worker=True,
                        col_execution="distributed",
                        col_communication="synchronous",
                        grad_worker_resources=default_remote_config):
 
-        def grad_worker_set_factory(device, initial_weights=None):
+        def grad_worker_set_factory(device, add_local_worker, initial_weights=None):
             return cls(
                 local_device=device,
                 num_workers=num_workers,
