@@ -214,10 +214,10 @@ class UpdaterThread(threading.Thread):
 
             # Keep checking how many workers have finished until percent% are ready
             samples_ready, samples_not_ready = ray.wait(pending_grads,
-              num_returns=len(self.pending_tasks), timeout=0.5)
+              num_returns=len(pending_grads), timeout=0.5)
             while len(samples_ready) < (self.num_workers * fraction_workers):
                 samples_ready, samples_not_ready = ray.wait(pending_grads,
-                  num_returns=len(self.pending_tasks), timeout=0.5)
+                  num_returns=len(pending_grads), timeout=0.5)
 
             # Send stop message to the workers
             broadcast_message("sample", b"stop")
