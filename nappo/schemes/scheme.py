@@ -22,6 +22,7 @@ class Scheme:
         A function to create test environments.
     """
     def __init__(self,
+
                  # core
                  algo_factory,
                  actor_factory,
@@ -30,13 +31,15 @@ class Scheme:
                  test_envs_factory=lambda x, y, c: None,
 
                  # collection
-                 col_workers=1,
+                 fraction_workers=1.0,
+                 fraction_samples=1.0,
+                 col_remote_workers=0,
                  col_execution="centralised",
                  col_communication="synchronous",
                  col_worker_resources={"num_cpus": 1, "num_gpus": 0.5},
 
                  # gradients
-                 grad_workers=1,
+                 grad_remote_workers=0,
                  grad_execution="centralised",
                  grad_communication="synchronous",
                  grad_worker_resources={"num_cpus": 1, "num_gpus": 0.5},
@@ -57,7 +60,7 @@ class Scheme:
             train_envs_factory=train_envs_factory,
 
             # col specs
-            num_workers=col_workers,
+            num_workers=col_remote_workers,
             col_worker_resources=col_worker_resources,
         )
 
@@ -69,7 +72,7 @@ class Scheme:
             collection_workers_factory=col_workers_factory,
 
             # grad_specs
-            num_workers=grad_workers,
+            num_workers=grad_remote_workers,
             grad_worker_resources=grad_worker_resources
         )
 

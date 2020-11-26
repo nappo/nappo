@@ -51,6 +51,12 @@ class WorkerSet:
             local_params.update(
                 {"device": local_device, "initial_weights": initial_weights})
 
+            if num_workers > 0:
+                if "test_envs_factory" in local_params:
+                    _ = local_params.pop("test_envs_factory")
+                if "train_envs_factory" in local_params:
+                    _ = local_params.pop("train_envs_factory")
+
             self._local_worker = self._make_worker(
                 self.worker_class, index_worker=0,
                 worker_params=local_params)

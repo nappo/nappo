@@ -1,8 +1,6 @@
-import os
 import ray
 import time
 import torch
-from shutil import copy2
 import threading
 from six.moves import queue
 from collections import defaultdict
@@ -25,8 +23,6 @@ class UWorker(W):
 
     Attributes
     ----------
-    num_updates : int
-        Number of times the actor model has been updated.
     grad_workers : WorkerSet
         Set of workers computing and sending gradients to the UWorker.
     num_workers : int
@@ -43,7 +39,6 @@ class UWorker(W):
 
         super(UWorker, self).__init__(index_worker)
 
-        self.num_updates = 0
         self.grad_execution = grad_execution
         self.update_execution = update_execution
         self.grad_communication = grad_communication
@@ -56,11 +51,8 @@ class UWorker(W):
         add_local_worker = update_execution == "centralised"
         self.grad_workers = grad_workers_factory(local_device, add_local_worker)
 
-
-
-
-
         self.local_worker = self.grad_workers.local_worker()
+        self.remote_workers = self.grad_workers.remote_workers()
         self.num_workers = len(self.grad_workers.remote_workers())
 
         # Queue
@@ -72,7 +64,6 @@ class UWorker(W):
             grad_workers=self.grad_workers,
             grad_communication=grad_communication,
             grad_execution=grad_execution)
-
 
         # Print worker information
         if index_worker > 0: self.print_worker_info()
@@ -87,7 +78,7 @@ class UWorker(W):
 
         return new_info
 
-    def save_model(self, fname):
+    def save_model(self, fname, args):
         """
         Save current version of actor as a torch loadable checkpoint.
 
@@ -101,16 +92,13 @@ class UWorker(W):
         save_name : str
             Path to saved file.
         """
-        torch.save(self.grad_workers.local_worker().actor.state_dict(), fname + ".tmp")
-        os.rename(fname + '.tmp', fname)
-        save_name = fname + ".{}".format(self.num_updates)
-        copy2(fname, save_name)
-        return save_name
+        return self.local_worker.save_model()
 
     def stop(self):
         """Stop remote workers"""
+        self.updater.stopped = True
         for e in self.grad_workers.remote_workers():
-            e.terminate_worker.remote()
+            e.stop.remote()
 
     def update_algo_parameter(self, parameter_name, new_parameter_value):
         """
@@ -122,8 +110,8 @@ class UWorker(W):
         parameter_name : str
             Algorithm attribute name
         """
-        self.grad_workers.local_worker().update_algo_parameter(parameter_name, new_parameter_value)
-        for e in self.grad_workers.remote_workers():
+        self.local_worker.update_algo_parameter(parameter_name, new_parameter_value)
+        for e in self.remote_workers:
             e.update_algo_parameter.remote(parameter_name, new_parameter_value)
 
 
@@ -161,7 +149,6 @@ class UpdaterThread(threading.Thread):
         threading.Thread.__init__(self)
 
         self.stopped = False
-        self.num_updates = 0
         self.outqueue = output_queue
         self.grad_workers = grad_workers
         self.grad_execution = grad_execution
@@ -228,7 +215,7 @@ class UpdaterThread(threading.Thread):
                 pending_gradients.pop(future)
 
                 # Update info dict
-                info["scheme/metrics/gradient_update_delay"] = self.num_updates - info.pop("ac_update_num")
+                info["update_version"] = self.local_worker.actor_version
 
                 # Update counters
                 for k, v in info.items(): step_metrics[k] += v
@@ -250,14 +237,15 @@ class UpdaterThread(threading.Thread):
             # Update info dict
             info = {k: v / self.num_workers if k != "collected_samples" else
             v for k, v in step_metrics.items()}
-            info.update({"scheme/seconds_to/avg_grads": avg_grads_t})
-            info.update({"scheme/seconds_to/sync_grads": sync_grads_t})
+            info.update({"avg_grads_time": avg_grads_t})
+            info.update({"sync_grads_time": sync_grads_t})
 
         elif self.grad_execution == "decentralised" and self.grad_communication == "asynchronous":
+
             # If first call, call for gradients from all workers
-            if self.num_updates == 0:
+            if self.local_worker.actor_version == 0:
                 self.pending_gradients = {}
-                for e in self.grad_workers.remote_workers():
+                for e in self.remote_workers:
                     future = e.step.remote()
                     self.pending_gradients[future] = e
 
@@ -268,18 +256,17 @@ class UpdaterThread(threading.Thread):
 
             # Get gradients
             gradients, info = ray_get_and_free(future)
+            e = self.pending_gradients.pop(future)
 
             # Update info dict
-            info["scheme/metrics/gradient_update_delay"] = self.num_updates - info.pop(
-                "ac_update_num")
+            info["update_version"] = self.local_worker.actor_version
 
             # Update local worker weights
-            self.grad_workers.local_worker().update_networks(gradients)
-            e = self.pending_gradients.pop(future)
+            self.local_worker.update_networks(gradients)
 
             # Update remote worker model version
             weights = ray.put({
-                "update": self.num_updates,
+                "update": self.local_worker.actor_version,
                 "weights": self.local_worker.get_weights()})
             e.set_weights.remote(weights)
 
@@ -291,7 +278,7 @@ class UpdaterThread(threading.Thread):
             raise NotImplementedError
 
         # Update counter
-        self.num_updates += 1
+        self.local_worker.actor_version += 1
 
         # Add step info to queue
         self.outqueue.put(info)
@@ -299,10 +286,6 @@ class UpdaterThread(threading.Thread):
     def sync_weights(self):
         """Synchronize gradient worker models with updater worker model"""
         weights = ray.put({
-            "update": self.num_updates,
+            "version": self.local_worker.actor_version,
             "weights": self.local_worker.get_weights()})
         for e in self.remote_workers: e.set_weights.remote(weights)
-
-    def stop(self):
-        """Stop updating the local policy."""
-        self.stopped = True

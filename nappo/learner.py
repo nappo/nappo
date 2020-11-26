@@ -65,7 +65,13 @@ class Learner:
 
         # Update step
         info = self.update_workers.step()
+
+        # info.update({"scheme/metrics/col_grad_lag": self.ac_version - self.col_info["ac_version"]})
+        # grad_update_lag
+
         info["scheme/metrics/fps"] = int(self.num_samples_collected / (time.time() - self.start))
+        info["scheme/metrics/collection_lag"] = info["grad_version"] - info.pop("col_version")
+        info["scheme/metrics/gradient_lag"] = info.pop("update_version") - info.pop("grad_version")
 
         # Update counters
         self.num_samples_collected += info.pop("collected_samples")
@@ -99,8 +105,10 @@ class Learner:
             int(self.num_samples_collected / (time.time() - self.start)))
         s += "\n"
         for k, v in self.get_metrics().items():
+
             if k.split("/")[0] == "algo":
                 s += "{} {}, ".format(k.split("/")[-1], v)
+
         print(s[:-2], flush=True)
 
     def update_algo_parameter(self, parameter_name, new_parameter_value):

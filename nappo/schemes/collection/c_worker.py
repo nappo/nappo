@@ -2,8 +2,9 @@ import ray
 import time
 import torch
 import numpy as np
+from collections import deque
 from ..base.worker import Worker as W
-from ..utils import broadcast_message, check_message
+from ..utils import check_message
 
 
 class CWorker(W):
@@ -47,7 +48,7 @@ class CWorker(W):
         A Storage class instance.
     iter : int
          Number of times gradients have been computed and sent.
-    ac_version : int
+    actor_version : int
         Number of times the current actor version been has been updated.
     update_every : int
         Number of data samples to collect between network update stages.
@@ -64,11 +65,12 @@ class CWorker(W):
                  algo_factory,
                  actor_factory,
                  storage_factory,
-                 train_envs_factory=lambda x, y, c: None,
-                 test_envs_factory=lambda x, y, c: None,
+                 train_envs_factory=lambda x, y, z: None,
+                 test_envs_factory=lambda x, y, z: None,
                  initial_weights=None,
                  device=None):
 
+        self.index_worker = index_worker
         super(CWorker, self).__init__(index_worker)
 
         # Computation device
@@ -86,7 +88,7 @@ class CWorker(W):
         self.storage = storage_factory(self.device)
 
         # Define counters and other attributes
-        self.iter, self.ac_version, self.samples_collected = 0, 0, 0
+        self.iter, self.actor_version, self.samples_collected = 0, 0, 0
         self.update_every = self.algo.update_every or self.storage.max_size
 
         # Create train environments, define initial train states
@@ -105,16 +107,21 @@ class CWorker(W):
             self.print_worker_info()
 
         if self.envs_train:
+
+            # Define train performance tracking variables
+            self.train_perf = deque(maxlen=100)
+            self.acc_reward = torch.zeros_like(self.done)
+
             # Collect initial samples
             print("Collecting initial samples...")
-            self.collect(self.algo.start_steps)
+            self.collect_data(self.algo.start_steps)
 
 
     def collect_data(self, min_fraction=1.0):
         """ _ """
 
         # Collect train data
-        col_time = self.collect_train_data(min_fraction=min_fraction)
+        col_time, train_perf = self.collect_train_data(min_fraction=min_fraction)
 
         # Get collected rollout and reset storage
         data = self.storage.get_data()
@@ -122,8 +129,9 @@ class CWorker(W):
 
         # Add information to info dict
         info = {}
-        info.update({"ac_version": self.ac_version})
-        info.update({"scheme/seconds_to/collect": col_time})
+        info.update({"time/collect": col_time})
+        info.update({"performance/train": train_perf})
+        info.update({"col_version": self.actor_version})
         info.update({"collected_samples": self.samples_collected})
         self.samples_collected = 0
 
@@ -131,11 +139,12 @@ class CWorker(W):
         if self.iter % self.algo.test_every == 0:
             if self.envs_test and self.algo.num_test_episodes > 0:
                 test_perf = self.evaluate()
-                info.update({"scheme/metrics/test_performance": test_perf})
+                info.update({"performance/test": test_perf})
 
         # Update counter
         self.iter += 1
 
+        # Return data
         rollouts = {"data": data, "info": info}
 
         return rollouts
@@ -160,6 +169,7 @@ class CWorker(W):
         t = time.time()
         num_steps = num_steps or int(self.update_every)
         min_steps = int(num_steps * min_fraction)
+
         for step in range(num_steps):
 
             # Predict next action, next rnn hidden state and algo-specific outputs
@@ -167,6 +177,11 @@ class CWorker(W):
 
             # Interact with envs_vector with predicted action (clipped within action space)
             obs2, reward, done, infos = self.envs_train.step(clip_act)
+
+            # Handle end of episode
+            self.acc_reward += reward
+            self.train_perf.extend(self.acc_reward[done == 1.0].tolist())
+            self.acc_reward[done == 1.0] = 0.0
 
             # Prepare transition dict
             transition = {"obs": self.obs, "rhs": rhs, "act": act, "rew": reward, "obs2": obs2, "done": done}
@@ -178,19 +193,18 @@ class CWorker(W):
             # Update current world state
             self.obs, self.rhs, self.done = obs2, rhs, done
 
-            # Record model version used to collect data
-            self.storage.ac_version = self.ac_version
-
             # Keep track of num collected samples
             self.samples_collected += self.envs_train.num_envs
 
-            # Check stop message for the synchronised case
-            if check_message("sample") == b"stop" and step >= min_steps: # TODO. make sure only ray actors execute that
-                break
+            if self.index_worker > 0: # Only remote workers
+                # Check stop message for the synchronised case
+                if check_message("sample") == b"stop" and step >= min_steps:
+                    break
 
         col_time = time.time() - t
+        train_perf = 0 if len(self.train_perf) == 0 else sum(self.train_perf) / len(self.train_perf)
 
-        return col_time
+        return col_time, train_perf
 
     def evaluate(self):
         """
@@ -231,7 +245,7 @@ class CWorker(W):
         weights: dict of tensors
             Dict containing actor weights to be set.
         """
-        self.ac_version = weights["update"]
+        self.actor_version = weights["version"]
         self.actor.load_state_dict(weights["weights"])
 
     def update_algo_parameter(self, parameter_name, new_parameter_value):

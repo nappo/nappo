@@ -69,12 +69,12 @@ class CWorkerSet(WS):
 
     @classmethod
     def create_factory(cls,
+                       num_workers,
                        algo_factory,
                        actor_factory,
                        storage_factory,
                        test_envs_factory,
                        train_envs_factory,
-                       num_workers=1,
                        col_worker_resources=default_remote_config):
         """
         Returns a function to create new CWorkerSet instances.

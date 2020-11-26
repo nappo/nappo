@@ -1,13 +1,15 @@
+import os
 import ray
 import time
 import torch
 import threading
+from shutil import copy2
 from six.moves import queue
 from functools import partial
 from collections import defaultdict, deque
 
 from ..base.worker import Worker as W
-from ..utils import ray_get_and_free, broadcast_message, check_message
+from ..utils import ray_get_and_free, broadcast_message
 
 
 class GWorker(W):
@@ -47,14 +49,10 @@ class GWorker(W):
         An algorithm class instance.
     storage : a rollout storage class
         A Storage class instance.
-    iter : int
-        Times gradients have been computed and sent.
     ac_version : int
         Number of times the current actor version been has been updated.
     latest_weights : ray object ID
         Last received model weights.
-    collector_tasks : TaskPool
-        Tracks the status of in-flight actor collection tasks.
     """
 
     def __init__(self,
@@ -69,7 +67,6 @@ class GWorker(W):
 
         # Define counters and other attributes
         self.iter = 0
-        self.ac_version = 0
         self.communication = col_communication
 
         # Computation device
@@ -78,6 +75,7 @@ class GWorker(W):
         # Create CWorkerSet instance
         self.c_workers = col_workers_factory(dev, initial_weights)
         self.local_worker = self.c_workers.local_worker()
+        self.remote_workers = self.c_workers.remote_workers()
 
         # Get Actor Critic instance
         self.actor = self.local_worker().actor
@@ -97,10 +95,15 @@ class GWorker(W):
         # Create CollectorThread
         self.collector = CollectorThread(
             input_queue=self.inqueue,
-            collection_workers=self.c_workers,
+            local_worker=self.local_worker,
+            remote_workers=self.remote_workers,
             col_communication=col_communication,
             col_execution=col_execution,
             broadcast_interval=1)
+
+    @property
+    def actor_version(self):
+        return self.local_worker.actor_version
 
     def step(self, distribute_gradients=False):
         """
@@ -123,31 +126,25 @@ class GWorker(W):
 
             new_rollouts = self.inqueue.get(timeout=300)
             self.local_worker.storage.add_data(new_rollouts["data"])
-            self.rollouts_info = new_rollouts["info"]
+            self.col_info = new_rollouts["info"]
             self.storage.before_update(self.actor, self.algo)
             self.batches = self.storage.generate_batches(
                 self.algo.num_mini_batch, self.algo.mini_batch_size,
                 self.algo.num_epochs, self.actor.is_recurrent)
 
-        else:
-            collect_info = {}
-            collect_info.update({"collected_samples": 0})
-
         # Compute gradients, get algo info
         grads, info = self.compute_gradients(self.batches.__next__())
 
         # Add extra information to info dict
-        info.update(self.collect_info)
-        self.collect_info.update({"collected_samples": 0})
-        info.update({"ac_update_num": self.iter})
-        info.update({"scheme/metrics/collection_gradient_delay": self.iter - self.collect_info["ac_version"]})
-
-        # Update counter
-        self.iter += 1
+        info.update(self.col_info)
+        self.col_info.update({"collected_samples": 0})
+        info.update({"grad_version": self.local_worker.actor_version})
 
         if distribute_gradients:
+            grads = None
             self.distribute_gradients(grads)
-            return info
+
+        self.iter += 1
 
         return grads, info
 
@@ -170,7 +167,7 @@ class GWorker(W):
 
         t = time.time()
         grads, info = self.algo.compute_gradients(batch)
-        info.update({"scheme/seconds_to/compute_grads": time.time() - t})
+        info.update({"time/compute_grads": time.time() - t})
 
         return grads, info
 
@@ -191,6 +188,7 @@ class GWorker(W):
 
     def apply_gradients(self, gradients):
         """Update Actor Critic model"""
+        self.local_worker.actor_version += 1
         self.algo.apply_gradients(gradients)
         if self.communication == "synchronous":
             self.collector.broadcast_new_weights()
@@ -202,9 +200,8 @@ class GWorker(W):
         weights: dict of tensors
             Dict containing actor weights to be set.
         """
-        self.latest_weights = weights
-        self.ac_version = weights["update"]
-        self.algo.set_weights(weights["weights"])
+        self.local_worker.actor_version = weights["version"]
+        self.local_worker.algo.set_weights(weights["weights"])
 
     def update_algo_parameter(self, parameter_name, new_parameter_value):
         """
@@ -216,9 +213,40 @@ class GWorker(W):
         parameter_name : str
             Algorithm attribute name
         """
+        self.local_worker.update_algo_parameter(parameter_name, new_parameter_value)
+        for e in self.remote_workers:
+            e.update_algo_parameter.remote(parameter_name, new_parameter_value)
+
+
         self.algo.update_algo_parameter(parameter_name, new_parameter_value)
         for e in self.c_workers.remote_workers():
             e.update_algo_parameter.remote(parameter_name, new_parameter_value)
+
+    def save_model(self, fname, args):
+        """
+        Save current version of actor as a torch loadable checkpoint.
+
+        Parameters
+        ----------
+        fname : str
+            Filename given to the checkpoint.
+
+        Returns
+        -------
+        save_name : str
+            Path to saved file.
+        """
+        torch.save(self.local_worker.actor.state_dict(), fname + ".tmp")
+        os.rename(fname + '.tmp', fname)
+        save_name = fname + ".{}".format(self.local_worker.actor_version)
+        copy2(fname, save_name)
+        return save_name
+
+    def stop(self):
+        """Stop collecting data."""
+        self.collector.stopped = True
+        for e in self.collector.remote_workers:
+            e.terminate_worker.remote()
 
 
 class CollectorThread(threading.Thread):
@@ -264,7 +292,8 @@ class CollectorThread(threading.Thread):
 
     def __init__(self,
                  input_queue,
-                 collection_workers,
+                 local_worker,
+                 remote_workers,
                  col_communication="synchronous",
                  col_execution="distributed",
                  broadcast_interval=1):
@@ -274,11 +303,10 @@ class CollectorThread(threading.Thread):
         self.inqueue = input_queue
         self.col_execution = col_execution
         self.col_communication = col_communication
-        self.collection_workers = collection_workers
         self.broadcast_interval = broadcast_interval
 
-        self.local_worker = self.collection_workers.local_worker()
-        self.remote_workers = self.collection_workers.remote_workers()
+        self.local_worker = local_worker
+        self.remote_workers = remote_workers
         self.num_workers = len(self.remote_workers)
 
         # Counters and metrics
@@ -388,7 +416,6 @@ class CollectorThread(threading.Thread):
         else:
             raise NotImplementedError
 
-
     def should_broadcast(self):
         """Returns whether broadcast() should be called to update weights."""
         return self.num_sent_since_broadcast >= self.broadcast_interval
@@ -397,16 +424,10 @@ class CollectorThread(threading.Thread):
         """Broadcast a new set of weights from the local worker."""
         if self.num_workers > 0:
             latest_weights = ray.put({
-                "update": self.collection_workers.local_worker().num_updates,
-                "weights": self.collection_workers.local_worker().get_weights()})
-            for e in self.collection_workers.remote_workers():
+                "version": self.local_worker.actor_version,
+                "weights": self.local_worker.get_weights()})
+            for e in self.remote_workers:
                 e.set_weights.remote(latest_weights)
             self.num_sent_since_broadcast = 0
-
-    def stop(self):
-        """Stop collecting data."""
-        self.stopped = True
-        for e in self.collection_workers.remote_workers():
-            e.terminate_worker.remote()
 
 

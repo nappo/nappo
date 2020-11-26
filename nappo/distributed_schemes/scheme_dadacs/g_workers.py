@@ -156,10 +156,6 @@ class GWorker(W):
                 self.algo.num_mini_batch, self.algo.mini_batch_size,
                 self.algo.num_epochs, self.actor.is_recurrent)
 
-        else:
-            collect_info = {}
-            collect_info.update({"collected_samples": 0})
-
         # Compute gradients, get algo info
         grads, info = self.compute_gradients(self.batches.__next__())
 
