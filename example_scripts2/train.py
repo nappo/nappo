@@ -68,13 +68,38 @@ def main():
     storage_factory = OnPolicyGAEBuffer.create_factory(size=args.num_steps, gae_lambda=args.gae_lambda)
 
     # 6. Define scheme
-    params = {
+    params = {}
+
+    # add core modules
+    params.update({
         "algo_factory":algo_factory,
         "actor_factory":actor_factory,
         "storage_factory": storage_factory,
         "train_envs_factory":train_envs_factory,
         "test_envs_factory":test_envs_factory,
-    }
+    })
+
+    # add collection specs
+    params.update({
+        "col_remote_workers": 4,
+        "col_communication": "synchronous",
+        "col_worker_resources": {"num_cpus": 1, "num_gpus": 0.125},
+        "col_specs": {"fraction_samples": 1.0, "fraction_workers": 1.0}
+    })
+
+    # add gradient specs
+    params.update({
+        "grad_remote_workers": 0,
+        "grad_communication": "synchronous",
+        "grad_worker_resources": {"num_cpus": 1, "num_gpus": 0.125},
+    })
+
+    # add update specs
+    params.update({
+        "local_device": None,
+        "update_execution": "centralised",
+    })
+
     scheme = Scheme(**params)
 
     # 7. Define learner

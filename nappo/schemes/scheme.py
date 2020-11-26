@@ -31,16 +31,13 @@ class Scheme:
                  test_envs_factory=lambda x, y, c: None,
 
                  # collection
-                 fraction_workers=1.0,
-                 fraction_samples=1.0,
                  col_remote_workers=0,
-                 col_execution="centralised",
                  col_communication="synchronous",
                  col_worker_resources={"num_cpus": 1, "num_gpus": 0.5},
+                 col_specs={"fraction_samples": 1.0, "fraction_workers": 1.0},
 
                  # gradients
                  grad_remote_workers=0,
-                 grad_execution="centralised",
                  grad_communication="synchronous",
                  grad_worker_resources={"num_cpus": 1, "num_gpus": 0.5},
 
@@ -49,6 +46,9 @@ class Scheme:
                  update_execution="centralised"):
 
         # TODO. Add that core components check.
+
+        col_execution="decentralised" if col_remote_workers > 0 else "centralised"
+        grad_execution="decentralised" if grad_remote_workers > 0 else "centralised"
 
         col_workers_factory = CWorkerSet.create_factory(
 

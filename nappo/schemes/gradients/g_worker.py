@@ -409,7 +409,7 @@ class CollectorThread(threading.Thread):
             if self.should_broadcast():
                 self.broadcast_new_weights()
 
-            # Schedule a new colection task
+            # Schedule a new collection task
             future = w.collect_data.remote(min_fraction=fraction_samples)
             self.pending_tasks[future] = w
 
