@@ -373,11 +373,11 @@ class CollectorThread(threading.Thread):
             fraction_workers = fraction_workers if self.num_workers > 1 else 1.0
 
             # Keep checking how many workers have finished until percent% are ready
-            samples_ready, samples_not_ready = ray.wait(self.pending_tasks.keys(
-            ), num_returns=len(self.pending_tasks), timeout=0.5)
+            samples_ready, samples_not_ready = ray.wait(list(self.pending_tasks.keys(
+            )), num_returns=len(self.pending_tasks), timeout=0.5)
             while len(samples_ready) < (self.num_workers * fraction_workers):
-                samples_ready, samples_not_ready = ray.wait(self.pending_tasks.keys(
-                    ), num_returns=len(self.pending_tasks), timeout=0.5)
+                samples_ready, samples_not_ready = ray.wait(list(self.pending_tasks.keys(
+                    )), num_returns=len(self.pending_tasks), timeout=0.5)
 
             # Send stop message to the workers
             broadcast_message("sample", b"stop")
