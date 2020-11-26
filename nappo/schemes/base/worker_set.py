@@ -61,15 +61,13 @@ class WorkerSet:
                 self.worker_class, index_worker=0,
                 worker_params=local_params)
 
-            self.worker_params.update({"initial_weights": ray.put(
-                {"update": 0, "weights": self._local_worker.get_weights()})})
-
         else:
             self._local_worker = None
 
         self._remote_workers = []
-        self.add_workers(num_workers)
         self.num_workers = num_workers
+        if num_workers > 0:
+            self.add_workers(num_workers)
 
     @staticmethod
     def _make_worker(cls, index_worker, worker_params):
@@ -100,6 +98,8 @@ class WorkerSet:
         num_workers : int
             Number of remote workers to create.
         """
+        self.worker_params.update({"initial_weights": ray.put(
+            {"version": 0, "weights": self._local_worker.get_weights()})})
         cls = self.worker_class.as_remote(**self.remote_config).remote
         self._remote_workers.extend([
             self._make_worker(cls, index_worker=i + 1, worker_params=self.worker_params)
