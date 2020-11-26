@@ -102,9 +102,6 @@ class CWorker(W):
             # Set initial weights
             self.set_weights(initial_weights)
 
-            # Print worker information
-            self.print_worker_info()
-
         if self.envs_train:
 
             # Define initial train states
@@ -118,6 +115,9 @@ class CWorker(W):
             # Collect initial samples
             print("Collecting initial samples...")
             self.collect_data(self.algo.start_steps)
+
+        # Print worker information
+        self.print_worker_info()
 
 
     def collect_data(self, min_fraction=1.0):
@@ -147,10 +147,7 @@ class CWorker(W):
         # Update counter
         self.iter += 1
 
-        # Return data
-        rollouts = {"data": data, "info": info}
-
-        return rollouts
+        return data, info
 
     def collect_train_data(self, num_steps=None, min_fraction=1.0):
         """

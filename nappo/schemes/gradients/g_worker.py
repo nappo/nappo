@@ -86,9 +86,6 @@ class GWorker(W):
         # Get storage instance
         self.storage = self.local_worker.storage
 
-        # Print worker information
-        if index_worker > 0: self.print_worker_info()
-
         # Queue
         self.inqueue = queue.Queue(maxsize=100)
 
@@ -100,6 +97,9 @@ class GWorker(W):
             col_communication=col_communication,
             col_execution=col_execution,
             broadcast_interval=1)
+
+        # Print worker information
+        self.print_worker_info()
 
     @property
     def actor_version(self):
@@ -124,9 +124,8 @@ class GWorker(W):
             if self.communication == "synchronous":
                 self.collector.step(fraction_workers, fraction_samples)
 
-            new_rollouts = self.inqueue.get(timeout=300)
-            self.local_worker.storage.add_data(new_rollouts["data"])
-            self.col_info = new_rollouts["info"]
+            data, self.col_info = self.inqueue.get(timeout=300)
+            self.local_worker.storage.add_data(data)
             self.storage.before_update(self.actor, self.algo)
             self.batches = self.storage.generate_batches(
                 self.algo.num_mini_batch, self.algo.mini_batch_size,
@@ -147,7 +146,6 @@ class GWorker(W):
         self.iter += 1
 
         return grads, info
-        # return {"grads": grads, "info": info}
 
     def compute_gradients(self, batch):
         """
@@ -397,8 +395,7 @@ class CollectorThread(threading.Thread):
             w = self.pending_tasks.pop(future)
 
             # Retrieve rollouts and add them to queue
-            rollouts = ray_get_and_free(future)
-            self.inqueue.put(rollouts)
+            self.inqueue.put(ray_get_and_free(future))
 
             # Then, update counter and broadcast weights to worker if necessary
             self.num_sent_since_broadcast += 1

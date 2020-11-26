@@ -225,7 +225,6 @@ class UpdaterThread(threading.Thread):
             # Compute model updates
             for grads in pending_grads:
                 gradients, info = ray_get_and_free(grads)
-                # info, gradients = g["info"], g["grads"]
 
                 # Update info dict
                 info["update_version"] = self.local_worker.actor_version
