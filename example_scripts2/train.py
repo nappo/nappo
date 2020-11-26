@@ -5,7 +5,7 @@ import time
 import json
 import argparse
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../..')
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 
 from nappo import utils
 from nappo import Learner
@@ -68,7 +68,14 @@ def main():
     storage_factory = OnPolicyGAEBuffer.create_factory(size=args.num_steps, gae_lambda=args.gae_lambda)
 
     # 6. Define scheme
-    scheme = Scheme()
+    params = {
+        "algo_factory":algo_factory,
+        "actor_factory":actor_factory,
+        "storage_factory": storage_factory,
+        "train_envs_factory":train_envs_factory,
+        "test_envs_factory":test_envs_factory,
+    }
+    scheme = Scheme(**params)
 
     # 7. Define learner
     learner = Learner(scheme, target_steps=args.num_env_steps, log_dir=args.log_dir)

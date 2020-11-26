@@ -50,7 +50,7 @@ class Scheme:
 
         # TODO. Add that core components check.
 
-        col_workers_factory = CWorkerSet.worker_set_factory(
+        col_workers_factory = CWorkerSet.create_factory(
 
             # core modules
             algo_factory=algo_factory,
@@ -64,12 +64,12 @@ class Scheme:
             col_worker_resources=col_worker_resources,
         )
 
-        grad_workers_factory = GWorkerSet.worker_set_factory(
+        grad_workers_factory = GWorkerSet.create_factory(
 
             # col specs
             col_execution=col_execution,
             col_communication=col_communication,
-            collection_workers_factory=col_workers_factory,
+            col_workers_factory=col_workers_factory,
 
             # grad_specs
             num_workers=grad_remote_workers,

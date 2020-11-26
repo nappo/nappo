@@ -28,7 +28,7 @@ NUM_WORKERS=1
 
 ###############################################################################
 
-CUDA_VISIBLE_DEVICES=$DEVICES python example_scripts/train_ppo/continuous_action_space/train.py  \
+CUDA_VISIBLE_DEVICES=$DEVICES python example_scripts2/train.py  \
 --lr $LR --clip-param $CLIP_PARAM --num-steps $NUM_STEPS --num-mini-batch $NUM_MINI_BATCH \
 --num-env-steps $STEPS --log-dir $LOG_DIR --nn $MODEL --gamma $GAMMA --save-interval $INTER \
 --ppo-epoch $PPO_EPOCH --gae-lambda $GAE_LAMBDA --use-gae --num-env-processes $NUM_PROC \
