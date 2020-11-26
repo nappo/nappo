@@ -107,13 +107,13 @@ class CWorker(W):
 
         if self.envs_train:
 
-            # Define train performance tracking variables
-            self.train_perf = deque(maxlen=100)
-            self.acc_reward = torch.zeros_like(self.done)
-
             # Define initial train states
             self.obs, self.rhs, self.done = self.actor.policy_initial_states(
                 self.envs_train.reset())
+
+            # Define train performance tracking variables
+            self.train_perf = deque(maxlen=100)
+            self.acc_reward = torch.zeros_like(self.done)
 
             # Collect initial samples
             print("Collecting initial samples...")
