@@ -5,11 +5,10 @@ import torch
 from shutil import copy2
 from functools import partial
 from collections import defaultdict, deque
-from ray.services import get_node_ip_address
 from nappo.distributed_schemes.base.worker import Worker as W
 from nappo.distributed_schemes.base.worker_set import WorkerSet as WS
-from nappo.distributed_schemes.utils import TaskPool, ray_get_and_free
 from nappo.distributed_schemes.base.worker import default_remote_config
+from nappo.distributed_schemes.utils import TaskPool, ray_get_and_free, average_gradients
 
 
 class GUWorker(W):
@@ -107,28 +106,9 @@ class GUWorker(W):
         t = time.time()
         grads, info = self.ps.algo.compute_gradients(batch, grads_to_cpu=False)
         compute_grads_t = time.time() - t
-
-        ###### ALLREDUCE ######################################################
-
-        t = time.time()
-        if torch.cuda.is_available():
-            for g in grads:
-                torch.distributed.all_reduce(g, op=torch.distributed.ReduceOp.SUM)
-        else:
-            torch.distributed.all_reduce_coalesced(grads, op=torch.distributed.ReduceOp.SUM)
-
-        for p in self.ps.actor.parameters():
-            if p.grad is not None:
-                p.grad /= self.distributed_world_size
-
-        avg_grads_t = time.time() - t
-
-        #######################################################################
-
         info.update({"scheme/seconds_to/compute_grads_t": compute_grads_t})
-        info.update({"scheme/seconds_to/avg_grads_t": avg_grads_t})
 
-        return info
+        return grads, info
 
     def update_networks(self):
         """Update Actor Critic model"""
@@ -183,10 +163,7 @@ class GUWorker(W):
                 self.ps.algo.num_epochs, self.ps.actor.is_recurrent)
 
         # Compute grads
-        info = self.compute_gradients(self.batches.__next__())
-
-        # Apply grads
-        self.update_networks()
+        grads, info = self.compute_gradients(self.batches.__next__())
 
         # Add extra information to info dict
         info.update(self.rollouts_info)
@@ -197,7 +174,7 @@ class GUWorker(W):
         self.num_updates += 1
         self.rollouts_info["collected_samples"] = 0 # count only once
 
-        return info
+        return grads, info
 
     def stop(self):
         """Stop remote workers"""
@@ -301,6 +278,14 @@ class GUWorkerSet(WS):
             address, i, len(self.remote_workers()), "nccl")
                  for i, worker in enumerate(self.remote_workers())])
 
+    def sync_weights(self):
+        """Synchronize gradient worker models with updater worker model"""
+        weights = ray.put({
+            "update": self.num_updates,
+            "weights": self.local_worker().get_weights()})
+        for e in self.remote_workers():
+            e.set_weights.remote(weights)
+
     def step(self):
         """
         Takes a logical optimization step.
@@ -310,20 +295,49 @@ class GUWorkerSet(WS):
         info : dict
             Summary dict of relevant information about the update process.
         """
-
-        # Compute model updates
-        results = ray.get([e.step.remote() for e in self.remote_workers()])
-
-        # Merge worker results
+        to_average = []
+        pending_gradients = {}
         step_metrics = defaultdict(float)
-        for info in results:
+
+        # Call for gradients from all workers
+        for e in self.remote_workers():
+            future = e.step.remote()
+            pending_gradients[future] = e
+
+        # Wait for workers to send back gradients
+        while pending_gradients:
+
+            # Get gradients 1 by 1
+            wait_results = ray.wait(list(pending_gradients.keys()))
+            ready_list = wait_results[0]
+            future = ready_list[0]
+            gradients, info = ray_get_and_free(future)
+            pending_gradients.pop(future)
+
+            # Update counters
             for k, v in info.items(): step_metrics[k] += v
 
-        # Update info dict
-        info = {k: v / self.num_workers if k != "collected_samples" else v for k, v in step_metrics.items()}
+            # Store gradients to average later
+            to_average.append(gradients)
 
-        # Update counters
+        # Average and apply gradients
+        t = time.time()
+        self.local_worker().update_networks(average_gradients(to_average))
+        avg_grads_t = time.time() - t
+
+        # Update workers with current weights
+        t = time.time()
+        self.sync_weights()
+        sync_grads_t = time.time() - t
+
+        # Update counter
         self.num_updates += 1
+
+        # Update info dict
+        info = {k: v / self.num_workers if k != "collected_samples" else
+        v for k, v in step_metrics.items()}
+        info.update({"scheme/seconds_to/avg_grads": avg_grads_t})
+        info.update({"scheme/seconds_to/sync_grads": sync_grads_t})
 
         return info
 

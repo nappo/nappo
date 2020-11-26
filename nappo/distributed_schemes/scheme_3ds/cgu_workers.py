@@ -6,11 +6,10 @@ import numpy as np
 from shutil import copy2
 from collections import defaultdict
 
-from .utils import broadcast_message
 from ..base.worker import Worker as W
 from ..base.worker_set import WorkerSet as WS
 from ..base.worker import default_remote_config
-from .utils import check_message
+from .utils import broadcast_message, check_message
 
 
 class CGUWorker(W):
@@ -109,7 +108,7 @@ class CGUWorker(W):
 
             # Collect initial samples
             print("Collecting initial samples...")
-            self.collect_data(self.algo.start_steps, self.algo.start_steps)
+            self.collect_data(num_steps=self.algo.start_steps)
 
     def collect_data(self, num_steps=None, min_fraction=1.0):
         """
@@ -133,6 +132,7 @@ class CGUWorker(W):
         min_steps = int(num_steps * min_fraction)
 
         t = time.time()
+        num_steps_reached = 0
         for step in range(num_steps):
 
             # Predict next action, next rnn hidden state and algo-specific outputs
@@ -154,13 +154,13 @@ class CGUWorker(W):
             # Record model version used to collect data
             self.storage.ac_version = self.iter
 
+            num_steps_reached = step
             if check_message("sample") == b"stop" and step >= min_steps:
-                self.num_steps_reached = step
                 break
 
         # Record and return metrics
         self.collect_time = time.time() - t
-        self.collect_samples = self.num_steps_reached * self.envs_train.num_envs
+        self.collect_samples = (num_steps_reached) * self.envs_train.num_envs
 
     def compute_gradients(self, batch):
         """
@@ -362,6 +362,7 @@ class CGUWorkerSet(WS):
                  train_envs_factory,
                  test_envs_factory=lambda x, y, c: None,
                  worker_remote_config=default_remote_config,
+                 distributed_backend="gloo",
                  fraction_workers=0.8,
                  fraction_samples=0.5,
                  num_workers=1):
@@ -397,7 +398,7 @@ class CGUWorkerSet(WS):
         port = ray.get(self.remote_workers()[0].find_free_port.remote())
         address = "tcp://{ip}:{port}".format(ip=ip, port=port)
         ray.get([worker.setup_torch_data_parallel.remote(
-            address, i, len(self.remote_workers()), "nccl")
+            address, i, len(self.remote_workers()), distributed_backend)
                  for i, worker in enumerate(self.remote_workers())])
 
     def step(self):
