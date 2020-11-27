@@ -162,10 +162,6 @@ The parameters we used to create our Scheme instance in the training example abo
 
 <img src="images/nappo_single_threaded.jpg" width="70%">
 
-### Current limitations
-
-Coming soon...
-
 ### Citing Nappo
 
 ```
