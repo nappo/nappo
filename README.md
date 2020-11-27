@@ -156,11 +156,7 @@ A more detailed explanation of the training scheme possibilities can be found [h
 
 The parameters we used to create our Scheme instance in the training example above correspond to the simplest non-distributed scheme.
 
-![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_single_threaded.jpg?raw=true){
-  width: 20%;
-  border: none;
-  background: none;
-}
+![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_single_threaded.jpg?raw=true)<img src="images/nappo_single_threaded.jpg" width="40%">
 
 ### Current limitations
 
