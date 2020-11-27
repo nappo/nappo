@@ -170,7 +170,11 @@ class CWorker(W):
         """
         t = time.time()
         num_steps = num_steps or int(self.update_every)
-        min_steps = int(num_steps * self.fraction_samples)
+
+        try:
+            min_steps = int(num_steps * self.fraction_samples)
+        except Exception:
+            import ipdb; ipdb.set_trace()
 
         for step in range(num_steps):
 
