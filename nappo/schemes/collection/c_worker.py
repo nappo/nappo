@@ -126,7 +126,7 @@ class CWorker(W):
         """ _ """
 
         # Collect train data
-        col_time, train_perf = self.collect_train_data(listen_to)
+        col_time, train_perf = self.collect_train_data(listen_to=listen_to)
 
         # Get collected rollout and reset storage
         data = self.storage.get_data()
@@ -171,10 +171,7 @@ class CWorker(W):
         t = time.time()
         num_steps = num_steps or int(self.update_every)
 
-        try:
-            min_steps = int(num_steps * self.fraction_samples)
-        except Exception:
-            import ipdb; ipdb.set_trace()
+        min_steps = int(num_steps * self.fraction_samples)
 
         for step in range(num_steps):
 
