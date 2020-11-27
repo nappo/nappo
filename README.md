@@ -132,30 +132,35 @@ while not learner.done():
 
 ### Scheme options
 
-The following images shows how nappo schemes are structured
+The following images shows how nappo schemes are structured, with at least
 
 ![alt text](https://raw.githubusercontent.com/nappo/nappo/master/images/nappo_overview%20.jpg?raw=true)
 
-* Distributed schemes summary
-    * Data collection operations can be
-        * centralised (1 local workers)
-        * decentralised (M remote workers), which can coordinate
-            * synchronous
-            * asynchronous
-    * Gradient computation operations can be
-        * centralised (1 local workers)
-        * decentralised (N remote workers), which can coordinate
-            * synchronous
-            * asynchronous
-    * Model update operations can occur
-        * centralised (in 1 local workers with a central network version)
-        * decentralised (in the N remote workers)
+* Data collection operations can be
+    * centralised (1 local workers)
+    * decentralised (M remote workers), which can coordinate
+        * synchronous
+        * asynchronous
+
+* Gradient computation operations can be
+    * centralised (1 local workers)
+    * decentralised (N remote workers), which can coordinate
+        * synchronous
+        * asynchronous
+
+* Model update operations can occur
+    * centralised (in 1 local workers with a central network version)
+    * decentralised (in the N remote workers)
 
 A more detailed explanation of the training scheme possibilities can be found [here](http://nappo.readthedocs.io/).
 
 The parameters we used to create our Scheme instance in the training example above correspond to the simplest non-distributed scheme.
 
-![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_single_threaded.jpg?raw=true=24x48)
+![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_single_threaded.jpg?raw=true){
+  width: 20%;
+  border: none;
+  background: none;
+}
 
 ### Current limitations
 
