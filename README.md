@@ -136,7 +136,7 @@ while not learner.done():
 
 ### Scaling up RL training processes: distributed scheme options
 
-The following images shows how nappo schemes are structured, formed by collection (green), gradient (blue) and update (red) workers, which in turn can be central (running in the same thread as the train script) or remote (running in a different thread allocated anywhere in the cluster).
+The following image shows how nappo schemes are structured, formed by collection (green), gradient (blue) and update (red) workers, which in turn can be central (running in the same thread as the train script) or remote (running in a different thread allocated anywhere in the cluster).
 
 ![alt text](https://raw.githubusercontent.com/nappo/nappo/master/images/nappo_overview%20.jpg?raw=true)
 
@@ -158,7 +158,7 @@ The following images shows how nappo schemes are structured, formed by collectio
 
 Choosing from these possibilities allows to set up in a wide variety of training schemes. A more detailed explanation of the training scheme possibilities can be found [here](http://nappo.readthedocs.io/).
 
-The parameters we used to create our Scheme instance in the training example above correspond to the simplest non-distributed scheme.
+The parameters we used to create our Scheme instance in the training example above correspond to the simplest non-distributed scheme. As we can see in the following image, there are no remote workers and the training process proceeds in a single thread.
 
 <img src="images/nappo_single_threaded.jpg" width="70%">
 
