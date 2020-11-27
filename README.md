@@ -24,11 +24,11 @@ NAPPO documentation can be found [here](http://nappo.readthedocs.io/).
 ```
 import ray
 from nappo import Learner
+from nappo.schemes import Scheme
 from nappo.core.algos import PPO
 from nappo.core.envs import VecEnv
 from nappo.core.storages import OnPolicyGAEBuffer
 from nappo.core.actors import OnPolicyActorCritic, get_feature_extractor
-from nappo.distributed_schemes.scheme_dadacs import Workers
 from nappo.envs import make_pybullet_train_env
 
 # 0. init ray
@@ -68,23 +68,42 @@ One of the main ideas behind Nappo is to allow single components to be replaced 
 
 We encourage users to create their own core components to extend current functionality, following the base.py templates associated with each one of them. Neural networks used as function approximators in the actor components can also be modified by the user. A more detailed explanation about how to do it can be found [here](http://nappo.readthedocs.io/).
 
-Following, we instantiate the Workers of the training scheme of our choice. Worker components were designed to work for any combination of core components.
+Following, we instantiate the training scheme of our choice.
+
+Worker components were designed to work for any combination of core components.
 
 ```
 # 5. Define workers
-workers = Workers(
-    algo_factory=algo_factory,
-    actor_factory=actor_factory,
-    storage_factory=storage_factory,
-    train_envs_factory=train_envs_factory,
-    num_col_workers=2, num_grad_workers=6)
+
+# Core components params
+scheme_parameters = {
+    "algo_factory": algo_factory,
+    "actor_factory": actor_factory,
+    "storage_factory": storage_factory,
+    "train_envs_factory": train_envs_factory}
+
+# Collection operation params
+scheme_parameters.update({
+    "col_remote_workers": 0, # only local workers
+    "col_communication": "synchronous"})
+
+# Gradient computation operation params
+scheme_parameters.update({
+    "grad_remote_workers": 0, # only local workers
+    "col_communication": "synchronous"})
+
+# Update operation params
+scheme_parameters.update({
+    "update_execution": "centralised"})
+
+scheme = Scheme(**scheme_parameters)
 ```
 
 Finally, we create a Learner class instance and define the training loop.
 
 ```
 # 6. Define learner
-learner = Learner(workers, target_steps=1000000, log_dir="/tmp/train_example")
+learner = Learner(scheme, target_steps=1000000, log_dir="/tmp/train_example")
 
 # 7. Define train loop
 iterations = 0
@@ -97,7 +116,7 @@ while not learner.done():
     iterations += 1
 ```
 
-### Available core components and distributed training schemes
+### Available core components
 
 * Core components
     * envs: VecEnv
@@ -111,16 +130,32 @@ while not learner.done():
         * On-policy: OnPolicyBuffer, OnPolicyGAEBuffer, OnPolicyVTraceBuffer
         * Off-policy: ReplayBuffer: HindsightExperienceReplayBuffer
 
-* Distributed schemes
-    * 3cs
-    * 3ds
-    * 2dacs
-    * 2daca
-    * da2cs
-    * dadacs
-    * dadaca
+### Scheme options
 
-A more detailed explanation of the meaning of distributed scheme naming be found [here](http://nappo.readthedocs.io/).
+The following images shows how nappo schemes are structured
+
+![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_overview.jpg?raw=true)
+
+* Distributed schemes summary
+    * Data collection operations can be
+        * centralised (1 local workers)
+        * decentralised (M remote workers), which can coordinate
+            * synchronous
+            * asynchronous
+    * Gradient computation operations can be
+        * centralised (1 local workers)
+        * decentralised (N remote workers), which can coordinate
+            * synchronous
+            * asynchronous
+    * Model update operations can occur
+        * centralised (in 1 local workers with a central network version)
+        * decentralised (in the N remote workers)
+
+A more detailed explanation of the training scheme possibilities can be found [here](http://nappo.readthedocs.io/).
+
+The parameters we used to create our Scheme instance in the training example above correspond to the simplest non-distributed scheme.
+
+![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_single_threaded.jpg?raw=true)
 
 ### Current limitations
 

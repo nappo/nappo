@@ -179,15 +179,13 @@ class UpdaterThread(threading.Thread):
             pass
 
         elif grad_execution == "centralised" and grad_communication == "asynchronous":
-            # Start UpdaterThread
-            self.start()
+            self.start() # Start UpdaterThread
 
         elif grad_execution == "decentralised" and grad_communication == "synchronous":
             pass
 
         elif grad_execution == "decentralised" and grad_communication == "asynchronous":
-            # Start UpdaterThread
-            self.start()
+            self.start() # Start UpdaterThread
 
         else:
             raise NotImplementedError
@@ -259,6 +257,7 @@ class UpdaterThread(threading.Thread):
 
             if self.update_execution == "centralised":
                 # Average and apply gradients
+                t = time.time()
                 self.grad_workers.local_worker().apply_gradients(
                     average_gradients(to_average))
                 avg_grads_t = time.time() - t
@@ -269,8 +268,6 @@ class UpdaterThread(threading.Thread):
                 self.sync_weights()
                 sync_grads_t = time.time() - t
                 info.update({"sync_grads_time": sync_grads_t})
-
-
 
         elif self.grad_execution == "decentralised" and self.grad_communication == "asynchronous":
 
