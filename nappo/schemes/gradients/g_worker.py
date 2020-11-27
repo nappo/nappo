@@ -114,7 +114,7 @@ class GWorker(W):
     def step(self, distribute_gradients=False):
 
         self.get_data()
-        grads, info = self.get_gradients(distribute_gradients)
+        grads, info = self.get_grads(distribute_gradients)
         if distribute_gradients: self.apply_gradients()
         return grads, info
 

@@ -6,7 +6,6 @@ DEVICES="0,1,2,3"
 MAX_TIME=86400
 STEPS=100000000000
 ENV_ID=PongNoFrameskip-v4
-SCHEME=2dacs
 
 ###############################################################################
 
@@ -34,4 +33,4 @@ CUDA_VISIBLE_DEVICES=$DEVICES python example_scripts/train_ppo/discrete_action_s
 --ppo-epoch $PPO_EPOCH --gae-lambda $GAE_LAMBDA --use-gae --num-env-processes $NUM_PROC \
 --value-loss-coef $VALUE_LOSS_COEF --entropy-coef $ENTROPY_COEF --eps $EPS --max-time $MAX_TIME \
 --use_clipped_value_loss --frame-stack $FRAME_STACK --env-id $ENV_ID --max-grad-norm $MAX_GRAD_NORM \
---num-workers $NUM_WORKERS --scheme $SCHEME
+--num-workers $NUM_WORKERS

@@ -6,7 +6,6 @@ DEVICES="0,1,2,3"
 MAX_TIME=100000000000000000
 STEPS=100000000000000000
 ENV_ID=HalfCheetahBulletEnv-v0
-SCHEME=2dacs
 
 ###############################################################################
 
@@ -32,4 +31,4 @@ CUDA_VISIBLE_DEVICES=$DEVICES python example_scripts/train_sac/continuous_action
 --mini-batch-size $MINI_BATCH_SIZE --update-every $UPDATE_EVERY --num-updates $NUM_UPDATES \
 --start-steps $START_STEPS --buffer-size $BUFFER_SIZE --lr $LR --nn $MODEL \
 --frame-skip $FRAME_SKIP --frame-stack $FRAME_STACK --num-workers $NUM_WORKERS \
---env-id $ENV_ID --scheme $SCHEME
+--env-id $ENV_ID
