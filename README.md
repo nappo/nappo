@@ -134,7 +134,7 @@ while not learner.done():
 
 The following images shows how nappo schemes are structured
 
-![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_overview.jpg)
+![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_overview%10.jpg)
 
 * Distributed schemes summary
     * Data collection operations can be
@@ -155,7 +155,7 @@ A more detailed explanation of the training scheme possibilities can be found [h
 
 The parameters we used to create our Scheme instance in the training example above correspond to the simplest non-distributed scheme.
 
-![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_single_threaded.jpg)
+![alt text](https://github.com/nappo/nappo/blob/master/images/nappo_single_threaded%10.jpg)
 
 ### Current limitations
 
