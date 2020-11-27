@@ -115,6 +115,7 @@ class GWorker(W):
 
         self.get_data()
         grads, info = self.get_gradients(distribute_gradients)
+        if distribute_gradients: self.apply_gradients()
         return grads, info
 
     def get_grads(self, distribute_gradients=False):
@@ -140,16 +141,13 @@ class GWorker(W):
                 self.algo.num_epochs, self.actor.is_recurrent)
 
         # Compute gradients, get algo info
-        grads, info = self.compute_gradients(self.batches.__next__())
+        grads, info = self.compute_gradients(
+            self.batches.__next__(), distribute_gradients)
 
         # Add extra information to info dict
         info.update(self.col_info)
         self.col_info.update({"collected_samples": 0})
         info.update({"grad_version": self.local_worker.actor_version})
-
-        if distribute_gradients:
-            grads = None
-            self.distribute_gradients(grads)
 
         self.iter += 1
 
@@ -164,7 +162,7 @@ class GWorker(W):
         if self.communication == "synchronous": self.collector.step()
         self.data, self.col_info = self.inqueue.get(timeout=300)
 
-    def compute_gradients(self, batch):
+    def compute_gradients(self, batch, distribute_gradients):
         """
         Calculate actor gradients and update networks.
 
@@ -182,25 +180,29 @@ class GWorker(W):
         """
 
         t = time.time()
-        grads, info = self.algo.compute_gradients(batch)
-        info.update({"time/compute_grads": time.time() - t})
+        grads, info = self.algo.compute_gradients(batch, grads_to_cpu=not distribute_gradients)
+        compute_time = time.time() - t
+
+        if distribute_gradients:
+
+            t = time.time()
+            if torch.cuda.is_available():
+                for g in grads:
+                    torch.distributed.all_reduce(g, op=torch.distributed.ReduceOp.SUM)
+            else:
+                torch.distributed.all_reduce_coalesced(grads, op=torch.distributed.ReduceOp.SUM)
+
+            for p in self.actor.parameters():
+                if p.grad is not None:
+                    p.grad /= self.distributed_world_size
+
+            avg_grads_t = time.time() - t
+            grads = None
+
+        info.update({"time/compute_grads": compute_time})
+        info.update({"time/avg_grads": avg_grads_t})
 
         return grads, info
-
-    def distribute_gradients(self, grads):
-        """ _ """
-        t = time.time()
-        if torch.cuda.is_available():
-            for g in grads:
-                torch.distributed.all_reduce(g, op=torch.distributed.ReduceOp.SUM)
-        else:
-            torch.distributed.all_reduce_coalesced(grads, op=torch.distributed.ReduceOp.SUM)
-
-        for p in self.actor.parameters():
-            if p.grad is not None:
-                p.grad /= self.distributed_world_size
-        avg_grads_t = time.time() - t
-        return avg_grads_t
 
     def apply_gradients(self, gradients=None):
         """Update Actor Critic model"""

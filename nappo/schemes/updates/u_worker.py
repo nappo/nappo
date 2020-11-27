@@ -41,7 +41,6 @@ class UWorker(W):
         super(UWorker, self).__init__(index_worker)
 
         self.grad_execution = grad_execution
-        self.update_execution = update_execution
         self.grad_communication = grad_communication
 
         # Computation device
@@ -72,7 +71,9 @@ class UWorker(W):
             grad_workers=self.grad_workers,
             col_fraction_workers=col_fraction_workers,
             grad_communication=grad_communication,
-            grad_execution=grad_execution)
+            grad_execution=grad_execution,
+            update_execution=update_execution,
+        )
 
         # Print worker information
         if index_worker > 0: self.print_worker_info()
@@ -156,6 +157,7 @@ class UpdaterThread(threading.Thread):
     def __init__(self,
                  output_queue,
                  grad_workers,
+                 update_execution,
                  col_fraction_workers=1.0,
                  grad_execution="distributed",
                  grad_communication="synchronous"):
@@ -171,6 +173,7 @@ class UpdaterThread(threading.Thread):
         self.local_worker = self.grad_workers.local_worker()
         self.remote_workers = self.grad_workers.remote_workers()
         self.num_workers = len(self.grad_workers.remote_workers())
+        self.update_execution = update_execution
 
         if grad_execution == "centralised" and grad_communication == "synchronous":
             pass
@@ -200,13 +203,15 @@ class UpdaterThread(threading.Thread):
         output queue.
         """
 
+        distribute_gradients = self.update_execution == "decentralised"
+
         if self.grad_execution == "centralised" and self.grad_communication == "synchronous":
-            _, info = self.local_worker.step()
+            _, info = self.local_worker.step(distribute_gradients)
             info["update_version"] = self.local_worker.actor_version
             self.local_worker.apply_gradients()
 
         elif self.grad_execution == "centralised" and self.grad_communication == "asynchronous":
-            _, info = self.local_worker.step()
+            _, info = self.local_worker.step(distribute_gradients)
             info["update_version"] = self.local_worker.actor_version
             self.local_worker.apply_gradients()
 
@@ -230,7 +235,8 @@ class UpdaterThread(threading.Thread):
             broadcast_message("sync", b"stop")
 
             # Start gradient computation in all workers
-            pending_tasks = ray.get([e.get_grads.remote() for e in self.remote_workers])
+            pending_tasks = ray.get([e.get_grads.remote(
+                distribute_gradients) for e in self.remote_workers])
 
             # Compute model updates
             for grads in pending_tasks:
@@ -247,22 +253,17 @@ class UpdaterThread(threading.Thread):
                 # Store gradients to average later
                 to_average.append(gradients)
 
-            # Average and apply gradients
-            t = time.time()
-            self.grad_workers.local_worker().apply_gradients(
-                average_gradients(to_average))
-            avg_grads_t = time.time() - t
-
-            # Update workers with current weights
-            t = time.time()
-            self.sync_weights()
-            sync_grads_t = time.time() - t
-
             # Update info dict
             info = {k: v / self.num_workers if k != "collected_samples" else
             v for k, v in step_metrics.items()}
-            info.update({"avg_grads_time": avg_grads_t})
-            info.update({"sync_grads_time": sync_grads_t})
+
+            if self.update_execution == "centralised":
+                # Average and apply gradients
+                self.grad_workers.local_worker().apply_gradients(
+                    average_gradients(to_average))
+
+                # Update workers with current weights
+                self.sync_weights()
 
         elif self.grad_execution == "decentralised" and self.grad_communication == "asynchronous":
 

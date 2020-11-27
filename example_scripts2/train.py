@@ -195,8 +195,8 @@ def get_args():
 
     # Scheme specs
     parser.add_argument(
-        '--scheme', default='3cs',
-        help='Distributed training scheme name (default: 3cs)')
+        '--scheme', default='cscs',
+        help='Distributed training scheme name (default: cscs)')
     parser.add_argument(
         '--num-env-processes', type=int, default=16,
         help='how many training CPU processes to use (default: 16)')
