@@ -115,7 +115,7 @@ class GWorker(W):
         grads, info = self.get_gradients(distribute_gradients)
         return grads, info
 
-    def get_gradients(self, distribute_gradients=False):
+    def get_grads(self, distribute_gradients=False):
         """
         Perform logical learning step. Training proceeds receiving data samples
         from collection workers and computations policy gradients.
