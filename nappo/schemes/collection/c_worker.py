@@ -116,17 +116,17 @@ class CWorker(W):
 
             # Collect initial samples
             print("Collecting initial samples...")
-            self.collect_data(self.algo.start_steps)
+            self.collect_train_data(self.algo.start_steps)
 
         # Print worker information
         self.print_worker_info()
 
 
-    def collect_data(self):
+    def collect_data(self, listen_to):
         """ _ """
 
         # Collect train data
-        col_time, train_perf = self.collect_train_data()
+        col_time, train_perf = self.collect_train_data(listen_to)
 
         # Get collected rollout and reset storage
         data = self.storage.get_data()
