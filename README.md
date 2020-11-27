@@ -132,27 +132,27 @@ while not learner.done():
 
 ### Scheme options
 
-The following images shows how nappo schemes are structured, with at least
+The following images shows how nappo schemes are structured, formed by collection (green), gradient (blue) and update (red) workers, which in turn can be central (running in the thread as the train script) or remote (running in a different thread allocated somewhere in the cluster).
 
 ![alt text](https://raw.githubusercontent.com/nappo/nappo/master/images/nappo_overview%20.jpg?raw=true)
 
 * Data collection operations can be
-    * centralised (1 local workers)
-    * decentralised (M remote workers), which can coordinate
+    * centralised (1 central workers)
+    * decentralised (M remote workers), and its coordination can be
         * synchronous
         * asynchronous
 
 * Gradient computation operations can be
-    * centralised (1 local workers)
-    * decentralised (N remote workers), which can coordinate
+    * centralised (1 central workers)
+    * decentralised (N remote workers), and its coordination can be
         * synchronous
         * asynchronous
 
 * Model update operations can occur
-    * centralised (in 1 local workers with a central network version)
-    * decentralised (in the N remote workers)
+    * centralised (in a central worker that broadcasts pdates weights)
+    * decentralised (in the N gradient remote workers)
 
-A more detailed explanation of the training scheme possibilities can be found [here](http://nappo.readthedocs.io/).
+Choosing from these possibilities allows to set up in a wide variety of training schemes. A more detailed explanation of the training scheme possibilities can be found [here](http://nappo.readthedocs.io/).
 
 The parameters we used to create our Scheme instance in the training example above correspond to the simplest non-distributed scheme.
 
