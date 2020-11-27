@@ -7,10 +7,10 @@ import argparse
 
 from nappo import utils
 from nappo import Learner
+from nappo.schemes import Scheme
 from nappo.core.algos import PPO
 from nappo.core.envs import VecEnv
 from nappo.core.storages import OnPolicyGAEBuffer
-from nappo.distributed_schemes import get_scheme_workers
 from nappo.core.actors import OnPolicyActorCritic, get_feature_extractor
 from nappo.envs import make_atari_train_env, make_atari_test_env
 
@@ -62,47 +62,43 @@ def main():
     # 5. Define rollouts storage
     storage_factory = OnPolicyGAEBuffer.create_factory(size=args.num_steps, gae_lambda=args.gae_lambda)
 
-    # 6. Define workers
-    workers_params = {
+    # 6. Define scheme
+    params = {}
+
+    # add core modules
+    params.update({
         "algo_factory": algo_factory,
         "actor_factory": actor_factory,
         "storage_factory": storage_factory,
         "train_envs_factory": train_envs_factory,
         "test_envs_factory": test_envs_factory,
-    }
+    })
 
-    if args.scheme == "3cs":
-        workers_params.update({"device": "cuda:0"})
-    elif args.scheme == "3ds":
-        workers_params.update({
-            "num_workers": args.num_workers,
-            "worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 1.0}
-        })
-    elif args.scheme in ["2dacs", "2daca"]:
-        workers_params.update({
-            "num_col_grad_workers": args.num_workers,
-            "worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 1.0}
-        })
-    elif args.scheme == "da2cs":
-        workers_params.update({
-            "updater_device": "cuda:0",
-            "num_col_workers": args.num_workers,
-            "col_worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 1.0}
-        })
-    elif args.scheme in ["dadacs", "dadaca"]:
-        workers_params.update({
-            "num_grad_workers": args.num_workers,
-            "num_col_workers": args.num_workers * 2,
-            "grad_worker_remote_config": {"num_cpus": 1, "num_gpus": 0.5},
-            "col_worker_remote_config": {"num_cpus": args.num_env_processes, "num_gpus": 0.25},
-        })
-    else:
-        raise ValueError("Scheme {} does not exist".format(args.scheme))
+    # add collection specs
+    params.update({
+        "col_remote_workers": 0,
+        "col_communication": "synchronous",
+        "col_worker_resources": {"num_cpus": 1, "num_gpus": 0.125},
+        "sync_col_specs": {"fraction_samples": 1.0, "fraction_workers": 1.0}
+    })
 
-    workers = get_scheme_workers(args.scheme)(**workers_params)
+    # add gradient specs
+    params.update({
+        "grad_remote_workers": 4,
+        "grad_communication": "synchronous",
+        "grad_worker_resources": {"num_cpus": 1, "num_gpus": 0.125},
+    })
+
+    # add update specs
+    params.update({
+        "local_device": None,
+        "update_execution": "decentralised",
+    })
+
+    scheme = Scheme(**params)
 
     # 7. Define learner
-    learner = Learner(workers, target_steps=args.num_env_steps, log_dir=args.log_dir)
+    learner = Learner(scheme, target_steps=args.num_env_steps, log_dir=args.log_dir)
 
     # 8. Define train loop
     iterations = 0

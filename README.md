@@ -27,7 +27,7 @@ from nappo import Learner
 from nappo.core.algos import PPO
 from nappo.core.envs import VecEnv
 from nappo.core.storages import OnPolicyGAEBuffer
-from nappo.core.actors import OnPolicyActorCritic, get_model
+from nappo.core.actors import OnPolicyActorCritic, get_feature_extractor
 from nappo.distributed_schemes.scheme_dadacs import Workers
 from nappo.envs import make_pybullet_train_env
 
@@ -52,7 +52,7 @@ We can continue by defining an on-policy or off-policy set of **Actor** (or Acto
 ```
 # 2. Define RL Actor
 actor_factory = OnPolicyActorCritic.create_factory(
-    obs_space, action_space, feature_extractor_network=get_model("MLP"))
+    obs_space, action_space, feature_extractor_network=get_feature_extractor("MLP"))
 
 # 3. Define RL training algorithm
 algo_factory = PPO.create_factory(

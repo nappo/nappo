@@ -182,6 +182,7 @@ class GWorker(W):
         t = time.time()
         grads, info = self.algo.compute_gradients(batch, grads_to_cpu=not distribute_gradients)
         compute_time = time.time() - t
+        info.update({"time/compute_grads": compute_time})
 
         if distribute_gradients:
 
@@ -199,8 +200,7 @@ class GWorker(W):
             avg_grads_t = time.time() - t
             grads = None
 
-        info.update({"time/compute_grads": compute_time})
-        info.update({"time/avg_grads": avg_grads_t})
+            info.update({"time/avg_grads": avg_grads_t})
 
         return grads, info
 
