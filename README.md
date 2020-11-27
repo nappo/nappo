@@ -1,6 +1,10 @@
 ## Nappo: A PyTorch Library for distributed Reinforcement Learning
 
-Nappo is a pytorch-based library for RL that focuses on distributed implementations, yet flexible enough to allow for method experimentation.
+Nappo is a pytorch-based library for RL that focuses on distributed implementations, yet flexible enough to allow for method experimentation. We envision this library can be used to accelerate RL training processes and believe it can be useful for both algorithmic and distributed training RL research.
+
+### Benchmarks
+
+Coming soon...
 
 ### Installation
 ```
@@ -160,6 +164,7 @@ The parameters we used to create our Scheme instance in the training example abo
 
 ### Current limitations
 
+Coming soon...
 
 ### Citing Nappo
 
