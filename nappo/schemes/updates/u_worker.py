@@ -47,13 +47,20 @@ class UWorker(W):
         dev = local_device or "cuda" if torch.cuda.is_available() else "cpu"
         self.device = torch.device(dev)
 
-        # Create CWorkerSet instance
-        add_local_worker = update_execution == "centralised"
-        self.grad_workers = grad_workers_factory(local_device, add_local_worker)
-
+        self.grad_workers = grad_workers_factory(local_device, add_local_worker=True)
         self.local_worker = self.grad_workers.local_worker()
         self.remote_workers = self.grad_workers.remote_workers()
         self.num_workers = len(self.grad_workers.remote_workers())
+
+        # Create CWorkerSet instance
+        if update_execution == "decentralised":
+            # Setup the distributed processes for gradient averaging
+            ip = ray.get(self.remote_workers[0].get_node_ip.remote())
+            port = ray.get(self.remote_workers[0].find_free_port.remote())
+            address = "tcp://{ip}:{port}".format(ip=ip, port=port)
+            ray.get([worker.setup_torch_data_parallel.remote(
+                address, i, len(self.remote_workers), "nccl")
+                     for i, worker in enumerate(self.remote_workers)])
 
         # Queue
         self.outqueue = queue.Queue()

@@ -67,6 +67,7 @@ class Scheme:
         grad_workers_factory = GWorkerSet.create_factory(
 
             # col specs
+            col_specs=col_specs,
             col_execution=col_execution,
             col_communication=col_communication,
             col_workers_factory=col_workers_factory,

@@ -67,6 +67,7 @@ class CWorker(W):
                  storage_factory,
                  train_envs_factory=lambda x, y : None,
                  test_envs_factory=lambda x, y, z: None,
+                 col_specs={"fraction_samples": 1.0, "fraction_workers": 1.0},
                  initial_weights=None,
                  device=None):
 

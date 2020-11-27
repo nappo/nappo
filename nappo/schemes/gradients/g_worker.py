@@ -57,6 +57,7 @@ class GWorker(W):
     """
 
     def __init__(self,
+                 col_specs,
                  index_worker,
                  col_workers_factory,
                  col_communication="synchronous",
@@ -95,6 +96,7 @@ class GWorker(W):
 
         # Create CollectorThread
         self.collector = CollectorThread(
+            col_specs=col_specs,
             input_queue=self.inqueue,
             local_worker=self.local_worker,
             remote_workers=self.remote_workers,
@@ -109,7 +111,7 @@ class GWorker(W):
     def actor_version(self):
         return self.local_worker.actor_version
 
-    def step(self, fraction_workers=1.0, fraction_samples=1.0, distribute_gradients=False):
+    def step(self, distribute_gradients=False):
         """
         Perform logical learning step. Training proceeds receiving data samples
         from collection workers and computations policy gradients.
@@ -126,7 +128,7 @@ class GWorker(W):
         if self.iter % (self.algo.num_epochs * self.algo.num_mini_batch) == 0:
 
             if self.communication == "synchronous":
-                self.collector.step(fraction_workers, fraction_samples)
+                self.collector.step(self.fraction_samples)
 
             data, self.col_info = self.inqueue.get(timeout=300)
             self.storage.add_data(data)
@@ -294,6 +296,7 @@ class CollectorThread(threading.Thread):
     """
 
     def __init__(self,
+                 col_specs,
                  input_queue,
                  local_worker,
                  remote_workers,
@@ -308,6 +311,8 @@ class CollectorThread(threading.Thread):
         self.col_execution = col_execution
         self.col_communication = col_communication
         self.broadcast_interval = broadcast_interval
+        self.fraction_workers = col_specs.get("fraction_workers")
+        self.fraction_samples = col_specs.get("fraction_samples")
 
         self.local_worker = local_worker
         self.remote_workers = remote_workers
@@ -329,13 +334,13 @@ class CollectorThread(threading.Thread):
 
         elif col_execution == "decentralised" and col_communication == "asynchronous":
             # Start CollectorThread
-            self.start()
             self.pending_tasks = {}
             self.broadcast_new_weights()
             for w in self.remote_workers:
                 for _ in range(2):
                     future = w.collect_data.remote()
                     self.pending_tasks[future] = w
+            self.start()
 
         else:
             raise NotImplementedError
@@ -352,7 +357,7 @@ class CollectorThread(threading.Thread):
             if self.should_broadcast():
                 self.broadcast_new_weights()
 
-    def step(self, fraction_workers=1.0, fraction_samples=1.0):
+    def step(self):
         """
         Continuously collects data from remote workers and puts it
         in the updater queue.
@@ -360,17 +365,17 @@ class CollectorThread(threading.Thread):
 
         if self.col_execution == "centralised" and self.col_communication == "synchronous":
 
-            rollouts = self.local_worker.collect_data(min_fraction=fraction_samples)
+            rollouts = self.local_worker.collect_data()
             self.inqueue.put(rollouts)
 
         elif self.col_execution == "centralised" and self.col_communication == "asynchronous":
-            rollouts = self.local_worker.collect_data(min_fraction=fraction_samples)
+            rollouts = self.local_worker.collect_data()
             self.inqueue.put(rollouts)
 
         elif self.col_execution == "decentralised" and self.col_communication == "synchronous":
 
-            fraction_samples = fraction_samples if self.num_workers > 1 else 1.0
-            fraction_workers = fraction_workers if self.num_workers > 1 else 1.0
+            fraction_samples = self.fraction_samples if self.num_workers > 1 else 1.0
+            fraction_workers = self.fraction_workers if self.num_workers > 1 else 1.0
 
             # Start data collection in all workers
             broadcast_message("sample", b"start-continue")
@@ -407,7 +412,7 @@ class CollectorThread(threading.Thread):
                 self.broadcast_new_weights()
 
             # Schedule a new collection task
-            future = w.collect_data.remote(min_fraction=fraction_samples)
+            future = w.collect_data.remote()
             self.pending_tasks[future] = w
 
         else:
