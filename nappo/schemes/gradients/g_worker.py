@@ -57,7 +57,6 @@ class GWorker(W):
     """
 
     def __init__(self,
-                 col_specs,
                  index_worker,
                  col_workers_factory,
                  col_communication="synchronous",
@@ -96,7 +95,6 @@ class GWorker(W):
 
         # Create CollectorThread
         self.collector = CollectorThread(
-            col_specs=col_specs,
             input_queue=self.inqueue,
             local_worker=self.local_worker,
             remote_workers=self.remote_workers,
@@ -112,6 +110,22 @@ class GWorker(W):
         return self.local_worker.actor_version
 
     def step(self, distribute_gradients=False):
+
+        self.get_data()
+        grads, info = self.get_gradients(distribute_gradients)
+        return grads, info
+
+    def get_data(self):
+        """ _ """
+
+        if self.iter % (
+            self.algo.num_epochs * self.algo.num_mini_batch) != 0:
+            return
+
+        if self.communication == "synchronous": self.collector.step()
+        self.data, self.col_info = self.inqueue.get(timeout=300)
+
+    def get_gradients(self, distribute_gradients=False):
         """
         Perform logical learning step. Training proceeds receiving data samples
         from collection workers and computations policy gradients.
@@ -127,11 +141,7 @@ class GWorker(W):
         # Collect data and prepare data batches
         if self.iter % (self.algo.num_epochs * self.algo.num_mini_batch) == 0:
 
-            if self.communication == "synchronous":
-                self.collector.step(self.fraction_samples)
-
-            data, self.col_info = self.inqueue.get(timeout=300)
-            self.storage.add_data(data)
+            self.storage.add_data(self.data)
             self.storage.before_update(self.actor, self.algo)
             self.batches = self.storage.generate_batches(
                 self.algo.num_mini_batch, self.algo.mini_batch_size,
@@ -296,7 +306,6 @@ class CollectorThread(threading.Thread):
     """
 
     def __init__(self,
-                 col_specs,
                  input_queue,
                  local_worker,
                  remote_workers,
@@ -311,8 +320,6 @@ class CollectorThread(threading.Thread):
         self.col_execution = col_execution
         self.col_communication = col_communication
         self.broadcast_interval = broadcast_interval
-        self.fraction_workers = col_specs.get("fraction_workers")
-        self.fraction_samples = col_specs.get("fraction_samples")
 
         self.local_worker = local_worker
         self.remote_workers = remote_workers
@@ -365,7 +372,7 @@ class CollectorThread(threading.Thread):
 
         if self.col_execution == "centralised" and self.col_communication == "synchronous":
 
-            rollouts = self.local_worker.collect_data()
+            rollouts = self.local_worker.collect_data(listen_to=["sync"])
             self.inqueue.put(rollouts)
 
         elif self.col_execution == "centralised" and self.col_communication == "asynchronous":
@@ -374,27 +381,11 @@ class CollectorThread(threading.Thread):
 
         elif self.col_execution == "decentralised" and self.col_communication == "synchronous":
 
-            fraction_samples = self.fraction_samples if self.num_workers > 1 else 1.0
-            fraction_workers = self.fraction_workers if self.num_workers > 1 else 1.0
-
-            # Start data collection in all workers
-            broadcast_message("sample", b"start-continue")
-
-            pending_samples = [e.collect_data.remote(
-                min_fraction=fraction_samples) for e in self.remote_workers]
-
-            # Keep checking how many workers have finished until percent% are ready
-            samples_ready, samples_not_ready = ray.wait(pending_samples,
-                num_returns=len(pending_samples), timeout=0.5)
-            while len(samples_ready) < (self.num_workers * fraction_workers):
-                samples_ready, samples_not_ready = ray.wait(pending_samples,
-                    num_returns=len(pending_samples), timeout=0.5)
-
-            # Send stop message to the workers
-            broadcast_message("sample", b"stop")
+            pending_samples = ray.get([e.collect_data.remote(
+                listen_to=["sync"]) for e in self.remote_workers])
 
             # Compute model updates
-            for r in pending_samples: self.inqueue.put(ray_get_and_free(r))
+            for r in pending_samples: self.inqueue.put(r)
 
         elif self.col_execution == "decentralised" and self.col_communication == "asynchronous":
 

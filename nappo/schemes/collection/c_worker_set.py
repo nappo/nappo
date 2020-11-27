@@ -44,6 +44,7 @@ class CWorkerSet(WS):
                  train_envs_factory,
                  local_device=None,
                  initial_weights=None,
+                 fraction_samples=1.0,
                  test_envs_factory=lambda x, y, c: None,
                  worker_remote_config=default_remote_config):
 
@@ -55,6 +56,7 @@ class CWorkerSet(WS):
             "storage_factory": storage_factory,
             "test_envs_factory": test_envs_factory,
             "train_envs_factory": train_envs_factory,
+            "fraction_samples": fraction_samples,
             "actor_factory": actor_factory,
         }
 
@@ -75,6 +77,7 @@ class CWorkerSet(WS):
                        storage_factory,
                        test_envs_factory,
                        train_envs_factory,
+                       fraction_samples=1.0,
                        col_worker_resources=default_remote_config):
         """
         Returns a function to create new CWorkerSet instances.
@@ -110,6 +113,7 @@ class CWorkerSet(WS):
                 actor_factory=actor_factory,
                 storage_factory=storage_factory,
                 initial_weights=initial_weights,
+                fraction_samples=fraction_samples,
                 test_envs_factory=test_envs_factory,
                 train_envs_factory=train_envs_factory,
                 worker_remote_config=col_worker_resources)

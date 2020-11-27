@@ -32,6 +32,7 @@ class UWorker(W):
     def __init__(self,
                  grad_workers_factory,
                  index_worker=0,
+                 fraction_workers=1.0,
                  grad_execution="decentralised",
                  grad_communication="synchronous",
                  update_execution="centralised",
@@ -69,6 +70,7 @@ class UWorker(W):
         self.updater = UpdaterThread(
             output_queue=self.outqueue,
             grad_workers=self.grad_workers,
+            fraction_workers=fraction_workers,
             grad_communication=grad_communication,
             grad_execution=grad_execution)
 
@@ -154,6 +156,7 @@ class UpdaterThread(threading.Thread):
     def __init__(self,
                  output_queue,
                  grad_workers,
+                 fraction_workers=1.0,
                  grad_execution="distributed",
                  grad_communication="synchronous"):
 
@@ -163,6 +166,7 @@ class UpdaterThread(threading.Thread):
         self.outqueue = output_queue
         self.grad_workers = grad_workers
         self.grad_execution = grad_execution
+        self.fraction_workers = fraction_workers
         self.grad_communication = grad_communication
         self.local_worker = self.grad_workers.local_worker()
         self.remote_workers = self.grad_workers.remote_workers()
@@ -189,7 +193,7 @@ class UpdaterThread(threading.Thread):
         while not self.stopped:
             self.step()
 
-    def step(self, fraction_workers=1.0, fraction_samples=1.0):
+    def step(self):
         """
         Continuously pulls data from the input queue, computes gradients,
         updates the local actor model and places information in the
@@ -211,26 +215,25 @@ class UpdaterThread(threading.Thread):
             to_average = []
             step_metrics = defaultdict(float)
 
-            fraction_samples = fraction_samples if self.num_workers > 1 else 1.0
-            fraction_workers = fraction_workers if self.num_workers > 1 else 1.0
-
-            # Start data collection in all workers
-            broadcast_message("sample", b"start-continue")
-
-            pending_grads = [e.step.remote(fraction_workers, fraction_samples) for e in self.remote_workers]
+            # Start get data in all workers that have sync collection
+            broadcast_message("sync", b"start-continue")
+            pending_tasks = [e.get_data.remote() for e in self.remote_workers]
 
             # Keep checking how many workers have finished until percent% are ready
-            samples_ready, samples_not_ready = ray.wait(pending_grads,
-              num_returns=len(pending_grads), timeout=0.5)
-            while len(samples_ready) < (self.num_workers * fraction_workers):
-                samples_ready, samples_not_ready = ray.wait(pending_grads,
-                  num_returns=len(pending_grads), timeout=0.5)
+            samples_ready, samples_not_ready = ray.wait(pending_tasks,
+              num_returns=len(pending_tasks), timeout=0.5)
+            while len(samples_ready) < (self.num_workers * self.fraction_workers):
+                samples_ready, samples_not_ready = ray.wait(pending_tasks,
+                  num_returns=len(pending_tasks), timeout=0.5)
 
-            # Send stop message to the workers
-            broadcast_message("sample", b"stop")
+            # Send stop message to the workers that have sync collection
+            broadcast_message("sync", b"stop")
+
+            # Start gradient computation in all workers
+            pending_tasks = ray.get([e.get_grads.remote() for e in self.remote_workers])
 
             # Compute model updates
-            for grads in pending_grads:
+            for grads in pending_tasks:
                 gradients, info = ray_get_and_free(grads)
 
                 # Update info dict

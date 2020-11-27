@@ -62,12 +62,12 @@ class Scheme:
             # col specs
             num_workers=col_remote_workers,
             col_worker_resources=col_worker_resources,
+            fraction_samples=col_specs.get("fraction_samples"),
         )
 
         grad_workers_factory = GWorkerSet.create_factory(
 
             # col specs
-            col_specs=col_specs,
             col_execution=col_execution,
             col_communication=col_communication,
             col_workers_factory=col_workers_factory,
@@ -83,6 +83,7 @@ class Scheme:
             grad_execution=grad_execution,
             grad_communication=grad_communication,
             grad_workers_factory=grad_workers_factory,
+            fraction_workers=col_specs.get("fraction_workers"),
 
             # update specs
             local_device=local_device,

@@ -65,14 +65,15 @@ class CWorker(W):
                  algo_factory,
                  actor_factory,
                  storage_factory,
+                 fraction_samples,
                  train_envs_factory=lambda x, y : None,
                  test_envs_factory=lambda x, y, z: None,
-                 col_specs={"fraction_samples": 1.0, "fraction_workers": 1.0},
                  initial_weights=None,
                  device=None):
 
-        self.index_worker = index_worker
         super(CWorker, self).__init__(index_worker)
+        self.index_worker = index_worker
+        self.fraction_samples = fraction_samples
 
         # Computation device
         dev = device or "cuda" if torch.cuda.is_available() else "cpu"
@@ -121,11 +122,11 @@ class CWorker(W):
         self.print_worker_info()
 
 
-    def collect_data(self, min_fraction=1.0):
+    def collect_data(self):
         """ _ """
 
         # Collect train data
-        col_time, train_perf = self.collect_train_data(min_fraction=min_fraction)
+        col_time, train_perf = self.collect_train_data()
 
         # Get collected rollout and reset storage
         data = self.storage.get_data()
@@ -150,7 +151,7 @@ class CWorker(W):
 
         return data, info
 
-    def collect_train_data(self, num_steps=None, min_fraction=1.0):
+    def collect_train_data(self, num_steps=None, listen_to=[]):
         """
         Collect data from interactions with the environments.
 
@@ -169,7 +170,7 @@ class CWorker(W):
         """
         t = time.time()
         num_steps = num_steps or int(self.update_every)
-        min_steps = int(num_steps * min_fraction)
+        min_steps = int(num_steps * self.fraction_samples)
 
         for step in range(num_steps):
 
@@ -197,9 +198,10 @@ class CWorker(W):
             # Keep track of num collected samples
             self.samples_collected += self.envs_train.num_envs
 
-            # Check stop message for the synchronised case
-            if check_message("sample") == b"stop" and step >= min_steps:
-                break
+            # Check if stop message sent
+            for l in listen_to:
+                if check_message(l) == b"stop" and step >= min_steps:
+                    break
 
         col_time = time.time() - t
         train_perf = 0 if len(self.train_perf) == 0 else sum(self.train_perf) / len(self.train_perf)

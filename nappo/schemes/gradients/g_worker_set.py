@@ -7,7 +7,6 @@ class GWorkerSet(WS):
     """Class to better handle the operations of ensembles of GWorkers."""
 
     def __init__(self,
-                 col_specs,
                  num_workers,
                  local_device,
                  add_local_worker,
@@ -23,7 +22,6 @@ class GWorkerSet(WS):
         self.remote_config = default_remote_config
 
         self.worker_params = {
-            "col_specs": col_specs,
             "col_execution": col_execution,
             "col_communication": col_communication,
             "col_workers_factory": col_workers_factory,
@@ -44,12 +42,10 @@ class GWorkerSet(WS):
                        col_workers_factory,
                        col_execution="distributed",
                        col_communication="synchronous",
-                       grad_worker_resources=default_remote_config,
-                       col_specs={"fraction_samples": 1.0, "fraction_workers": 1.0}):
+                       grad_worker_resources=default_remote_config):
 
         def grad_worker_set_factory(device, add_local_worker, initial_weights=None):
             return cls(
-                col_specs=col_specs,
                 local_device=device,
                 num_workers=num_workers,
                 initial_weights=initial_weights,
