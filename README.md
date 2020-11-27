@@ -132,19 +132,19 @@ while not learner.done():
 
 ### Scheme options
 
-The following images shows how nappo schemes are structured, formed by collection (green), gradient (blue) and update (red) workers, which in turn can be central (running in the thread as the train script) or remote (running in a different thread allocated somewhere in the cluster).
+The following images shows how nappo schemes are structured, formed by collection (green), gradient (blue) and update (red) workers, which in turn can be central (running in the same thread as the train script) or remote (running in a different thread allocated anywhere in the cluster).
 
 ![alt text](https://raw.githubusercontent.com/nappo/nappo/master/images/nappo_overview%20.jpg?raw=true)
 
 * Data collection operations can be
     * centralised (1 central workers)
-    * decentralised (M remote workers), and its coordination can be
+    * decentralised (M remote workers), the coordination of which can be
         * synchronous
         * asynchronous
 
 * Gradient computation operations can be
     * centralised (1 central workers)
-    * decentralised (N remote workers), and its coordination can be
+    * decentralised (N remote workers), the coordination of which can be
         * synchronous
         * asynchronous
 
