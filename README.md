@@ -134,7 +134,7 @@ while not learner.done():
         * On-policy: OnPolicyBuffer, OnPolicyGAEBuffer, OnPolicyVTraceBuffer
         * Off-policy: ReplayBuffer: HindsightExperienceReplayBuffer
 
-### Scheme options
+### Scaling up RL training processes: distributed scheme options
 
 The following images shows how nappo schemes are structured, formed by collection (green), gradient (blue) and update (red) workers, which in turn can be central (running in the same thread as the train script) or remote (running in a different thread allocated anywhere in the cluster).
 
@@ -160,7 +160,7 @@ Choosing from these possibilities allows to set up in a wide variety of training
 
 The parameters we used to create our Scheme instance in the training example above correspond to the simplest non-distributed scheme.
 
-![alt text]<img src="images/nappo_single_threaded.jpg" width="70%">
+<img src="images/nappo_single_threaded.jpg" width="70%">
 
 ### Current limitations
 
