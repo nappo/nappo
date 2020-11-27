@@ -134,7 +134,7 @@ while not learner.done():
 
 The following images shows how nappo schemes are structured
 
-![alt text](https://raw.githubusercontent.com/nappo/nappo/master/images/nappo_overview.jpg?raw=true)
+![alt text](https://raw.githubusercontent.com/nappo/nappo/master/images/nappo_overview%20.jpg?raw=true)
 
 * Distributed schemes summary
     * Data collection operations can be
