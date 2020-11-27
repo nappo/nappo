@@ -61,6 +61,7 @@ class GWorker(W):
                  col_workers_factory,
                  col_communication="synchronous",
                  col_execution="distributed",
+                 col_fraction_workers=1.0,
                  initial_weights=None,
                  device=None):
 
@@ -99,6 +100,7 @@ class GWorker(W):
             local_worker=self.local_worker,
             remote_workers=self.remote_workers,
             col_communication=col_communication,
+            col_fraction_workers=col_fraction_workers,
             col_execution=col_execution,
             broadcast_interval=1)
 
@@ -308,6 +310,7 @@ class CollectorThread(threading.Thread):
                  input_queue,
                  local_worker,
                  remote_workers,
+                 col_fraction_workers=1.0,
                  col_communication="synchronous",
                  col_execution="distributed",
                  broadcast_interval=1):
@@ -319,7 +322,7 @@ class CollectorThread(threading.Thread):
         self.col_execution = col_execution
         self.col_communication = col_communication
         self.broadcast_interval = broadcast_interval
-        self.fraction_workers = 1.0
+        self.fraction_workers = col_fraction_workers
 
         self.local_worker = local_worker
         self.remote_workers = remote_workers
@@ -381,8 +384,6 @@ class CollectorThread(threading.Thread):
 
         elif self.col_execution == "decentralised" and self.col_communication == "synchronous":
 
-            fraction_workers = self.fraction_workers if self.num_workers > 1 else 1.0
-
             # Start data collection in all workers
             worker_key = "worker_{}".format(self.index_worker)
             broadcast_message(worker_key, b"start-continue")
@@ -393,7 +394,7 @@ class CollectorThread(threading.Thread):
             # Keep checking how many workers have finished until percent% are ready
             samples_ready, samples_not_ready = ray.wait(
                 pending_samples, num_returns=len(pending_samples), timeout=0.5)
-            while len(samples_ready) < (self.num_workers * fraction_workers):
+            while len(samples_ready) < (self.num_workers * self.fraction_workers):
                 samples_ready, samples_not_ready = ray.wait(
                     pending_samples, num_returns=len(pending_samples), timeout=0.5)
 

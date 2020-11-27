@@ -34,7 +34,7 @@ class Scheme:
                  col_remote_workers=0,
                  col_communication="synchronous",
                  col_worker_resources={"num_cpus": 1, "num_gpus": 0.5},
-                 col_specs={"fraction_samples": 1.0, "fraction_workers": 1.0},
+                 sync_col_specs={"fraction_samples": 1.0, "fraction_workers": 1.0},
 
                  # gradients
                  grad_remote_workers=0,
@@ -62,7 +62,7 @@ class Scheme:
             # col specs
             num_workers=col_remote_workers,
             col_worker_resources=col_worker_resources,
-            fraction_samples=col_specs.get("fraction_samples"),
+            col_fraction_samples=sync_col_specs.get("fraction_samples"),
         )
 
         grad_workers_factory = GWorkerSet.create_factory(
@@ -71,19 +71,22 @@ class Scheme:
             col_execution=col_execution,
             col_communication=col_communication,
             col_workers_factory=col_workers_factory,
+            col_fraction_workers=sync_col_specs.get("fraction_workers"),
 
             # grad_specs
             num_workers=grad_remote_workers,
-            grad_worker_resources=grad_worker_resources
+            grad_worker_resources=grad_worker_resources,
         )
 
         self._update_worker = UWorker(
+
+           # col specs
+            col_fraction_workers=sync_col_specs.get("fraction_workers"),
 
             # grad specs
             grad_execution=grad_execution,
             grad_communication=grad_communication,
             grad_workers_factory=grad_workers_factory,
-            fraction_workers=col_specs.get("fraction_workers"),
 
             # update specs
             local_device=local_device,

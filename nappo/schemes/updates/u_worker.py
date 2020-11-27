@@ -32,7 +32,7 @@ class UWorker(W):
     def __init__(self,
                  grad_workers_factory,
                  index_worker=0,
-                 fraction_workers=1.0,
+                 col_fraction_workers=1.0,
                  grad_execution="decentralised",
                  grad_communication="synchronous",
                  update_execution="centralised",
@@ -70,7 +70,7 @@ class UWorker(W):
         self.updater = UpdaterThread(
             output_queue=self.outqueue,
             grad_workers=self.grad_workers,
-            fraction_workers=fraction_workers,
+            col_fraction_workers=col_fraction_workers,
             grad_communication=grad_communication,
             grad_execution=grad_execution)
 
@@ -156,7 +156,7 @@ class UpdaterThread(threading.Thread):
     def __init__(self,
                  output_queue,
                  grad_workers,
-                 fraction_workers=1.0,
+                 col_fraction_workers=1.0,
                  grad_execution="distributed",
                  grad_communication="synchronous"):
 
@@ -166,7 +166,7 @@ class UpdaterThread(threading.Thread):
         self.outqueue = output_queue
         self.grad_workers = grad_workers
         self.grad_execution = grad_execution
-        self.fraction_workers = fraction_workers
+        self.fraction_workers = col_fraction_workers
         self.grad_communication = grad_communication
         self.local_worker = self.grad_workers.local_worker()
         self.remote_workers = self.grad_workers.remote_workers()
@@ -234,6 +234,8 @@ class UpdaterThread(threading.Thread):
 
             # Compute model updates
             for grads in pending_tasks:
+
+                # Get gradients
                 gradients, info = grads
 
                 # Update info dict

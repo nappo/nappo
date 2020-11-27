@@ -13,6 +13,7 @@ class GWorkerSet(WS):
                  col_execution,
                  col_communication,
                  col_workers_factory,
+                 col_fraction_workers,
                  grad_worker_resources,
                  initial_weights=None):
 
@@ -25,6 +26,7 @@ class GWorkerSet(WS):
             "col_execution": col_execution,
             "col_communication": col_communication,
             "col_workers_factory": col_workers_factory,
+            "col_fraction_workers": col_fraction_workers,
         }
 
         super(GWorkerSet, self).__init__(
@@ -40,6 +42,7 @@ class GWorkerSet(WS):
     def create_factory(cls,
                        num_workers,
                        col_workers_factory,
+                       col_fraction_workers=1.0,
                        col_execution="distributed",
                        col_communication="synchronous",
                        grad_worker_resources=default_remote_config):
@@ -53,6 +56,7 @@ class GWorkerSet(WS):
                 col_execution=col_execution,
                 col_communication=col_communication,
                 col_workers_factory=col_workers_factory,
+                col_fraction_workers=col_fraction_workers,
                 grad_worker_resources=grad_worker_resources)
 
         return grad_worker_set_factory
