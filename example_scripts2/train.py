@@ -81,15 +81,15 @@ def main():
 
     # add collection specs
     params.update({
-        "col_remote_workers": 4,
+        "col_remote_workers": 0,
         "col_communication": "synchronous",
         "col_worker_resources": {"num_cpus": 1, "num_gpus": 0.125},
-        "col_specs": {"fraction_samples": 1.0, "fraction_workers": 1.0}
+        "sync_col_specs": {"fraction_samples": 1.0, "fraction_workers": 1.0}
     })
 
     # add gradient specs
     params.update({
-        "grad_remote_workers": 0,
+        "grad_remote_workers": 4,
         "grad_communication": "synchronous",
         "grad_worker_resources": {"num_cpus": 1, "num_gpus": 0.125},
     })
@@ -97,7 +97,7 @@ def main():
     # add update specs
     params.update({
         "local_device": None,
-        "update_execution": "centralised",
+        "update_execution": "decentralised",
     })
 
     scheme = Scheme(**params)
