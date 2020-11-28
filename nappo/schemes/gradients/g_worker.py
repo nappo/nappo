@@ -97,6 +97,7 @@ class GWorker(W):
         # Create CollectorThread
         self.collector = CollectorThread(
             input_queue=self.inqueue,
+            index_worker=index_worker,
             local_worker=self.local_worker,
             remote_workers=self.remote_workers,
             col_communication=col_communication,
@@ -310,6 +311,7 @@ class CollectorThread(threading.Thread):
 
     def __init__(self,
                  input_queue,
+                 index_worker,
                  local_worker,
                  remote_workers,
                  col_fraction_workers=1.0,
@@ -321,6 +323,7 @@ class CollectorThread(threading.Thread):
 
         self.stopped = False
         self.inqueue = input_queue
+        self.index_worker = index_worker
         self.col_execution = col_execution
         self.col_communication = col_communication
         self.broadcast_interval = broadcast_interval

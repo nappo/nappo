@@ -122,7 +122,7 @@ class CWorker(W):
         self.print_worker_info()
 
 
-    def collect_data(self, listen_to):
+    def collect_data(self, listen_to=[]):
         """ _ """
 
         # Collect train data

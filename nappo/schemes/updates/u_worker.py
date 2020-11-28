@@ -80,7 +80,8 @@ class UWorker(W):
 
     @property
     def num_updates(self):
-        return self.local_worker.actor_version
+        version = self.local_worker.actor_version
+        return version
 
     def step(self):
         """ _ """
@@ -106,7 +107,13 @@ class UWorker(W):
         save_name : str
             Path to saved file.
         """
-        return self.local_worker.save_model(fname)
+
+        if self.updater.update_execution == "centralised":
+            save_name = self.local_worker.save_model(fname)
+        else:
+            save_name = ray.get(self.remote_workers[0].save_model.remote(fname))
+
+        return save_name
 
     def stop(self):
         """Stop remote workers"""
@@ -258,8 +265,7 @@ class UpdaterThread(threading.Thread):
             if self.update_execution == "centralised":
                 # Average and apply gradients
                 t = time.time()
-                self.grad_workers.local_worker().apply_gradients(
-                    average_gradients(to_average))
+                self.local_worker.apply_gradients(average_gradients(to_average))
                 avg_grads_t = time.time() - t
                 info.update({"avg_grads_time": avg_grads_t})
 
@@ -268,6 +274,9 @@ class UpdaterThread(threading.Thread):
                 self.sync_weights()
                 sync_grads_t = time.time() - t
                 info.update({"sync_grads_time": sync_grads_t})
+
+            else:
+                self.local_worker.local_worker.actor_version += 1
 
         elif self.grad_execution == "decentralised" and self.grad_communication == "asynchronous":
 
