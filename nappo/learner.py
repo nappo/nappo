@@ -14,8 +14,8 @@ class Learner:
 
     Parameters
     ----------
-    update_workers : Worker or WorkerSet
-        The set of workers handling actor_critic updates.
+    scheme : Scheme
+        
     target_steps : int
         Number of environment steps to reach to complete training.
     log_dir : str
@@ -39,7 +39,7 @@ class Learner:
         Training start time.
     """
 
-    def __init__(self, workers, target_steps, log_dir=None):
+    def __init__(self, scheme, target_steps, log_dir=None):
 
         # Input attributes
         self.log_dir = log_dir
