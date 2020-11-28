@@ -47,8 +47,7 @@ class GWorkerSet(WS):
                  col_communication,
                  col_workers_factory,
                  col_fraction_workers,
-                 grad_worker_resources,
-                 initial_weights=None):
+                 grad_worker_resources):
 
         self.worker_class = GWorker
         self.num_workers = num_workers
@@ -66,7 +65,6 @@ class GWorkerSet(WS):
             worker=self.worker_class,
             local_device=local_device,
             num_workers=self.num_workers,
-            initial_weights=initial_weights,
             worker_params=self.worker_params,
             worker_remote_config=self.remote_config)
 
@@ -103,7 +101,7 @@ class GWorkerSet(WS):
         grad_worker_set_factory : func
             creates a new GWorkerSet class instance.
         """
-        def grad_worker_set_factory(device, initial_weights=None):
+        def grad_worker_set_factory(device):
             """
             Creates and returns a GWorkerSet class instance.
 
@@ -111,8 +109,6 @@ class GWorkerSet(WS):
             ----------
             device : str
                 "cpu" or specific GPU "cuda:number`" to use for computation.
-            initial_weights : ray object ID
-                Initial model weights.
 
             Returns
             -------
@@ -122,7 +118,6 @@ class GWorkerSet(WS):
             return cls(
                 local_device=device,
                 num_workers=num_workers,
-                initial_weights=initial_weights,
                 col_execution=col_execution,
                 col_communication=col_communication,
                 col_workers_factory=col_workers_factory,

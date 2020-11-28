@@ -12,33 +12,35 @@ class UWorker(W):
     """
     Update worker. Handles actor updates.
 
-    This worker receives gradients from gradient workers and then updates the
-    its actor model. Updated weights are broadcasted back to gradient workers
+    This worker receives gradients from gradient workers and then handle actor
+    model updates. Updated weights are broadcasted back to gradient workers
     if required by the training scheme.
 
     Parameters
     ----------
-     grad_workers_factory : func
-
-     index_worker : int
-
-     col_fraction_workers : float
-
-     grad_execution : str
-
-     grad_communication : str
-
-     update_execution : str
-
-     local_device : str
+    grad_workers_factory : func
+        A function that creates a set of gradientc omputation workers.
+    index_worker : int
+        Worker index.
+    col_fraction_workers : float
+        Minimum fraction of samples required to stop if collection is
+        synchronously coordinated and most workers have finished their
+        collection task.
+    grad_execution : str
+        Execution patterns for gradients computation.
+    grad_communication : str
+        Communication coordination pattern for gradient computation workers.
+    update_execution : str
+        Execution patterns for update steps.
+    local_device : str
+        "cpu" or specific GPU "cuda:number`" to use for computation.
 
     Attributes
     ----------
     grad_execution : str
-
+        Execution patterns for gradients computation.
     grad_communication : str
-
-    device : str
+        Communication coordination pattern for gradient computation workers.
 
     grad_workers : GWorkerSet
 
@@ -70,9 +72,8 @@ class UWorker(W):
 
         # Computation device
         dev = local_device or "cuda" if torch.cuda.is_available() else "cpu"
-        self.device = torch.device(dev)
 
-        self.grad_workers = grad_workers_factory(local_device)
+        self.grad_workers = grad_workers_factory(dev)
         self.local_worker = self.grad_workers.local_worker()
         self.remote_workers = self.grad_workers.remote_workers()
         self.num_workers = len(self.grad_workers.remote_workers())
