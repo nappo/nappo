@@ -113,7 +113,7 @@ class CWorkerSet(WS):
 
         Returns
         -------
-        create_algo_instance : func
+        collection_worker_set_factory : func
             creates a new CWorkerSet class instance.
         """
 

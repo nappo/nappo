@@ -101,7 +101,7 @@ class Learner:
     def print_info(self):
         """Print relevant information about the training process"""
         s = "Update {}, num samples collected {}, FPS {}".format(
-            self.update_worker.num_updates, self.num_samples_collected,
+            self.update_worker.actor_version, self.num_samples_collected,
             int(self.num_samples_collected / (time.time() - self.start)))
         s += "\n"
         for k, v in self.get_metrics().items():

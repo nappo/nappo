@@ -48,15 +48,15 @@ class CWorker(W):
         collection task.
     device : torch.device
         CPU or specific GPU to use for computation.
-    actor : nn.Module
+    actor : Actor
         An actor class instance.
-    algo : an algorithm class
+    algo : Algo
         An algorithm class instance.
     envs_train : VecEnv
         A VecEnv class instance with the train environments.
     envs_test : VecEnv
         A VecEnv class instance with the test environments.
-    storage : a rollout storage class
+    storage : Storage
         A Storage class instance.
     iter : int
          Number of times samples have been collected and sent.

@@ -13,20 +13,45 @@ class UWorker(W):
     Update worker. Handles actor updates.
 
     This worker receives gradients from gradient workers and then updates the
-    its actor model. Updated weights are synchronously sent back
-    to gradient workers.
+    its actor model. Updated weights are broadcasted back to gradient workers
+    if required by the training scheme.
 
     Parameters
     ----------
-    grad_workers : WorkerSet
-        Set of workers computing and sending gradients to the UWorker.
+     grad_workers_factory : func
+
+     index_worker : int
+
+     col_fraction_workers : float
+
+     grad_execution : str
+
+     grad_communication : str
+
+     update_execution : str
+
+     local_device : str
 
     Attributes
     ----------
-    grad_workers : WorkerSet
-        Set of workers computing and sending gradients to the UWorker.
+    grad_execution : str
+
+    grad_communication : str
+
+    device : str
+
+    grad_workers : GWorkerSet
+
+    local_worker : GWorker
+
+    remote_workers : List
+
     num_workers : int
-        number of remote workers computing gradients.
+
+    outqueue : queue.Queue
+
+    updater : UpdaterThread
+
     """
 
     def __init__(self,
@@ -47,7 +72,7 @@ class UWorker(W):
         dev = local_device or "cuda" if torch.cuda.is_available() else "cpu"
         self.device = torch.device(dev)
 
-        self.grad_workers = grad_workers_factory(local_device, add_local_worker=True)
+        self.grad_workers = grad_workers_factory(local_device)
         self.local_worker = self.grad_workers.local_worker()
         self.remote_workers = self.grad_workers.remote_workers()
         self.num_workers = len(self.grad_workers.remote_workers())
@@ -68,7 +93,8 @@ class UWorker(W):
         # Create UpdaterThread
         self.updater = UpdaterThread(
             output_queue=self.outqueue,
-            grad_workers=self.grad_workers,
+            local_worker=self.local_worker,
+            remote_workers=self.remote_workers,
             col_fraction_workers=col_fraction_workers,
             grad_communication=grad_communication,
             grad_execution=grad_execution,
@@ -79,7 +105,8 @@ class UWorker(W):
         if index_worker > 0: self.print_worker_info()
 
     @property
-    def num_updates(self):
+    def actor_version(self):
+        """Number of times Actor has been updated."""
         version = self.local_worker.actor_version
         return version
 
@@ -142,28 +169,45 @@ class UpdaterThread(threading.Thread):
 
     Parameters
     ----------
-    input_queue : queue.Queue
-        Queue to store the data dicts received and pending to be processed.
     output_queue : queue.Queue
         Queue to store the info dicts resulting from the model update operation.
-    local_worker : Worker
-        Local worker that acts as a parameter server.
+    local_worker : GWorker
+        Local GWorker that acts as a parameter server.
+    remote_workers : List
+
+    update_execution : str
+
+    col_fraction_workers : float
+
+    grad_execution : str
+
+    grad_communication : str
 
     Attributes
     ----------
-    local_worker : Worker
-        Local worker that acts as a parameter server.
-    input_queue : queue.Queue
-        Queue to store the data dicts received and pending to be processed.
-    output_queue : queue.Queue
-        Queue to store the info dicts resulting from the model update operation.
     stopped : bool
         Whether or not the thread in running.
+    outqueue : queue.Queue
+        Queue to store the info dicts resulting from the model update operation.
+    local_worker : Worker
+        Local worker that acts as a parameter server.
+    remote_workers : List
+
+    num_workers : int
+
+    update_execution : str
+
+    col_fraction_workers : float
+
+    grad_execution : str
+
+    grad_communication : str
     """
 
     def __init__(self,
                  output_queue,
-                 grad_workers,
+                 local_worker,
+                 remote_workers,
                  update_execution,
                  col_fraction_workers=1.0,
                  grad_execution="distributed",
@@ -173,14 +217,13 @@ class UpdaterThread(threading.Thread):
 
         self.stopped = False
         self.outqueue = output_queue
-        self.grad_workers = grad_workers
+        self.local_worker = local_worker
+        self.remote_workers = remote_workers
+        self.num_workers = len(remote_workers)
+        self.update_execution = update_execution
         self.grad_execution = grad_execution
         self.fraction_workers = col_fraction_workers
         self.grad_communication = grad_communication
-        self.local_worker = self.grad_workers.local_worker()
-        self.remote_workers = self.grad_workers.remote_workers()
-        self.num_workers = len(self.grad_workers.remote_workers())
-        self.update_execution = update_execution
 
         if grad_execution == "centralised" and grad_communication == "synchronous":
             pass

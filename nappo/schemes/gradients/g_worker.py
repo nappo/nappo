@@ -26,34 +26,48 @@ class GWorker(W):
     ----------
     index_worker : int
         Worker index.
-    algo_factory : func
-        A function that creates an algorithm class.
-    storage_factory : func
-        A function that create a rollouts storage.
-    actor_factory : func
-        A function that creates a policy.
-    collection_workers_factory : func
-        A function that creates a sets of data collection workers.
+    col_workers_factory : func
+        A function that creates a set of data collection workers.
+    col_communication : str
+        Communication coordination pattern for data collection.
+    col_execution : str
+        Execution patterns for data collection.
+    col_fraction_workers : float
+        Minimum fraction of samples required to stop if collection is
+        synchronously coordinated and most workers have finished their
+        collection task.
+    device : str
+        "cpu" or specific GPU "cuda:number`" to use for computation.
     initial_weights : ray object ID
         Initial model weights.
-    max_collect_requests_pending : int
-        maximum number of collection tasks simultaneously scheduled to each
-        collection worker.
 
     Attributes
     ----------
     index_worker : int
         Index assigned to this worker.
-    actor : nn.Module
+    iter : int
+        Number of times gradients have been computed and sent.
+    col_communication : str
+        Communication coordination pattern for data collection.
+    c_workers : CWorkerSet
+        A CWorkerSet class instance.
+    local_worker : CWorker
+        c_workers local worker.
+    remote_workers : List of CWorker's
+        c_workers remote data collection workers.
+    num_workers : int
+        Number of collection remote workers.
+    actor : Actor
         An actor class instance.
-    algo : an algorithm class
+    algo : Algo
         An algorithm class instance.
-    storage : a rollout storage class
+    storage : Storage
         A Storage class instance.
-    ac_version : int
-        Number of times the current actor version been has been updated.
-    latest_weights : ray object ID
-        Last received model weights.
+    inqueue : queue.Queue
+        Input queue where incoming collected samples are placed.
+    collector : CollectorThread
+        Class handling data collection via c_workers and placing incoming
+        rollouts into the input queue `inqueue`.
     """
 
     def __init__(self,
@@ -69,7 +83,7 @@ class GWorker(W):
 
         # Define counters and other attributes
         self.iter = 0
-        self.communication = col_communication
+        self.col_communication = col_communication
 
         # Computation device
         dev = device or "cuda" if torch.cuda.is_available() else "cpu"
@@ -111,10 +125,26 @@ class GWorker(W):
 
     @property
     def actor_version(self):
+        """Number of times Actor has been updated."""
         return self.local_worker.actor_version
 
     def step(self, distribute_gradients=False):
+        """
+        Get data from `self.inqueue`, then perform a gradient computation step.
 
+        Parameters
+        ----------
+        distribute_gradients : bool
+            If True, gradients will be directly shared across remote workers
+            and optimization steps will executed in a decentralised way.
+
+        Returns
+        -------
+        grads: list of tensors
+            List of actor gradients.
+        info : dict
+            Summary dict of relevant gradient operation information.
+        """
         self.get_data()
         grads, info = self.get_grads(distribute_gradients)
         if distribute_gradients: self.apply_gradients()
@@ -122,15 +152,20 @@ class GWorker(W):
 
     def get_grads(self, distribute_gradients=False):
         """
-        Perform logical learning step. Training proceeds receiving data samples
-        from collection workers and computations policy gradients.
+        Perform a gradient computation step.
+
+        Parameters
+        ----------
+        distribute_gradients : bool
+            If True, gradients will be directly shared across remote workers
+            and optimization steps will executed in a decentralised way.
 
         Returns
         -------
         grads: list of tensors
             List of actor gradients.
         info : dict
-            Summary dict of relevant step information.
+            Summary dict of relevant gradient operation information.
         """
 
         # Collect data and prepare data batches
@@ -156,7 +191,7 @@ class GWorker(W):
         return grads, info
 
     def get_data(self):
-        """ _ """
+        """Get data from `self.inqueue`"""
 
         if self.iter % (self.algo.num_epochs * self.algo.num_mini_batch) != 0:
             return
@@ -172,6 +207,9 @@ class GWorker(W):
         ----------
         batch : dict
             data batch containing all required tensors to compute algo loss.
+        distribute_gradients : bool
+            If True, gradients will be directly shared across remote workers
+            and optimization steps will executed in a decentralised way.
 
         Returns
         -------
@@ -210,7 +248,7 @@ class GWorker(W):
         """Update Actor Critic model"""
         self.local_worker.actor_version += 1
         self.algo.apply_gradients(gradients)
-        if self.communication == "synchronous":
+        if self.col_communication == "synchronous":
             self.collector.broadcast_new_weights()
 
     def set_weights(self, weights):
@@ -271,43 +309,50 @@ class GWorker(W):
 
 class CollectorThread(threading.Thread):
     """
-    This class receives data from the workers and queues it to the updater queue.
-
+    This class receives data samples from the data collection workers and
+    queues them into the data input_queue.
 
     Parameters
     ----------
-    inqueue : queue.Queue
-        Queue to store the data dicts received and pending to be processed.
+    index_worker : int
+        Index assigned to this worker.
+    input_queue : queue.Queue
+        Queue to store the data dicts received from data collection workers.
     local_worker : Worker
         Local worker that acts as a parameter server.
     remote_workers : list of Workers
         Set of workers collecting and sending rollouts.
+    col_fraction_workers : float
+        Minimum fraction of samples required to stop if collection is
+        synchronously coordinated and most workers have finished their
+        collection task.
+    col_communication : str
+        Communication coordination pattern for data collection.
+    col_execution : str
+        Execution patterns for data collection.
     broadcast_interval : int
         After how many central updates, model weights should be broadcasted to
         remote collection workers.
-    max_collect_requests_pending : int
-        Maximum number of collection tasks simultaneously scheduled to each
-        collection worker.
 
     Attributes
     ----------
-    input_queue : queue.Queue
-        Queue to store the data dicts received and pending to be processed.
-    local_worker : Worker
-        Local worker that acts as a parameter server.
-    remote_workers : list of Workers
-        Set of workers collecting and sending rollouts.
+    stopped : bool
+        Whether or not the thread in running.
+    inqueue : queue.Queue
+        Queue to store the data dicts received from data collection workers.
+    index_worker : int
+        Index assigned to this worker.
+    local_worker : CWorker
+        c_workers local worker.
+    remote_workers : List of CWorker's
+        c_workers remote data collection workers.
+    num_workers : int
+        Number of collection remote workers.
     broadcast_interval : int
-        After how many central updates, model weights should be broadcasted to
+        After how many collection step model weights should be broadcasted to
         remote collection workers.
     num_sent_since_broadcast : int
         Number of data dicts received since last model weights were broadcasted.
-    num_workers : int
-        number of remote workers computing gradients.
-    collector_tasks : TaskPool
-        Task pool to track remote workers in-flight collection tasks.
-    stopped : bool
-        Whether or not the thread in running.
     """
 
     def __init__(self,
@@ -364,10 +409,8 @@ class CollectorThread(threading.Thread):
 
     def run(self):
         while not self.stopped:
-
             # First, collect data
             self.step()
-
             # Then, update counter and broadcast weights to worker if necessary
             self.num_sent_since_broadcast += 1
             if self.should_broadcast():
@@ -375,8 +418,7 @@ class CollectorThread(threading.Thread):
 
     def step(self):
         """
-        Continuously collects data from remote workers and puts it
-        in the updater queue.
+        Collects data from remote workers and puts it in the GWorker queue.
         """
 
         if self.col_execution == "centralised" and self.col_communication == "synchronous":
