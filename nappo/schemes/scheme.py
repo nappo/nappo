@@ -20,6 +20,23 @@ class Scheme:
         A function to create train environments.
     test_envs_factory : func
         A function to create test environments.
+    col_remote_workers : int
+
+    col_communication : str
+
+    col_worker_resources : dict
+
+    sync_col_specs : dict
+
+    grad_remote_workers : int
+
+    grad_communication : str
+
+    grad_worker_resources : dict
+
+    local_device : str
+
+    update_execution : str
     """
     def __init__(self,
 
@@ -45,7 +62,7 @@ class Scheme:
                  local_device=None,
                  update_execution="centralised"):
 
-        # TODO. Add that core components check.
+        # TODO. Add core components check, to make sure components match.
 
         col_execution="decentralised" if col_remote_workers > 0 else "centralised"
         grad_execution="decentralised" if grad_remote_workers > 0 else "centralised"

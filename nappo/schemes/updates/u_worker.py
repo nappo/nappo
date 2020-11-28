@@ -111,7 +111,7 @@ class UWorker(W):
         return version
 
     def step(self):
-        """ _ """
+        """Pulls information from update operations from  `self.outqueue`."""
 
         if self.grad_communication == "synchronous":
             self.updater.step()
@@ -246,8 +246,7 @@ class UpdaterThread(threading.Thread):
 
     def step(self):
         """
-        Continuously pulls data from the input queue, computes gradients,
-        updates the local actor model and places information in the
+        Takes a logical optimization step and places output information in the
         output queue.
         """
 

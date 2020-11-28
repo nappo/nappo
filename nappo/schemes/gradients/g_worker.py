@@ -130,7 +130,7 @@ class GWorker(W):
 
     def step(self, distribute_gradients=False):
         """
-        Get data from `self.inqueue`, then perform a gradient computation step.
+        Pulls data from `self.inqueue`, then perform a gradient computation step.
 
         Parameters
         ----------
@@ -191,7 +191,7 @@ class GWorker(W):
         return grads, info
 
     def get_data(self):
-        """Get data from `self.inqueue`"""
+        """Pulls data from `self.inqueue`"""
 
         if self.iter % (self.algo.num_epochs * self.algo.num_mini_batch) != 0:
             return

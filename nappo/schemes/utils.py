@@ -46,11 +46,9 @@ def ray_get_and_free(object_ids):
     return result
 
 def broadcast_message(key, message):
-    """ _ """
     ray.worker.global_worker.redis_client.set(key, message)
 
 def check_message(key):
-    """_ """
     return ray.worker.global_worker.redis_client.get(key)
 
 def average_gradients(grads_list):

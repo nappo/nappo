@@ -15,7 +15,7 @@ class Learner:
     Parameters
     ----------
     scheme : Scheme
-        
+
     target_steps : int
         Number of environment steps to reach to complete training.
     log_dir : str
