@@ -12,8 +12,8 @@ class CWorker(W):
      Worker class handling data collection.
 
     This class wraps an actor instance, a storage class instance and a
-    train and a test vector of environments. It collects data samples, sends
-    them to a central node for processing and and evaluates network versions.
+    train and a test vector environments. It collects data samples, sends
+    them and and evaluates network versions.
 
     Parameters
     ----------
@@ -21,21 +21,33 @@ class CWorker(W):
         Worker index.
     algo_factory : func
         A function that creates an algorithm class.
-    storage_factory : func
-        A function that create a rollouts storage.
-    train_envs_factory : func
-        A function to create train environments.
     actor_factory : func
         A function that creates a policy.
+    storage_factory : func
+        A function that create a rollouts storage.
+    fraction_samples : float
+        Minimum fraction of samples required to stop if collection is
+        synchronously coordinated and most workers have finished their
+        collection task.
+    train_envs_factory : func
+        A function to create train environments.
     test_envs_factory : func
         A function to create test environments.
     initial_weights : ray object ID
         Initial model weights.
+    device : str
+        "cpu" or specific GPU "cuda:number`" to use for computation.
 
     Attributes
     ----------
     index_worker : int
         Index assigned to this worker.
+    fraction_samples : float
+        Minimum fraction of samples required to stop if collection is
+        synchronously coordinated and most workers have finished their
+        collection task.
+    device : torch.device
+        CPU or specific GPU to use for computation.
     actor : nn.Module
         An actor class instance.
     algo : an algorithm class
@@ -47,7 +59,7 @@ class CWorker(W):
     storage : a rollout storage class
         A Storage class instance.
     iter : int
-         Number of times gradients have been computed and sent.
+         Number of times samples have been collected and sent.
     actor_version : int
         Number of times the current actor version been has been updated.
     update_every : int
@@ -65,8 +77,8 @@ class CWorker(W):
                  algo_factory,
                  actor_factory,
                  storage_factory,
-                 fraction_samples,
-                 train_envs_factory=lambda x, y : None,
+                 fraction_samples=1.0,
+                 train_envs_factory=lambda x, y: None,
                  test_envs_factory=lambda x, y, z: None,
                  initial_weights=None,
                  device=None):
@@ -99,13 +111,12 @@ class CWorker(W):
         # Create test environments (if creation function available)
         self.envs_test = test_envs_factory(self.device, index_worker, "test")
 
-        if initial_weights: # if remote worker
+        if initial_weights:  # if remote worker
 
             # Set initial weights
             self.set_weights(initial_weights)
 
         if self.envs_train:
-
             # Define initial train states
             self.obs, self.rhs, self.done = self.actor.policy_initial_states(
                 self.envs_train.reset())
@@ -121,9 +132,24 @@ class CWorker(W):
         # Print worker information
         self.print_worker_info()
 
-
     def collect_data(self, listen_to=[]):
-        """ _ """
+        """
+        Perform a data collection operation, returning rollouts and
+        other relevant information about the process.
+
+        Parameters
+        ----------
+        listen_to : list
+            List of keywords to listen to trigger early stopping during
+            collection.
+
+        Returns
+        -------
+        data : dict
+            Collected train data samples.
+        info : dict
+            Additional relevant information about the collection operation.
+        """
 
         # Collect train data
         col_time, train_perf = self.collect_train_data(listen_to=listen_to)
@@ -153,30 +179,30 @@ class CWorker(W):
 
     def collect_train_data(self, num_steps=None, listen_to=[]):
         """
-        Collect data from interactions with the environments.
+        Collect train data from interactions with the environments.
 
         Parameters
         ----------
         num_steps : int
             Target number of train environment steps to take.
-        send : bool
-            If true, this function returns the collected rollouts.
+        listen_to : list
 
         Returns
         -------
-        rollouts : dict
-            Dict containing collected data and ohter relevant information
-            related to the collection process.
+        col_time : float
+            Time, in seconds, spent in this operation.
+        train_perf : float
+            Average accumulated reward over recent train episodes.
         """
         t = time.time()
         num_steps = num_steps or int(self.update_every)
-
         min_steps = int(num_steps * self.fraction_samples)
 
         for step in range(num_steps):
 
             # Predict next action, next rnn hidden state and algo-specific outputs
-            act, clip_act, rhs, algo_data = self.algo.acting_step(self.obs, self.rhs, self.done)
+            act, clip_act, rhs, algo_data = self.algo.acting_step(
+                self.obs, self.rhs, self.done)
 
             # Interact with envs_vector with predicted action (clipped within action space)
             obs2, reward, done, infos = self.envs_train.step(clip_act)
@@ -187,7 +213,8 @@ class CWorker(W):
             self.acc_reward[done == 1.0] = 0.0
 
             # Prepare transition dict
-            transition = {"obs": self.obs, "rhs": rhs, "act": act, "rew": reward, "obs2": obs2, "done": done}
+            transition = {"obs": self.obs, "rhs": rhs, "act": act,
+                          "rew": reward, "obs2": obs2, "done": done}
             transition.update(algo_data)
 
             # Store transition in buffer
@@ -205,7 +232,8 @@ class CWorker(W):
                     break
 
         col_time = time.time() - t
-        train_perf = 0 if len(self.train_perf) == 0 else sum(self.train_perf) / len(self.train_perf)
+        train_perf = 0 if len(self.train_perf) == 0 else sum(
+            self.train_perf) / len(self.train_perf)
 
         return col_time, train_perf
 
@@ -225,16 +253,17 @@ class CWorker(W):
         obs, rhs, done = self.actor.policy_initial_states(obs)
 
         while len(completed_episodes) < self.algo.num_test_episodes:
-
             # Predict next action and rnn hidden state
-            act, clip_act, rhs, _ = self.algo.acting_step(obs, rhs, done, deterministic=True)
+            act, clip_act, rhs, _ = self.algo.acting_step(
+                obs, rhs, done, deterministic=True)
 
             # Interact with env with predicted action (clipped within action space)
             obs2, reward, done, _ = self.envs_test.step(clip_act)
 
             # Keep track of episode rewards and completed episodes
             rewards += reward.cpu().squeeze(-1).numpy()
-            completed_episodes.extend(rewards[done.cpu().squeeze(-1).numpy() == 1.0].tolist())
+            completed_episodes.extend(
+                rewards[done.cpu().squeeze(-1).numpy() == 1.0].tolist())
             rewards[done.cpu().squeeze(-1).numpy() == 1.0] = 0.0
 
             obs = obs2

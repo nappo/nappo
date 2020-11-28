@@ -9,20 +9,28 @@ class CWorkerSet(WS):
 
     Parameters
     ----------
+    num_workers : int
+        Number of remote workers in the worker set.
     algo_factory : func
         A function that creates an algorithm class.
+    actor_factory : func
+        A function that creates a policy.
     storage_factory : func
         A function that create a rollouts storage.
     train_envs_factory : func
         A function to create train environments.
-    actor_factory : func
-        A function that creates a policy.
+    local_device : str
+        "cpu" or specific GPU "cuda:number`" to use for computation.
+    initial_weights : ray object ID
+        Initial model weights.
+    fraction_samples :
+        Minimum fraction of samples required to stop if collection is
+        synchronously coordinated and most workers have finished their
+        collection task.
     test_envs_factory : func
         A function to create test environments.
     worker_remote_config : dict
         Ray resource specs for the remote workers.
-    num_workers : int
-        Number of remote workers in the worker set.
 
     Attributes
     ----------
@@ -84,20 +92,24 @@ class CWorkerSet(WS):
 
         Parameters
         ----------
+        num_workers : int
+            Number of remote workers in the worker set.
         algo_factory : func
             A function that creates an algorithm class.
         actor_factory : func
             A function that creates a policy.
         storage_factory : func
             A function that create a rollouts storage.
-        test_envs_factory : func
-            A function to create test environments.
         train_envs_factory : func
             A function to create train environments.
-        worker_remote_config : dict
+        col_fraction_samples :
+            Minimum fraction of samples required to stop if collection is
+            synchronously coordinated and most workers have finished their
+            collection task.
+        test_envs_factory : func
+            A function to create test environments.
+        col_worker_resources : dict
             Ray resource specs for the remote workers.
-        num_workers : int
-            Number of remote workers in the worker set.
 
         Returns
         -------
@@ -106,6 +118,21 @@ class CWorkerSet(WS):
         """
 
         def collection_worker_set_factory(device, initial_weights):
+            """
+            Creates and returns a CWorkerSet class instance.
+
+            Parameters
+            ----------
+            device : str
+                "cpu" or specific GPU "cuda:number`" to use for computation.
+            initial_weights : ray object ID
+                Initial model weights.
+
+            Returns
+            -------
+            CWorkerSet : CWorkerSet
+                A new CWorkerSet class instance.
+            """
             return cls(
                 local_device=device,
                 num_workers=num_workers,

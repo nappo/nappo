@@ -4,6 +4,8 @@ from contextlib import closing
 
 def find_free_port():
     """
+    Returns a free port on the current node.
+
     from https://github.com/ray-project/ray/blob/master/python/ray/util/sgd/utils.py
     """
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:

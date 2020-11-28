@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 default_remote_config = {
     "num_cpus": 1,
-    "num_gpus": 0.5,
+    "num_gpus": 0.2,
 }
 
 
@@ -97,14 +97,27 @@ class Worker:
         """Returns a free port on the current node."""
         return find_free_port()
 
-    def setup_torch_data_parallel(self, url, world_rank, world_size, backend):
-        """Join a torch process group for distributed SGD."""
+    def setup_torch_data_parallel(self, url, rank, world_size, backend):
+        """
+        Join a torch process group for distributed SGD.
+
+        Parameters
+        ----------
+        url :
+            URL specifying how to initialize the process group.
+        rank :
+            Rank of the current process.
+        world_size : int
+            Number of processes participating in the job.
+        backend : str
+            The pytorch distributed backend to use. valid values include mpi,
+            gloo, and nccl.
+        """
         torch.distributed.init_process_group(
             backend=backend,
             init_method=url,
-            rank=world_rank,
+            rank=rank,
             world_size=world_size)
-        self.distributed_world_size = world_size
 
     @staticmethod
     def get_host():

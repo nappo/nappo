@@ -78,6 +78,7 @@ class GWorker(W):
         self.c_workers = col_workers_factory(dev, initial_weights)
         self.local_worker = self.c_workers.local_worker()
         self.remote_workers = self.c_workers.remote_workers()
+        self.num_workers = len(self.remote_workers)
 
         # Get Actor Critic instance
         self.actor = self.local_worker.actor
@@ -196,7 +197,7 @@ class GWorker(W):
 
             for p in self.actor.parameters():
                 if p.grad is not None:
-                    p.grad /= self.distributed_world_size
+                    p.grad /= self.num_workers
 
             avg_grads_t = time.time() - t
             grads = None
