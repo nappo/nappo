@@ -1,8 +1,5 @@
-nappo.core.storages package
-===========================
-
-Subpackages
------------
+nappo.core.storages
+===================
 
 .. toctree::
    :maxdepth: 4

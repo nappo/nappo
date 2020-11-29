@@ -1,27 +1,24 @@
-nappo.core.actors.distributions package
-=======================================
+nappo.core.actors.distributions
+===============================
 
-Submodules
-----------
-
-nappo.core.actors.distributions.categorical module
---------------------------------------------------
+nappo.core.actors.distributions.categorical
+-------------------------------------------
 
 .. automodule:: nappo.core.actors.distributions.categorical
    :members:
    :undoc-members:
    :show-inheritance:
 
-nappo.core.actors.distributions.gaussian module
------------------------------------------------
+nappo.core.actors.distributions.gaussian
+----------------------------------------
 
 .. automodule:: nappo.core.actors.distributions.gaussian
    :members:
    :undoc-members:
    :show-inheritance:
 
-nappo.core.actors.distributions.squashed\_gaussian module
----------------------------------------------------------
+nappo.core.actors.distributions.squashed\_gaussian
+---------------------------------------------------
 
 .. automodule:: nappo.core.actors.distributions.squashed_gaussian
    :members:

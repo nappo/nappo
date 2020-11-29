@@ -1,8 +1,5 @@
-nappo.core.algos package
-========================
-
-Submodules
-----------
+algos
+=====
 
 nappo.core.algos.base module
 ----------------------------

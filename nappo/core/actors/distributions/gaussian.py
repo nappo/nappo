@@ -3,6 +3,8 @@ import torch.nn as nn
 from torch.distributions.normal import Normal
 from ..neural_networks.feature_extractors.utils import init
 
+LOG_STD_MAX = 2  # Maximum std allowed value. Used for clipping.
+LOG_STD_MIN = -20  # Minimum std allowed value. Used for clipping.
 
 class DiagGaussian(nn.Module):
     """
@@ -25,9 +27,6 @@ class DiagGaussian(nn.Module):
         If predict_log_std is True Maps the incoming feature maps to output
         action std values. Otherwise, the std values are a learnable nn.Parameter.
     """
-
-    LOG_STD_MAX = 2 # Maximum std allowed value. Used for clipping.
-    LOG_STD_MIN = -20 # Minimum std allowed value. Used for clipping.
 
     def __init__(self, num_inputs, num_outputs, predict_log_std=False):
         super(DiagGaussian, self).__init__()

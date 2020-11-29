@@ -1,8 +1,5 @@
-nappo.core.envs package
-=======================
-
-Submodules
-----------
+envs
+====
 
 nappo.core.envs.base module
 ---------------------------

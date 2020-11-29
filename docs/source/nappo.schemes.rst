@@ -1,8 +1,16 @@
-nappo.schemes package
-=====================
+Nappo scalable training schemes
+===============================
 
-Subpackages
------------
+Scheme class
+------------
+
+.. automodule:: nappo.schemes.scheme
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Workers
+-------
 
 .. toctree::
    :maxdepth: 4
@@ -11,31 +19,3 @@ Subpackages
    nappo.schemes.collection
    nappo.schemes.gradients
    nappo.schemes.updates
-
-Submodules
-----------
-
-nappo.schemes.scheme module
----------------------------
-
-.. automodule:: nappo.schemes.scheme
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-nappo.schemes.utils module
---------------------------
-
-.. automodule:: nappo.schemes.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: nappo.schemes
-   :members:
-   :undoc-members:
-   :show-inheritance:
