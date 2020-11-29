@@ -21,22 +21,24 @@ class Scheme:
     test_envs_factory : func
         A function to create test environments.
     col_remote_workers : int
-
+        Number of data collection workers per gradient worker.
     col_communication : str
-
+        Communication coordination pattern for data collection.
     col_worker_resources : dict
-
+        Ray resource specs for collection remote workers.
     sync_col_specs : dict
-
+        specs about minimum fraction_samples [0 - 1.0] and minimum
+        fraction_workers [0 - 1.0] required in synchronous data collection.
     grad_remote_workers : int
-
+        Number of gradient workers.
     grad_communication : str
-
+        Communication coordination pattern for gradient computation workers.
     grad_worker_resources : dict
-
+        Ray resource specs for gradient remote workers.
     local_device : str
-
+        "cpu" or specific GPU "cuda:number`" to use for computation.
     update_execution : str
+        Execution patterns for update steps.
     """
     def __init__(self,
 

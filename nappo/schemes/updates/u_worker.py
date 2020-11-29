@@ -41,19 +41,20 @@ class UWorker(W):
         Execution patterns for gradients computation.
     grad_communication : str
         Communication coordination pattern for gradient computation workers.
-
     grad_workers : GWorkerSet
-
+        A GWorkerSet class instance.
     local_worker : GWorker
-
+        grad_workers local worker.
     remote_workers : List
-
+        grad_workers remote data collection workers.
     num_workers : int
-
+        Number of gradient remote workers.
     outqueue : queue.Queue
-
+        Output queue where information from update operations is placed.
     updater : UpdaterThread
-
+        Class handling updates, calling grad_workers to get gradients,
+        performing update steps and placing update information into the
+        ouput queue `outqueue`.
     """
 
     def __init__(self,
@@ -175,14 +176,17 @@ class UpdaterThread(threading.Thread):
     local_worker : GWorker
         Local GWorker that acts as a parameter server.
     remote_workers : List
-
+        grad_workers remote data collection workers.
     update_execution : str
-
+        Execution patterns for update steps.
     col_fraction_workers : float
-
+        Minimum fraction of samples required to stop if collection is
+        synchronously coordinated and most workers have finished their
+        collection task.
     grad_execution : str
-
+        Execution patterns for gradients computation.
     grad_communication : str
+        Communication coordination pattern for gradient computation workers.
 
     Attributes
     ----------
@@ -193,16 +197,21 @@ class UpdaterThread(threading.Thread):
     local_worker : Worker
         Local worker that acts as a parameter server.
     remote_workers : List
-
+        Minimum fraction of samples required to stop if collection is
+        synchronously coordinated and most workers have finished their
+        collection task.
     num_workers : int
-
+        Number of gradient remote workers.
     update_execution : str
-
+        Execution patterns for update steps.
     col_fraction_workers : float
-
+        Minimum fraction of samples required to stop if collection is
+        synchronously coordinated and most workers have finished their
+        collection task.
     grad_execution : str
-
+        Execution patterns for gradients computation.
     grad_communication : str
+        Communication coordination pattern for gradient computation workers.
     """
 
     def __init__(self,

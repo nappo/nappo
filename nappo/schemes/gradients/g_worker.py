@@ -49,12 +49,12 @@ class GWorker(W):
         Number of times gradients have been computed and sent.
     col_communication : str
         Communication coordination pattern for data collection.
-    c_workers : CWorkerSet
+    col_workers : CWorkerSet
         A CWorkerSet class instance.
     local_worker : CWorker
-        c_workers local worker.
+        col_workers local worker.
     remote_workers : List of CWorker's
-        c_workers remote data collection workers.
+        col_workers remote data collection workers.
     num_workers : int
         Number of collection remote workers.
     actor : Actor
@@ -66,7 +66,7 @@ class GWorker(W):
     inqueue : queue.Queue
         Input queue where incoming collected samples are placed.
     collector : CollectorThread
-        Class handling data collection via c_workers and placing incoming
+        Class handling data collection via col_workers and placing incoming
         rollouts into the input queue `inqueue`.
     """
 
@@ -89,9 +89,9 @@ class GWorker(W):
         dev = device or "cuda" if torch.cuda.is_available() else "cpu"
 
         # Create CWorkerSet instance
-        self.c_workers = col_workers_factory(dev, initial_weights)
-        self.local_worker = self.c_workers.local_worker()
-        self.remote_workers = self.c_workers.remote_workers()
+        self.col_workers = col_workers_factory(dev, initial_weights)
+        self.local_worker = self.coll_workers.local_worker()
+        self.remote_workers = self.col_workers.remote_workers()
         self.num_workers = len(self.remote_workers)
 
         # Get Actor Critic instance
@@ -277,7 +277,7 @@ class GWorker(W):
 
 
         self.algo.update_algo_parameter(parameter_name, new_parameter_value)
-        for e in self.c_workers.remote_workers():
+        for e in self.col_workers.remote_workers():
             e.update_algo_parameter.remote(parameter_name, new_parameter_value)
 
     def save_model(self, fname):
@@ -343,9 +343,9 @@ class CollectorThread(threading.Thread):
     index_worker : int
         Index assigned to this worker.
     local_worker : CWorker
-        c_workers local worker.
+        col_workers local worker.
     remote_workers : List of CWorker's
-        c_workers remote data collection workers.
+        col_workers remote data collection workers.
     num_workers : int
         Number of collection remote workers.
     broadcast_interval : int

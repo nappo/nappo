@@ -15,7 +15,7 @@ class Learner:
     Parameters
     ----------
     scheme : Scheme
-
+        Training scheme class instance, handling coordination of workers.
     target_steps : int
         Number of environment steps to reach to complete training.
     log_dir : str
@@ -44,7 +44,7 @@ class Learner:
         # Input attributes
         self.log_dir = log_dir
         self.target_steps = target_steps
-        self.update_worker = workers.update_worker()
+        self.update_worker = scheme.update_worker()
 
         # Counters and metrics
         self.num_samples_collected = 0
