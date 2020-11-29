@@ -91,6 +91,16 @@ of its workers.</p>
 <li><p><strong>storage_factory</strong> (<em>func</em>) – A function that create a rollouts storage.</p></li>
 <li><p><strong>train_envs_factory</strong> (<em>func</em>) – A function to create train environments.</p></li>
 <li><p><strong>test_envs_factory</strong> (<em>func</em>) – A function to create test environments.</p></li>
+<li><p><strong>col_remote_workers</strong> (<em>int</em>) – Number of data collection workers per gradient worker.</p></li>
+<li><p><strong>col_communication</strong> (<em>str</em>) – Communication coordination pattern for data collection.</p></li>
+<li><p><strong>col_worker_resources</strong> (<em>dict</em>) – Ray resource specs for collection remote workers.</p></li>
+<li><p><strong>sync_col_specs</strong> (<em>dict</em>) – specs about minimum fraction_samples [0 - 1.0] and minimum
+fraction_workers [0 - 1.0] required in synchronous data collection.</p></li>
+<li><p><strong>grad_remote_workers</strong> (<em>int</em>) – Number of gradient workers.</p></li>
+<li><p><strong>grad_communication</strong> (<em>str</em>) – Communication coordination pattern for gradient computation workers.</p></li>
+<li><p><strong>grad_worker_resources</strong> (<em>dict</em>) – Ray resource specs for gradient remote workers.</p></li>
+<li><p><strong>local_device</strong> (<em>str</em>) – “cpu” or specific GPU “cuda:number`” to use for computation.</p></li>
+<li><p><strong>update_execution</strong> (<em>str</em>) – Execution patterns for update steps.</p></li>
 </ul>
 </dd>
 </dl>
@@ -125,14 +135,12 @@ of its workers.</p>
 <dl class="py function">
 <dt id="nappo.schemes.utils.broadcast_message">
 <code class="sig-prename descclassname">nappo.schemes.utils.</code><code class="sig-name descname">broadcast_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.utils.broadcast_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>_</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="nappo.schemes.utils.check_message">
 <code class="sig-prename descclassname">nappo.schemes.utils.</code><code class="sig-name descname">check_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.utils.check_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>_</p>
-</dd></dl>
+<dd></dd></dl>
 
 <dl class="py function">
 <dt id="nappo.schemes.utils.ray_get_and_free">
@@ -160,7 +168,7 @@ multiple readers.</p>
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nappo.schemes" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="nappo.schemes.get_scheme">
-<code class="sig-prename descclassname">nappo.schemes.</code><code class="sig-name descname">get_scheme</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scheme_name</span></em>, <em class="sig-param"><span class="n">algo_factory</span></em>, <em class="sig-param"><span class="n">actor_factory</span></em>, <em class="sig-param"><span class="n">storage_factory</span></em>, <em class="sig-param"><span class="n">train_envs_factory</span></em>, <em class="sig-param"><span class="n">test_envs_factory</span></em>, <em class="sig-param"><span class="n">col_workers</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">grad_workers</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">local_device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">col_worker_resources</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.5}</span></em>, <em class="sig-param"><span class="n">grad_worker_resources</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.5}</span></em>, <em class="sig-param"><span class="n">col_specs</span><span class="o">=</span><span class="default_value">{'fraction_samples': 1.0, 'fraction_workers': 1.0}</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.get_scheme" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">nappo.schemes.</code><code class="sig-name descname">get_scheme</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scheme_name</span></em>, <em class="sig-param"><span class="n">algo_factory</span></em>, <em class="sig-param"><span class="n">actor_factory</span></em>, <em class="sig-param"><span class="n">storage_factory</span></em>, <em class="sig-param"><span class="n">train_envs_factory</span></em>, <em class="sig-param"><span class="n">test_envs_factory</span></em>, <em class="sig-param"><span class="n">col_workers</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">grad_workers</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">local_device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">col_worker_resources</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.2}</span></em>, <em class="sig-param"><span class="n">grad_worker_resources</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.2}</span></em>, <em class="sig-param"><span class="n">col_specs</span><span class="o">=</span><span class="default_value">{'fraction_samples': 1.0, 'fraction_workers': 1.0}</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.get_scheme" title="Permalink to this definition">¶</a></dt>
 <dd><p>_</p>
 </dd></dl>
 

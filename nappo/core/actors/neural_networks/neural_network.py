@@ -30,14 +30,8 @@ class NNBase(nn.Module):
 
     Attributes
     ----------
-    is_recurrent : bool
-        True if this is a recurrent neural network.
-    num_outputs : int
-        Output feature map size (as in np.prod(self.output_shape)).
     output_shape : tuple
         Output feature map shape.
-    recurrent_hidden_state_size : int
-        Recurrent hidden state size
     feature_extractor : nn.Module
         Neural network feature extractor block.
     gru : nn.Module
@@ -81,17 +75,17 @@ class NNBase(nn.Module):
 
     @property
     def is_recurrent(self):
-        """Returns True if this is a recurrent neural network"""
+        """True if this is a recurrent neural network"""
         return self._recurrent
 
     @property
     def num_outputs(self):
-        """Returns output feature map size"""
+        """Output feature map size (as in np.prod(self.output_shape))."""
         return self._num_outputs
 
     @property
     def recurrent_hidden_state_size(self):
-        """Returns recurrent hidden state size"""
+        """Recurrent hidden state size"""
         return self._recurrent_hidden_size
 
     def initial_states(self, obs):

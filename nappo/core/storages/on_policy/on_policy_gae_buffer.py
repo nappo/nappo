@@ -20,9 +20,6 @@ class OnPolicyGAEBuffer(B):
 
     Attributes
     ----------
-    on_policy_data_fields : tuple
-        Accepted data fields. If the samples inserted contain other fields,
-        an AssertionError will be raised.
     max_size : int
         Storage capacity along time axis.
     device: torch.device
@@ -32,6 +29,7 @@ class OnPolicyGAEBuffer(B):
         GAE lambda parameter.
     """
 
+    # Accepted data fields. Inserting other fields will raise AssertionError
     on_policy_data_fields = ("obs", "obs2", "rhs", "act", "rew", "val", "logp", "done")
 
     def __init__(self, size, gae_lambda=0.95, device=torch.device("cpu")):

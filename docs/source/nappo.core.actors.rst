@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    nappo.core.actors.distributions
    nappo.core.actors.neural_networks

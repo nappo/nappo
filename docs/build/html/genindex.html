@@ -66,8 +66,6 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.ac_version">ac_version (nappo.schemes.gradients.g_worker.GWorker attribute)</a>
-</li>
       <li><a href="nappo.core.algos.html#nappo.core.algos.base.Algo.acting_step">acting_step() (nappo.core.algos.base.Algo method)</a>
 
       <ul>
@@ -76,12 +74,16 @@
         <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.acting_step">(nappo.core.algos.sac.SAC method)</a>
 </li>
       </ul></li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.action_space">action_space (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.action_space">action_space (nappo.core.actors.base.Actor attribute)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.action_space">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.action_space">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic attribute)</a>
 </li>
       </ul></li>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor">Actor (class in nappo.core.actors.base)</a>
+</li>
       <li><a href="nappo.schemes.base.html#nappo.schemes.base.worker.Worker.actor">actor (nappo.schemes.base.worker.Worker attribute)</a>
 
       <ul>
@@ -99,7 +101,11 @@
       <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.actor_version">actor_version (nappo.schemes.collection.c_worker.CWorker attribute)</a>
 </li>
       <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.actor_version">actor_version() (nappo.schemes.gradients.g_worker.GWorker property)</a>
+
+      <ul>
+        <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.actor_version">(nappo.schemes.updates.u_worker.UWorker property)</a>
 </li>
+      </ul></li>
       <li><a href="nappo.core.storages.html#nappo.core.storages.base.Storage.add_data">add_data() (nappo.core.storages.base.Storage method)</a>
 
       <ul>
@@ -198,11 +204,17 @@
 </li>
       <li><a href="nappo.core.actors.neural_networks.feature_extractors.html#nappo.core.actors.neural_networks.feature_extractors.cnn.CNN">CNN (class in nappo.core.actors.neural_networks.feature_extractors.cnn)</a>
 </li>
+      <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.col_communication">col_communication (nappo.schemes.gradients.g_worker.GWorker attribute)</a>
+</li>
+      <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.col_fraction_workers">col_fraction_workers (nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
+</li>
+      <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.col_workers">col_workers (nappo.schemes.gradients.g_worker.GWorker attribute)</a>
+</li>
       <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.collect_data">collect_data() (nappo.schemes.collection.c_worker.CWorker method)</a>
 </li>
       <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.collect_train_data">collect_train_data() (nappo.schemes.collection.c_worker.CWorker method)</a>
 </li>
-      <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.CollectorThread.collector_tasks">collector_tasks (nappo.schemes.gradients.g_worker.CollectorThread attribute)</a>
+      <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.collector">collector (nappo.schemes.gradients.g_worker.GWorker attribute)</a>
 </li>
       <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.CollectorThread">CollectorThread (class in nappo.schemes.gradients.g_worker)</a>
 </li>
@@ -222,10 +234,10 @@
 </li>
       <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.compute_loss_alpha">compute_loss_alpha() (nappo.core.algos.sac.SAC method)</a>
 </li>
-      <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.compute_loss_pi">compute_loss_pi() (nappo.core.algos.sac.SAC method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.compute_loss_pi">compute_loss_pi() (nappo.core.algos.sac.SAC method)</a>
+</li>
       <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.compute_loss_q">compute_loss_q() (nappo.core.algos.sac.SAC method)</a>
 </li>
       <li><a href="nappo.core.storages.on_policy.html#nappo.core.storages.on_policy.on_policy_buffer.OnPolicyBuffer.compute_returns">compute_returns() (nappo.core.storages.on_policy.on_policy_buffer.OnPolicyBuffer method)</a>
@@ -238,9 +250,11 @@
 </li>
       <li><a href="nappo.envs.atari.html#nappo.envs.atari.wrappers.LazyFrames.count">count() (nappo.envs.atari.wrappers.LazyFrames method)</a>
 </li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.create_factory">create_factory() (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic class method)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.create_factory">create_factory() (nappo.core.actors.base.Actor class method)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.create_factory">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic class method)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.create_factory">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic class method)</a>
 </li>
         <li><a href="nappo.core.algos.html#nappo.core.algos.base.Algo.create_factory">(nappo.core.algos.base.Algo class method)</a>
@@ -293,6 +307,8 @@
 </li>
         <li><a href="nappo.core.storages.on_policy.html#nappo.core.storages.on_policy.on_policy_vtrace_buffer.OnPolicyVTraceBuffer.device">(nappo.core.storages.on_policy.on_policy_vtrace_buffer.OnPolicyVTraceBuffer attribute)</a>
 </li>
+        <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.device">(nappo.schemes.collection.c_worker.CWorker attribute)</a>
+</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -300,9 +316,11 @@
 </li>
       <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.discrete_version">discrete_version() (nappo.core.algos.sac.SAC property)</a>
 </li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.dist">dist (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.dist">dist (nappo.core.actors.base.Actor attribute)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.dist">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.dist">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic attribute)</a>
 </li>
       </ul></li>
@@ -328,9 +346,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.evaluate">evaluate() (nappo.schemes.collection.c_worker.CWorker method)</a>
 </li>
-      <li><a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.categorical.Categorical.evaluate_actions">evaluate_actions() (nappo.core.actors.distributions.categorical.Categorical method)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.evaluate_actions">evaluate_actions() (nappo.core.actors.base.Actor method)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.categorical.Categorical.evaluate_actions">(nappo.core.actors.distributions.categorical.Categorical method)</a>
+</li>
         <li><a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.gaussian.DiagGaussian.evaluate_actions">(nappo.core.actors.distributions.gaussian.DiagGaussian method)</a>
 </li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.evaluate_actions">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic method)</a>
@@ -388,6 +408,8 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.fraction_samples">fraction_samples (nappo.schemes.collection.c_worker.CWorker attribute)</a>
+</li>
       <li><a href="nappo.envs.atari.html#nappo.envs.atari.wrappers.LazyFrames.frame">frame() (nappo.envs.atari.wrappers.LazyFrames method)</a>
 </li>
       <li><a href="nappo.envs.html#nappo.envs.common.FrameSkip">FrameSkip (class in nappo.envs.common)</a>
@@ -418,9 +440,11 @@
         <li><a href="nappo.core.storages.on_policy.html#nappo.core.storages.on_policy.on_policy_buffer.OnPolicyBuffer.generate_batches">(nappo.core.storages.on_policy.on_policy_buffer.OnPolicyBuffer method)</a>
 </li>
       </ul></li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.get_action">get_action() (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic method)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.get_action">get_action() (nappo.core.actors.base.Actor method)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.get_action">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic method)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.get_action">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic method)</a>
 </li>
       </ul></li>
@@ -438,30 +462,48 @@
       </ul></li>
       <li><a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.get_dist">get_dist() (in module nappo.core.actors.distributions)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nappo.core.actors.neural_networks.feature_extractors.html#nappo.core.actors.neural_networks.feature_extractors.get_feature_extractor">get_feature_extractor() (in module nappo.core.actors.neural_networks.feature_extractors)</a>
 </li>
       <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.get_grads">get_grads() (nappo.schemes.gradients.g_worker.GWorker method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nappo.schemes.base.html#nappo.schemes.base.worker.Worker.get_host">get_host() (nappo.schemes.base.worker.Worker static method)</a>
 </li>
       <li><a href="nappo.html#nappo.learner.Learner.get_metrics">get_metrics() (nappo.learner.Learner method)</a>
 </li>
-      <li><a href="nappo.core.actors.neural_networks.html#nappo.core.actors.neural_networks.get_model">get_model() (in module nappo.core.actors.neural_networks)</a>
-</li>
       <li><a href="nappo.schemes.base.html#nappo.schemes.base.worker.Worker.get_node_ip">get_node_ip() (nappo.schemes.base.worker.Worker method)</a>
 </li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.get_q_scores">get_q_scores() (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic method)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.get_q_scores">get_q_scores() (nappo.core.actors.base.Actor method)</a>
+
+      <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.get_q_scores">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic method)</a>
 </li>
+      </ul></li>
       <li><a href="nappo.schemes.html#nappo.schemes.get_scheme">get_scheme() (in module nappo.schemes)</a>
 </li>
       <li><a href="nappo.core.storages.on_policy.html#nappo.core.storages.on_policy.on_policy_vtrace_buffer.OnPolicyVTraceBuffer.get_updated_action_log_probs">get_updated_action_log_probs() (nappo.core.storages.on_policy.on_policy_vtrace_buffer.OnPolicyVTraceBuffer method)</a>
 </li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.get_value">get_value() (nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic method)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.get_value">get_value() (nappo.core.actors.base.Actor method)</a>
+
+      <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.get_value">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic method)</a>
 </li>
+      </ul></li>
       <li><a href="nappo.schemes.base.html#nappo.schemes.base.worker.Worker.get_weights">get_weights() (nappo.schemes.base.worker.Worker method)</a>
 </li>
+      <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.grad_communication">grad_communication (nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
+
+      <ul>
+        <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.grad_communication">(nappo.schemes.updates.u_worker.UWorker attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.grad_execution">grad_execution (nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
+
+      <ul>
+        <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.grad_execution">(nappo.schemes.updates.u_worker.UWorker attribute)</a>
+</li>
+      </ul></li>
       <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.grad_workers">grad_workers (nappo.schemes.updates.u_worker.UWorker attribute)</a>
 </li>
       <li><a href="nappo.core.actors.neural_networks.html#nappo.core.actors.neural_networks.neural_network.NNBase.gru">gru (nappo.core.actors.neural_networks.neural_network.NNBase attribute)</a>
@@ -499,6 +541,8 @@
       <ul>
         <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.index_worker">(nappo.schemes.collection.c_worker.CWorker attribute)</a>
 </li>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.CollectorThread.index_worker">(nappo.schemes.gradients.g_worker.CollectorThread attribute)</a>
+</li>
         <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.index_worker">(nappo.schemes.gradients.g_worker.GWorker attribute)</a>
 </li>
       </ul></li>
@@ -516,18 +560,20 @@
       </ul></li>
       <li><a href="nappo.core.actors.neural_networks.html#nappo.core.actors.neural_networks.neural_network.NNBase.initial_states">initial_states() (nappo.core.actors.neural_networks.neural_network.NNBase method)</a>
 </li>
-      <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.CollectorThread.input_queue">input_queue (nappo.schemes.gradients.g_worker.CollectorThread attribute)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.input_space">input_space (nappo.core.actors.base.Actor attribute)</a>
 
       <ul>
-        <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.input_queue">(nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.input_space">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+</li>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.input_space">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic attribute)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.input_space">input_space (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+      <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.CollectorThread.inqueue">inqueue (nappo.schemes.gradients.g_worker.CollectorThread attribute)</a>
 
       <ul>
-        <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.input_space">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic attribute)</a>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.inqueue">(nappo.schemes.gradients.g_worker.GWorker attribute)</a>
 </li>
       </ul></li>
       <li><a href="nappo.core.storages.html#nappo.core.storages.base.Storage.insert">insert() (nappo.core.storages.base.Storage method)</a>
@@ -542,9 +588,11 @@
       </ul></li>
       <li><a href="nappo.core.actors.neural_networks.html#nappo.core.actors.neural_networks.neural_network.NNBase.is_recurrent">is_recurrent (nappo.core.actors.neural_networks.neural_network.NNBase attribute)</a>
 </li>
-      <li><a href="nappo.core.actors.neural_networks.html#id0">is_recurrent() (nappo.core.actors.neural_networks.neural_network.NNBase property)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.is_recurrent">is_recurrent() (nappo.core.actors.base.Actor property)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.neural_networks.html#id0">(nappo.core.actors.neural_networks.neural_network.NNBase property)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.is_recurrent">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic property)</a>
 </li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.is_recurrent">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic property)</a>
@@ -555,6 +603,8 @@
       <ul>
         <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.iter">(nappo.schemes.collection.c_worker.CWorker attribute)</a>
 </li>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.iter">(nappo.schemes.gradients.g_worker.GWorker attribute)</a>
+</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -562,8 +612,6 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.latest_weights">latest_weights (nappo.schemes.gradients.g_worker.GWorker attribute)</a>
-</li>
       <li><a href="nappo.envs.atari.html#nappo.envs.atari.wrappers.LazyFrames">LazyFrames (class in nappo.envs.atari.wrappers)</a>
 </li>
       <li><a href="nappo.html#nappo.learner.Learner">Learner (class in nappo.learner)</a>
@@ -573,7 +621,11 @@
       <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.CollectorThread.local_worker">local_worker (nappo.schemes.gradients.g_worker.CollectorThread attribute)</a>
 
       <ul>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.local_worker">(nappo.schemes.gradients.g_worker.GWorker attribute)</a>
+</li>
         <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.local_worker">(nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
+</li>
+        <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.local_worker">(nappo.schemes.updates.u_worker.UWorker attribute)</a>
 </li>
       </ul></li>
       <li><a href="nappo.schemes.base.html#nappo.schemes.base.worker_set.WorkerSet.local_worker">local_worker() (nappo.schemes.base.worker_set.WorkerSet method)</a>
@@ -590,16 +642,16 @@
         <li><a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian.log_std">(nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian attribute)</a>
 </li>
       </ul></li>
-      <li><a href="nappo.core.actors.distributions.html#id0">LOG_STD_MAX (nappo.core.actors.distributions.gaussian.DiagGaussian attribute)</a>, <a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.gaussian.DiagGaussian.LOG_STD_MAX">[1]</a>
+      <li><a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.gaussian.DiagGaussian.LOG_STD_MAX">LOG_STD_MAX (nappo.core.actors.distributions.gaussian.DiagGaussian attribute)</a>
 
       <ul>
-        <li><a href="nappo.core.actors.distributions.html#id2">(nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian attribute)</a>, <a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian.LOG_STD_MAX">[1]</a>
+        <li><a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian.LOG_STD_MAX">(nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian attribute)</a>
 </li>
       </ul></li>
-      <li><a href="nappo.core.actors.distributions.html#id1">LOG_STD_MIN (nappo.core.actors.distributions.gaussian.DiagGaussian attribute)</a>, <a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.gaussian.DiagGaussian.LOG_STD_MIN">[1]</a>
+      <li><a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.gaussian.DiagGaussian.LOG_STD_MIN">LOG_STD_MIN (nappo.core.actors.distributions.gaussian.DiagGaussian attribute)</a>
 
       <ul>
-        <li><a href="nappo.core.actors.distributions.html#id3">(nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian attribute)</a>, <a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian.LOG_STD_MIN">[1]</a>
+        <li><a href="nappo.core.actors.distributions.html#nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian.LOG_STD_MIN">(nappo.core.actors.distributions.squashed_gaussian.SquashedGaussian attribute)</a>
 </li>
       </ul></li>
       <li><a href="nappo.core.actors.html#nappo.core.actors.utils.Scale.low">low (nappo.core.actors.utils.Scale attribute)</a>
@@ -667,6 +719,8 @@
         <li><a href="nappo.core.html#module-nappo.core">nappo.core</a>
 </li>
         <li><a href="nappo.core.actors.html#module-nappo.core.actors">nappo.core.actors</a>
+</li>
+        <li><a href="nappo.core.actors.html#module-nappo.core.actors.base">nappo.core.actors.base</a>
 </li>
         <li><a href="nappo.core.actors.distributions.html#module-nappo.core.actors.distributions">nappo.core.actors.distributions</a>
 </li>
@@ -810,6 +864,13 @@
 
       <ul>
         <li><a href="nappo.core.actors.html#module-nappo.core.actors">module</a>
+</li>
+      </ul></li>
+      <li>
+    nappo.core.actors.base
+
+      <ul>
+        <li><a href="nappo.core.actors.html#module-nappo.core.actors.base">module</a>
 </li>
       </ul></li>
       <li>
@@ -1250,14 +1311,18 @@
         <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.num_test_episodes">(nappo.core.algos.sac.SAC attribute)</a>
 </li>
       </ul></li>
-      <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.num_updates">num_updates() (nappo.schemes.updates.u_worker.UWorker property)</a>
-</li>
       <li><a href="nappo.schemes.base.html#nappo.schemes.base.worker_set.WorkerSet.num_workers">num_workers (nappo.schemes.base.worker_set.WorkerSet attribute)</a>
 
       <ul>
         <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker_set.CWorkerSet.num_workers">(nappo.schemes.collection.c_worker_set.CWorkerSet attribute)</a>
 </li>
         <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.CollectorThread.num_workers">(nappo.schemes.gradients.g_worker.CollectorThread attribute)</a>
+</li>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.num_workers">(nappo.schemes.gradients.g_worker.GWorker attribute)</a>
+</li>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker_set.GWorkerSet.num_workers">(nappo.schemes.gradients.g_worker_set.GWorkerSet attribute)</a>
+</li>
+        <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.num_workers">(nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
 </li>
         <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.num_workers">(nappo.schemes.updates.u_worker.UWorker attribute)</a>
 </li>
@@ -1312,10 +1377,14 @@
 </li>
       <li><a href="nappo.core.actors.neural_networks.html#nappo.core.actors.neural_networks.neural_network.NNBase.output">output (nappo.core.actors.neural_networks.neural_network.NNBase attribute)</a>
 </li>
-      <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.output_queue">output_queue (nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
-</li>
       <li><a href="nappo.core.actors.neural_networks.html#nappo.core.actors.neural_networks.neural_network.NNBase.output_shape">output_shape (nappo.core.actors.neural_networks.neural_network.NNBase attribute)</a>
 </li>
+      <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.outqueue">outqueue (nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
+
+      <ul>
+        <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.outqueue">(nappo.schemes.updates.u_worker.UWorker attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1324,15 +1393,19 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.pi_optimizer">pi_optimizer (nappo.core.algos.sac.SAC attribute)</a>
 </li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.policy_initial_states">policy_initial_states() (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic method)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.policy_initial_states">policy_initial_states() (nappo.core.actors.base.Actor method)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.policy_initial_states">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic method)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.policy_initial_states">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic method)</a>
 </li>
       </ul></li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.policy_net">policy_net (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.policy_net">policy_net (nappo.core.actors.base.Actor attribute)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.policy_net">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.policy_net">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic attribute)</a>
 </li>
       </ul></li>
@@ -1352,12 +1425,20 @@
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.q1">q1 (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.q1">q1 (nappo.core.actors.base.Actor attribute)</a>
+
+      <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.q1">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.q2">q2 (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.q2">q2 (nappo.core.actors.base.Actor attribute)</a>
+
+      <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.q2">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
 </li>
+      </ul></li>
       <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.q_optimizer">q_optimizer (nappo.core.algos.sac.SAC attribute)</a>
 </li>
   </ul></td>
@@ -1370,9 +1451,11 @@
 </li>
       <li><a href="nappo.core.actors.neural_networks.html#nappo.core.actors.neural_networks.neural_network.NNBase.recurrent_hidden_state_size">recurrent_hidden_state_size (nappo.core.actors.neural_networks.neural_network.NNBase attribute)</a>
 </li>
-      <li><a href="nappo.core.actors.neural_networks.html#id2">recurrent_hidden_state_size() (nappo.core.actors.neural_networks.neural_network.NNBase property)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.recurrent_hidden_state_size">recurrent_hidden_state_size() (nappo.core.actors.base.Actor property)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.neural_networks.html#id2">(nappo.core.actors.neural_networks.neural_network.NNBase property)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.recurrent_hidden_state_size">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic property)</a>
 </li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.recurrent_hidden_state_size">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic property)</a>
@@ -1383,11 +1466,23 @@
       <ul>
         <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker_set.CWorkerSet.remote_config">(nappo.schemes.collection.c_worker_set.CWorkerSet attribute)</a>
 </li>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker_set.GWorkerSet.remote_config">(nappo.schemes.gradients.g_worker_set.GWorkerSet attribute)</a>
+</li>
       </ul></li>
       <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.CollectorThread.remote_workers">remote_workers (nappo.schemes.gradients.g_worker.CollectorThread attribute)</a>
+
+      <ul>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker.GWorker.remote_workers">(nappo.schemes.gradients.g_worker.GWorker attribute)</a>
 </li>
+        <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.remote_workers">(nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
+</li>
+        <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.remote_workers">(nappo.schemes.updates.u_worker.UWorker attribute)</a>
+</li>
+      </ul></li>
       <li><a href="nappo.schemes.base.html#nappo.schemes.base.worker_set.WorkerSet.remote_workers">remote_workers() (nappo.schemes.base.worker_set.WorkerSet method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nappo.core.storages.off_policy.html#nappo.core.storages.off_policy.replay_buffer.ReplayBuffer">ReplayBuffer (class in nappo.core.storages.off_policy.replay_buffer)</a>
 </li>
       <li><a href="nappo.core.envs.html#nappo.core.envs.vector_wrappers.VecPyTorch.reset">reset() (nappo.core.envs.vector_wrappers.VecPyTorch method)</a>
@@ -1412,8 +1507,6 @@
         <li><a href="nappo.envs.html#nappo.envs.common.FrameStack.reset">(nappo.envs.common.FrameStack method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.reward_scaling">reward_scaling (nappo.core.algos.sac.SAC attribute)</a>
 </li>
       <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.rhs">rhs (nappo.schemes.collection.c_worker.CWorker attribute)</a>
@@ -1442,9 +1535,11 @@
       </ul></li>
       <li><a href="nappo.core.actors.html#nappo.core.actors.utils.Scale">Scale (class in nappo.core.actors.utils)</a>
 </li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.scale">scale (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.scale">scale (nappo.core.actors.base.Actor attribute)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.scale">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.scale">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic attribute)</a>
 </li>
       </ul></li>
@@ -1562,9 +1657,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="nappo.core.actors.html#nappo.core.actors.utils.Unscale">Unscale (class in nappo.core.actors.utils)</a>
 </li>
-      <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.unscale">unscale (nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+      <li><a href="nappo.core.actors.html#nappo.core.actors.base.Actor.unscale">unscale (nappo.core.actors.base.Actor attribute)</a>
 
       <ul>
+        <li><a href="nappo.core.actors.html#nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic.unscale">(nappo.core.actors.off_policy_actor_critic.OffPolicyActorCritic attribute)</a>
+</li>
         <li><a href="nappo.core.actors.html#nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic.unscale">(nappo.core.actors.on_policy_actor_critic.OnPolicyActorCritic attribute)</a>
 </li>
       </ul></li>
@@ -1594,11 +1691,15 @@
         <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker.CWorker.update_every">(nappo.schemes.collection.c_worker.CWorker attribute)</a>
 </li>
       </ul></li>
+      <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread.update_execution">update_execution (nappo.schemes.updates.u_worker.UpdaterThread attribute)</a>
+</li>
       <li><a href="nappo.core.algos.html#nappo.core.algos.sac.SAC.update_target_networks">update_target_networks() (nappo.core.algos.sac.SAC method)</a>
 </li>
       <li><a href="nappo.schemes.html#nappo.schemes.scheme.Scheme.update_worker">update_worker() (nappo.schemes.scheme.Scheme method)</a>
 </li>
       <li><a href="nappo.html#nappo.learner.Learner.update_workers">update_workers (nappo.learner.Learner attribute)</a>
+</li>
+      <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UWorker.updater">updater (nappo.schemes.updates.u_worker.UWorker attribute)</a>
 </li>
       <li><a href="nappo.schemes.updates.html#nappo.schemes.updates.u_worker.UpdaterThread">UpdaterThread (class in nappo.schemes.updates.u_worker)</a>
 </li>
@@ -1637,6 +1738,8 @@
       <ul>
         <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker_set.CWorkerSet.worker_class">(nappo.schemes.collection.c_worker_set.CWorkerSet attribute)</a>
 </li>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker_set.GWorkerSet.worker_class">(nappo.schemes.gradients.g_worker_set.GWorkerSet attribute)</a>
+</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -1644,6 +1747,8 @@
 
       <ul>
         <li><a href="nappo.schemes.collection.html#nappo.schemes.collection.c_worker_set.CWorkerSet.worker_params">(nappo.schemes.collection.c_worker_set.CWorkerSet attribute)</a>
+</li>
+        <li><a href="nappo.schemes.gradients.html#nappo.schemes.gradients.g_worker_set.GWorkerSet.worker_params">(nappo.schemes.gradients.g_worker_set.GWorkerSet attribute)</a>
 </li>
       </ul></li>
       <li><a href="nappo.schemes.base.html#nappo.schemes.base.worker_set.WorkerSet">WorkerSet (class in nappo.schemes.base.worker_set)</a>

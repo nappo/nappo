@@ -45,7 +45,8 @@
 <dl class="py function">
 <dt id="nappo.schemes.base.utils.find_free_port">
 <code class="sig-prename descclassname">nappo.schemes.base.utils.</code><code class="sig-name descname">find_free_port</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.utils.find_free_port" title="Permalink to this definition">¶</a></dt>
-<dd><p>from <a class="reference external" href="https://github.com/ray-project/ray/blob/master/python/ray/util/sgd/utils.py">https://github.com/ray-project/ray/blob/master/python/ray/util/sgd/utils.py</a></p>
+<dd><p>Returns a free port on the current node.</p>
+<p>from <a class="reference external" href="https://github.com/ray-project/ray/blob/master/python/ray/util/sgd/utils.py">https://github.com/ray-project/ray/blob/master/python/ray/util/sgd/utils.py</a></p>
 </dd></dl>
 
 </div>
@@ -138,8 +139,19 @@
 
 <dl class="py method">
 <dt id="nappo.schemes.base.worker.Worker.setup_torch_data_parallel">
-<code class="sig-name descname">setup_torch_data_parallel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">world_rank</span></em>, <em class="sig-param"><span class="n">world_size</span></em>, <em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker.Worker.setup_torch_data_parallel" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">setup_torch_data_parallel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">rank</span></em>, <em class="sig-param"><span class="n">world_size</span></em>, <em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker.Worker.setup_torch_data_parallel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Join a torch process group for distributed SGD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>url</strong> – URL specifying how to initialize the process group.</p></li>
+<li><p><strong>rank</strong> – Rank of the current process.</p></li>
+<li><p><strong>world_size</strong> (<em>int</em>) – Number of processes participating in the job.</p></li>
+<li><p><strong>backend</strong> (<em>str</em>) – The pytorch distributed backend to use. valid values include mpi,
+gloo, and nccl.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -155,7 +167,7 @@
 <span id="nappo-schemes-base-worker-set-module"></span><h2>nappo.schemes.base.worker_set module<a class="headerlink" href="#module-nappo.schemes.base.worker_set" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="nappo.schemes.base.worker_set.WorkerSet">
-<em class="property">class </em><code class="sig-prename descclassname">nappo.schemes.base.worker_set.</code><code class="sig-name descname">WorkerSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">worker</span></em>, <em class="sig-param"><span class="n">worker_params</span></em>, <em class="sig-param"><span class="n">worker_remote_config</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.5}</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">local_device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">add_local_worker</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker_set.WorkerSet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">nappo.schemes.base.worker_set.</code><code class="sig-name descname">WorkerSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">worker</span></em>, <em class="sig-param"><span class="n">worker_params</span></em>, <em class="sig-param"><span class="n">worker_remote_config</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.2}</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">local_device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">add_local_worker</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker_set.WorkerSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class to better handle the operations of ensembles of Workers.
 Contains common functionality across all worker sets.</p>

@@ -18,9 +18,6 @@ class HindsightExperienceReplayBuffer:
 
     Attributes
     ----------
-    off_policy_data_fields : tuple
-        Accepted data fields. If the samples inserted contain other fields,
-        an AssertionError will be raised.
     max_size : int
         Storage capacity along time axis.
     device: torch.device
@@ -30,6 +27,7 @@ class HindsightExperienceReplayBuffer:
         Function to update obs, rhs, obs2 and rew according to HER paper.
     """
 
+    # Accepted data fields. Inserting other fields will raise AssertionError
     off_policy_data_fields = ("obs", "obs2", "rhs", "act", "rew", "done")
 
     def __init__(self, size, device, her_function=lambda o, rhs, o2, r, goal_state : (o, rhs, o2, r)):
