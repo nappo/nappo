@@ -5,7 +5,6 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
 
    nappo.core.storages.off_policy
    nappo.core.storages.on_policy

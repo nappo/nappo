@@ -5,7 +5,6 @@ Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
 
    nappo.envs.atari
    nappo.envs.mujoco

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from abc import ABC, abstractmethod
 
-from .neural_networks.feature_extractors import get_model
+from .neural_networks.feature_extractors import get_feature_extractor
 
 
 class Actor(nn.Module, ABC):
@@ -54,7 +54,7 @@ class Actor(nn.Module, ABC):
     def __init__(self,
                  input_space,
                  action_space,
-                 feature_extractor_network=get_model("MLP"),
+                 feature_extractor_network=get_feature_extractor("MLP"),
                  feature_extractor_kwargs={},
                  recurrent_policy=False,
                  recurrent_hidden_size=512,
@@ -73,7 +73,7 @@ class Actor(nn.Module, ABC):
             recurrent_policy=False,
             recurrent_hidden_size=512,
             feature_extractor_kwargs={},
-            feature_extractor_network=get_model("MLP"),
+            feature_extractor_network=get_feature_extractor("MLP"),
             *args):
         """
         Returns a function that creates actor critic instances.
