@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>nappo.core.envs package &#8212; nappo 0.0.1 documentation</title>
+    <title>nappo.core.envs package &#8212; nappo 0.0.22 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -15,9 +15,7 @@
     <script src="_static/language_data.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="nappo.core.models package" href="nappo.core.models.html" />
-    <link rel="prev" title="nappo.core.algos package" href="nappo.core.algos.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -28,15 +26,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="nappo.core.models.html" title="nappo.core.models package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="nappo.core.algos.html" title="nappo.core.algos package"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="nappo.html" >nappo package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="nappo.core.html" accesskey="U">nappo.core package</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.22 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -50,64 +40,8 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-nappo.core.envs.create_vector_environments">
-<span id="nappo-core-envs-create-vector-environments-module"></span><h2>nappo.core.envs.create_vector_environments module<a class="headerlink" href="#module-nappo.core.envs.create_vector_environments" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="nappo.core.envs.create_vector_environments.make_env">
-<code class="sig-prename descclassname">nappo.core.envs.create_vector_environments.</code><code class="sig-name descname">make_env</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_fn</span></em>, <em class="sig-param"><span class="n">env_kwargs</span></em>, <em class="sig-param"><span class="n">index_worker</span></em>, <em class="sig-param"><span class="n">index_env</span></em>, <em class="sig-param"><span class="n">log_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">info_keywords</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'train'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.create_vector_environments.make_env" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a function that handles the creating of a single environment, so it
-can be executed in an independent thread.</p>
-<dl class="simple">
-<dt>env_fn<span class="classifier">func</span></dt><dd><p>Function to create the environment.</p>
-</dd>
-<dt>env_kwargs<span class="classifier">dict</span></dt><dd><p>keyword arguments of env_fn.</p>
-</dd>
-<dt>log_dir<span class="classifier">str</span></dt><dd><p>Target path for bench.Monitor logger values.</p>
-</dd>
-<dt>info_keywords<span class="classifier">tuple</span></dt><dd><p>Information keywords to be logged stored by bench.Monitor.</p>
-</dd>
-<dt>index_worker<span class="classifier">int</span></dt><dd><p>Index of the worker running this environment.</p>
-</dd>
-<dt>index_env<span class="classifier">int</span></dt><dd><p>Index of this environment withing the vector of environments.</p>
-</dd>
-<dt>mode<span class="classifier">str</span></dt><dd><p>“train” or “test”</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>_thunk<span class="classifier">func</span></dt><dd><p>A function to create and return the environment. It also sets up the
-Monitor logging and used a TransposeImage wrapper if environment obs
-are images.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="nappo.core.envs.create_vector_environments.vec_envs_factory">
-<code class="sig-prename descclassname">nappo.core.envs.create_vector_environments.</code><code class="sig-name descname">vec_envs_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_fn</span></em>, <em class="sig-param"><span class="n">env_kwargs</span></em>, <em class="sig-param"><span class="n">num_processes</span></em>, <em class="sig-param"><span class="n">log_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">info_keywords</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.create_vector_environments.vec_envs_factory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a function to create a vector of environments of size
-num_processes, so it can be executed by any worker, remote or not.</p>
-<dl class="simple">
-<dt>env_fn<span class="classifier">func</span></dt><dd><p>Function to create the environment.</p>
-</dd>
-<dt>env_kwargs<span class="classifier">dict</span></dt><dd><p>keyword arguments of env_fn.</p>
-</dd>
-<dt>num_processes<span class="classifier">int</span></dt><dd><p>size of the vector of environments.</p>
-</dd>
-<dt>log_dir<span class="classifier">str</span></dt><dd><p>Target path for envs to log information through bench.Monitor class.</p>
-</dd>
-<dt>info_keywords<span class="classifier">tuple</span></dt><dd><p>Information keywords to be logged stored by bench.Monitor class.</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>make_vec_env<span class="classifier">func</span></dt><dd><p>Function to create a vector of environments.</p>
-</dd>
-<dt>dummy_env.action_space<span class="classifier">gym.Space</span></dt><dd><p>Environments action space.</p>
-</dd>
-<dt>dummy_env.observation_space: gym.Space</dt><dd><p>Environments observation space.</p>
-</dd>
-</dl>
-</dd></dl>
-
+<div class="section" id="module-nappo.core.envs.base">
+<span id="nappo-core-envs-base-module"></span><h2>nappo.core.envs.base module<a class="headerlink" href="#module-nappo.core.envs.base" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-nappo.core.envs.env_wrappers">
 <span id="nappo-core-envs-env-wrappers-module"></span><h2>nappo.core.envs.env_wrappers module<a class="headerlink" href="#module-nappo.core.envs.env_wrappers" title="Permalink to this headline">¶</a></h2>
@@ -118,24 +52,106 @@ num_processes, so it can be executed by any worker, remote or not.</p>
 <p>When environment observations are images, this wrapper allows to transpose
 the axis. It is useful when the images have shape (W,H,C), as they can be
 transposed “on the fly” to (C,W,H) for PyTorch convolutions to be applied.</p>
-<dl class="simple">
-<dt>env<span class="classifier">gym.Env</span></dt><dd><p>Original Gym environment, previous to applying the wrapper.</p>
-</dd>
-<dt>op<span class="classifier">list</span></dt><dd><p>New axis ordering.</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>op<span class="classifier">list</span></dt><dd><p>New axis ordering.</p>
-</dd>
-<dt>observation_space<span class="classifier">gym.Space</span></dt><dd><p>New observation space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>gym.Env</em>) – Original Gym environment, previous to applying the wrapper.</p></li>
+<li><p><strong>op</strong> (<em>list</em>) – New axis ordering.</p></li>
+</ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt id="nappo.core.envs.env_wrappers.TransposeImage.op">
+<code class="sig-name descname">op</code><a class="headerlink" href="#nappo.core.envs.env_wrappers.TransposeImage.op" title="Permalink to this definition">¶</a></dt>
+<dd><p>New axis ordering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="nappo.core.envs.env_wrappers.TransposeImage.observation_space">
+<code class="sig-name descname">observation_space</code><a class="headerlink" href="#nappo.core.envs.env_wrappers.TransposeImage.observation_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>New observation space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>gym.Space</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="nappo.core.envs.env_wrappers.TransposeImage.observation">
 <code class="sig-name descname">observation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ob</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.env_wrappers.TransposeImage.observation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transpose observation</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-nappo.core.envs.vec_env">
+<span id="nappo-core-envs-vec-env-module"></span><h2>nappo.core.envs.vec_env module<a class="headerlink" href="#module-nappo.core.envs.vec_env" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="nappo.core.envs.vec_env.VecEnv">
+<em class="property">class </em><code class="sig-prename descclassname">nappo.core.envs.vec_env.</code><code class="sig-name descname">VecEnv</code><a class="headerlink" href="#nappo.core.envs.vec_env.VecEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class to handle creation of environment vectors</p>
+<dl class="py method">
+<dt id="nappo.core.envs.vec_env.VecEnv.create_factory">
+<em class="property">classmethod </em><code class="sig-name descname">create_factory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_fn</span></em>, <em class="sig-param"><span class="n">env_kwargs</span></em>, <em class="sig-param"><span class="n">vec_env_size</span></em>, <em class="sig-param"><span class="n">log_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">info_keywords</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.vec_env.VecEnv.create_factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function to create a vector of environments of size
+num_processes, so it can be executed by any worker, remote or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_fn</strong> (<em>func</em>) – Function to create the environment.</p></li>
+<li><p><strong>env_kwargs</strong> (<em>dict</em>) – keyword arguments of env_fn.</p></li>
+<li><p><strong>num_processes</strong> (<em>int</em>) – size of the vector of environments.</p></li>
+<li><p><strong>log_dir</strong> (<em>str</em>) – Target path for envs to log information through bench.Monitor class.</p></li>
+<li><p><strong>info_keywords</strong> (<em>tuple</em>) – Information keywords to be logged stored by bench.Monitor class.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>make_vec_env</strong> (<em>func</em>) – Function to create a vector of environments.</p></li>
+<li><p><strong>dummy_env.action_space</strong> (<em>gym.Space</em>) – Environments action space.</p></li>
+<li><p><strong>dummy_env.observation_space</strong> (<em>gym.Space</em>) – Environments observation space.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="nappo.core.envs.vec_env.make_env">
+<code class="sig-prename descclassname">nappo.core.envs.vec_env.</code><code class="sig-name descname">make_env</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_fn</span></em>, <em class="sig-param"><span class="n">env_kwargs</span></em>, <em class="sig-param"><span class="n">index_worker</span></em>, <em class="sig-param"><span class="n">index_env</span></em>, <em class="sig-param"><span class="n">log_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">info_keywords</span><span class="o">=</span><span class="default_value">()</span></em>, <em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'train'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.vec_env.make_env" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a function that handles the creating of a single environment, so it
+can be executed in an independent thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_fn</strong> (<em>func</em>) – Function to create the environment.</p></li>
+<li><p><strong>env_kwargs</strong> (<em>dict</em>) – keyword arguments of env_fn.</p></li>
+<li><p><strong>log_dir</strong> (<em>str</em>) – Target path for bench.Monitor logger values.</p></li>
+<li><p><strong>info_keywords</strong> (<em>tuple</em>) – Information keywords to be logged stored by bench.Monitor.</p></li>
+<li><p><strong>index_worker</strong> (<em>int</em>) – Index of the worker running this environment.</p></li>
+<li><p><strong>index_env</strong> (<em>int</em>) – Index of this environment withing the vector of environments.</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – “train” or “test”</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>_thunk</strong> – A function to create and return the environment. It also sets up the
+Monitor logging and used a TransposeImage wrapper if environment obs
+are images.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>func</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -148,20 +164,38 @@ transposed “on the fly” to (C,W,H) for PyTorch convolutions to be applied.</
 <p>This wrapper turns obs, reward’s and done’s from numpy arrays to pytorch
 tensors and places them in the specified device, facilitating interaction
 between the environment and the actor critic function approximators (NNs).</p>
-<dl class="simple">
-<dt>venv<span class="classifier">VecEnv</span></dt><dd><p>Original vector environment, previous to applying the wrapper.</p>
-</dd>
-<dt>device<span class="classifier">torch.device</span></dt><dd><p>CPU or specific GPU where obs, reward’s and done’s are placed after
-being transformed into pytorch tensors.</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>device<span class="classifier">torch.device</span></dt><dd><p>CPU or specific GPU where obs, reward’s and done’s are placed after
-being transformed into pytorch tensors.</p>
-</dd>
-<dt>num_envs<span class="classifier">int</span></dt><dd><p>Size of vector environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>venv</strong> (<a class="reference internal" href="#nappo.core.envs.vec_env.VecEnv" title="nappo.core.envs.vec_env.VecEnv"><em>VecEnv</em></a>) – Original vector environment, previous to applying the wrapper.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – CPU or specific GPU where obs, reward’s and done’s are placed after
+being transformed into pytorch tensors.</p></li>
+</ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt id="nappo.core.envs.vector_wrappers.VecPyTorch.device">
+<code class="sig-name descname">device</code><a class="headerlink" href="#nappo.core.envs.vector_wrappers.VecPyTorch.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>CPU or specific GPU where obs, reward’s and done’s are placed after
+being transformed into pytorch tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.device</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="nappo.core.envs.vector_wrappers.VecPyTorch.num_envs">
+<code class="sig-name descname">num_envs</code><a class="headerlink" href="#nappo.core.envs.vector_wrappers.VecPyTorch.num_envs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Size of vector environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="nappo.core.envs.vector_wrappers.VecPyTorch.reset">
 <code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.core.envs.vector_wrappers.VecPyTorch.reset" title="Permalink to this definition">¶</a></dt>
@@ -198,20 +232,15 @@ being transformed into pytorch tensors.</p>
   <ul>
 <li><a class="reference internal" href="#">nappo.core.envs package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-nappo.core.envs.create_vector_environments">nappo.core.envs.create_vector_environments module</a></li>
+<li><a class="reference internal" href="#module-nappo.core.envs.base">nappo.core.envs.base module</a></li>
 <li><a class="reference internal" href="#module-nappo.core.envs.env_wrappers">nappo.core.envs.env_wrappers module</a></li>
+<li><a class="reference internal" href="#module-nappo.core.envs.vec_env">nappo.core.envs.vec_env module</a></li>
 <li><a class="reference internal" href="#module-nappo.core.envs.vector_wrappers">nappo.core.envs.vector_wrappers module</a></li>
 <li><a class="reference internal" href="#module-nappo.core.envs">Module contents</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="nappo.core.algos.html"
-                        title="previous chapter">nappo.core.algos package</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="nappo.core.models.html"
-                        title="next chapter">nappo.core.models package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -242,15 +271,7 @@ being transformed into pytorch tensors.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="nappo.core.models.html" title="nappo.core.models package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="nappo.core.algos.html" title="nappo.core.algos package"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="nappo.html" >nappo package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="nappo.core.html" >nappo.core package</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.22 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>nappo.schemes.base package &#8212; nappo 0.0.1 documentation</title>
+    <title>nappo.schemes.base package &#8212; nappo 0.0.22 documentation</title>
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
@@ -15,9 +15,7 @@
     <script src="_static/language_data.js"></script>
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="nappo.schemes.workers_2daca package" href="nappo.schemes.workers_2daca.html" />
-    <link rel="prev" title="nappo.schemes package" href="nappo.schemes.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -28,15 +26,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="nappo.schemes.workers_2daca.html" title="nappo.schemes.workers_2daca package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="nappo.schemes.html" title="nappo.schemes package"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="nappo.html" >nappo package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="nappo.schemes.html" accesskey="U">nappo.schemes package</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.22 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -50,6 +40,15 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-nappo.schemes.base.utils">
+<span id="nappo-schemes-base-utils-module"></span><h2>nappo.schemes.base.utils module<a class="headerlink" href="#module-nappo.schemes.base.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="nappo.schemes.base.utils.find_free_port">
+<code class="sig-prename descclassname">nappo.schemes.base.utils.</code><code class="sig-name descname">find_free_port</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.utils.find_free_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>from <a class="reference external" href="https://github.com/ray-project/ray/blob/master/python/ray/util/sgd/utils.py">https://github.com/ray-project/ray/blob/master/python/ray/util/sgd/utils.py</a></p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-nappo.schemes.base.worker">
 <span id="nappo-schemes-base-worker-module"></span><h2>nappo.schemes.base.worker module<a class="headerlink" href="#module-nappo.schemes.base.worker" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -57,36 +56,60 @@
 <em class="property">class </em><code class="sig-prename descclassname">nappo.schemes.base.worker.</code><code class="sig-name descname">Worker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index_worker</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker.Worker" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class containing common worker functionality.</p>
-<dl class="simple">
-<dt>index_worker<span class="classifier">int</span></dt><dd><p>Worker index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index_worker</strong> (<em>int</em>) – Worker index.</p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>index_worker<span class="classifier">int</span></dt><dd><p>Index assigned to this worker.</p>
-</dd>
-<dt>actor_critic<span class="classifier">nn.Module</span></dt><dd><p>An actor_critic class instance.</p>
+<dl class="py attribute">
+<dt id="nappo.schemes.base.worker.Worker.index_worker">
+<code class="sig-name descname">index_worker</code><a class="headerlink" href="#nappo.schemes.base.worker.Worker.index_worker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Index assigned to this worker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="nappo.schemes.base.worker.Worker.actor">
+<code class="sig-name descname">actor</code><a class="headerlink" href="#nappo.schemes.base.worker.Worker.actor" title="Permalink to this definition">¶</a></dt>
+<dd><p>An actor class instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>nn.Module</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="nappo.schemes.base.worker.Worker.as_remote">
 <em class="property">classmethod </em><code class="sig-name descname">as_remote</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_cpus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_gpus</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">memory</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">object_store_memory</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resources</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker.Worker.as_remote" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a Worker instance as a remote ray actor.</p>
-<dl class="simple">
-<dt>num_cpus<span class="classifier">int</span></dt><dd><p>The quantity of CPU cores to reserve for this Worker class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_cpus</strong> (<em>int</em>) – The quantity of CPU cores to reserve for this Worker class.</p></li>
+<li><p><strong>num_gpus</strong> (<em>float</em>) – The quantity of GPUs to reserve for this Worker class.</p></li>
+<li><p><strong>memory</strong> (<em>int</em>) – The heap memory quota for this actor (in bytes).</p></li>
+<li><p><strong>object_store_memory</strong> (<em>int</em>) – The object store memory quota for this actor (in bytes).</p></li>
+<li><p><strong>resources</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em>) – The default resources required by the actor creation task.</p></li>
+</ul>
 </dd>
-<dt>num_gpus<span class="classifier">float</span></dt><dd><p>The quantity of GPUs to reserve for this Worker class.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>W</strong> – A ray remote actor Worker class.</p>
 </dd>
-<dt>memory<span class="classifier">int</span></dt><dd><p>The heap memory quota for this actor (in bytes).</p>
-</dd>
-<dt>object_store_memory<span class="classifier">int</span></dt><dd><p>The object store memory quota for this actor (in bytes).</p>
-</dd>
-<dt>resources: Dict[str, float]</dt><dd><p>The default resources required by the actor creation task.</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nappo.schemes.base.worker.Worker" title="nappo.schemes.base.worker.Worker">Worker</a></p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>W<span class="classifier">Worker</span></dt><dd><p>A ray remote actor Worker class.</p>
-</dd>
-</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="nappo.schemes.base.worker.Worker.find_free_port">
+<code class="sig-name descname">find_free_port</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker.Worker.find_free_port" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a free port on the current node.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -96,9 +119,15 @@
 </dd></dl>
 
 <dl class="py method">
+<dt id="nappo.schemes.base.worker.Worker.get_node_ip">
+<code class="sig-name descname">get_node_ip</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker.Worker.get_node_ip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the IP address of the current node.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="nappo.schemes.base.worker.Worker.get_weights">
 <code class="sig-name descname">get_weights</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker.Worker.get_weights" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns current actor_critic.state_dict() weights</p>
+<dd><p>Returns current actor.state_dict() weights</p>
 </dd></dl>
 
 <dl class="py method">
@@ -108,19 +137,9 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="nappo.schemes.base.worker.Worker.save_model">
-<code class="sig-name descname">save_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fname</span></em>, <em class="sig-param"><span class="n">iter</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker.Worker.save_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save current version of actor_critic as a torch loadable checkpoint.</p>
-<dl class="simple">
-<dt>fname<span class="classifier">str</span></dt><dd><p>Filename given to the checkpoint.</p>
-</dd>
-<dt>iter: int</dt><dd><p>Training iteration.</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>save_name<span class="classifier">str</span></dt><dd><p>Path to saved file.</p>
-</dd>
-</dl>
+<dt id="nappo.schemes.base.worker.Worker.setup_torch_data_parallel">
+<code class="sig-name descname">setup_torch_data_parallel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">url</span></em>, <em class="sig-param"><span class="n">world_rank</span></em>, <em class="sig-param"><span class="n">world_size</span></em>, <em class="sig-param"><span class="n">backend</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker.Worker.setup_torch_data_parallel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Join a torch process group for distributed SGD.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -136,42 +155,72 @@
 <span id="nappo-schemes-base-worker-set-module"></span><h2>nappo.schemes.base.worker_set module<a class="headerlink" href="#module-nappo.schemes.base.worker_set" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="nappo.schemes.base.worker_set.WorkerSet">
-<em class="property">class </em><code class="sig-prename descclassname">nappo.schemes.base.worker_set.</code><code class="sig-name descname">WorkerSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">worker</span></em>, <em class="sig-param"><span class="n">worker_params</span></em>, <em class="sig-param"><span class="n">worker_remote_config</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.5}</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">add_local_worker</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker_set.WorkerSet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">nappo.schemes.base.worker_set.</code><code class="sig-name descname">WorkerSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">worker</span></em>, <em class="sig-param"><span class="n">worker_params</span></em>, <em class="sig-param"><span class="n">worker_remote_config</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.5}</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">local_device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_weights</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">add_local_worker</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker_set.WorkerSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class to better handle the operations of ensembles of Workers.
 Contains common functionality across all worker sets.</p>
-<dl class="simple">
-<dt>create_algo_instance<span class="classifier">func</span></dt><dd><p>A function that creates an algorithm class.</p>
-</dd>
-<dt>create_storage_instance<span class="classifier">func</span></dt><dd><p>A function that create a rollouts storage.</p>
-</dd>
-<dt>create_train_envs_instance<span class="classifier">func</span></dt><dd><p>A function to create train environments.</p>
-</dd>
-<dt>create_actor_critic_instance<span class="classifier">func</span></dt><dd><p>A function that creates a policy.</p>
-</dd>
-<dt>create_test_envs_instance<span class="classifier">func</span></dt><dd><p>A function to create test environments.</p>
-</dd>
-<dt>worker_remote_config<span class="classifier">dict</span></dt><dd><p>Ray resource specs for the remote workers.</p>
-</dd>
-<dt>num_workers<span class="classifier">int</span></dt><dd><p>Number of remote workers in the worker set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>worker</strong> (<em>func</em>) – A function that creates a worker class.</p></li>
+<li><p><strong>worker_params</strong> (<em>dict</em>) – Worker class kwargs.</p></li>
+<li><p><strong>worker_remote_config</strong> (<em>dict</em>) – Ray resource specs for the remote workers.</p></li>
+<li><p><strong>num_workers</strong> (<em>int</em>) – Num workers replicas in the worker_set.</p></li>
+<li><p><strong>add_local_worker</strong> (<em>bool</em>) – Whether or not to include have a non-remote worker in the worker set.</p></li>
+</ul>
 </dd>
 </dl>
-<dl class="simple">
-<dt>worker_class<span class="classifier">python class</span></dt><dd><p>Worker class to be instantiated to create Ray remote actors.</p>
-</dd>
-<dt>remote_config<span class="classifier">dict</span></dt><dd><p>Ray resource specs for the remote workers.</p>
-</dd>
-<dt>worker_params<span class="classifier">dict</span></dt><dd><p>Keyword arguments of the worker_class.</p>
-</dd>
-<dt>num_workers<span class="classifier">int</span></dt><dd><p>Number of remote workers in the worker set.</p>
+<dl class="py attribute">
+<dt id="nappo.schemes.base.worker_set.WorkerSet.worker_class">
+<code class="sig-name descname">worker_class</code><a class="headerlink" href="#nappo.schemes.base.worker_set.WorkerSet.worker_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Worker class to be instantiated to create Ray remote actors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>python class</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="nappo.schemes.base.worker_set.WorkerSet.remote_config">
+<code class="sig-name descname">remote_config</code><a class="headerlink" href="#nappo.schemes.base.worker_set.WorkerSet.remote_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ray resource specs for the remote workers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="nappo.schemes.base.worker_set.WorkerSet.worker_params">
+<code class="sig-name descname">worker_params</code><a class="headerlink" href="#nappo.schemes.base.worker_set.WorkerSet.worker_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keyword arguments of the worker_class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="nappo.schemes.base.worker_set.WorkerSet.num_workers">
+<code class="sig-name descname">num_workers</code><a class="headerlink" href="#nappo.schemes.base.worker_set.WorkerSet.num_workers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of remote workers in the worker set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="nappo.schemes.base.worker_set.WorkerSet.add_workers">
 <code class="sig-name descname">add_workers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_workers</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.base.worker_set.WorkerSet.add_workers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create and add a number of remote workers to this worker set.</p>
-<dl class="simple">
-<dt>num_workers<span class="classifier">int</span></dt><dd><p>Number of remote workers to create.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_workers</strong> (<em>int</em>) – Number of remote workers to create.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -212,6 +261,7 @@ Contains common functionality across all worker sets.</p>
   <ul>
 <li><a class="reference internal" href="#">nappo.schemes.base package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-nappo.schemes.base.utils">nappo.schemes.base.utils module</a></li>
 <li><a class="reference internal" href="#module-nappo.schemes.base.worker">nappo.schemes.base.worker module</a></li>
 <li><a class="reference internal" href="#module-nappo.schemes.base.worker_set">nappo.schemes.base.worker_set module</a></li>
 <li><a class="reference internal" href="#module-nappo.schemes.base">Module contents</a></li>
@@ -219,12 +269,6 @@ Contains common functionality across all worker sets.</p>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="nappo.schemes.html"
-                        title="previous chapter">nappo.schemes package</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="nappo.schemes.workers_2daca.html"
-                        title="next chapter">nappo.schemes.workers_2daca package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -255,15 +299,7 @@ Contains common functionality across all worker sets.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="nappo.schemes.workers_2daca.html" title="nappo.schemes.workers_2daca package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="nappo.schemes.html" title="nappo.schemes package"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.1 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="nappo.html" >nappo package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="nappo.schemes.html" >nappo.schemes package</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.22 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

@@ -8,16 +8,20 @@ Subpackages
    :maxdepth: 4
 
    nappo.schemes.base
-   nappo.schemes.workers_2daca
-   nappo.schemes.workers_2dacs
-   nappo.schemes.workers_3cs
-   nappo.schemes.workers_3ds
-   nappo.schemes.workers_da2cs
-   nappo.schemes.workers_dadaca
-   nappo.schemes.workers_dadacs
+   nappo.schemes.collection
+   nappo.schemes.gradients
+   nappo.schemes.updates
 
 Submodules
 ----------
+
+nappo.schemes.scheme module
+---------------------------
+
+.. automodule:: nappo.schemes.scheme
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 nappo.schemes.utils module
 --------------------------

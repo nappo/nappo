@@ -4,6 +4,14 @@ nappo.schemes.base package
 Submodules
 ----------
 
+nappo.schemes.base.utils module
+-------------------------------
+
+.. automodule:: nappo.schemes.base.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 nappo.schemes.base.worker module
 --------------------------------
 

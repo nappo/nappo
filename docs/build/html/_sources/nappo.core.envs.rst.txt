@@ -4,10 +4,10 @@ nappo.core.envs package
 Submodules
 ----------
 
-nappo.core.envs.create\_vector\_environments module
----------------------------------------------------
+nappo.core.envs.base module
+---------------------------
 
-.. automodule:: nappo.core.envs.create_vector_environments
+.. automodule:: nappo.core.envs.base
    :members:
    :undoc-members:
    :show-inheritance:
@@ -16,6 +16,14 @@ nappo.core.envs.env\_wrappers module
 ------------------------------------
 
 .. automodule:: nappo.core.envs.env_wrappers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+nappo.core.envs.vec\_env module
+-------------------------------
+
+.. automodule:: nappo.core.envs.vec_env
    :members:
    :undoc-members:
    :show-inheritance:
