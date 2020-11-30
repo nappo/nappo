@@ -90,7 +90,7 @@ class GWorker(W):
 
         # Create CWorkerSet instance
         self.col_workers = col_workers_factory(dev, initial_weights)
-        self.local_worker = self.coll_workers.local_worker()
+        self.local_worker = self.col_workers.local_worker()
         self.remote_workers = self.col_workers.remote_workers()
         self.num_workers = len(self.remote_workers)
 

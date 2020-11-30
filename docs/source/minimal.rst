@@ -1,5 +1,5 @@
-Minimal example
-===============
+Minimal train example
+=====================
 
 Imports
 -------
