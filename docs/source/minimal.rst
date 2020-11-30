@@ -23,8 +23,8 @@ Specifying ray resources
     # 0. init ray
     ray.init(address="auto")
 
-Core components
----------------
+Defining core components
+------------------------
 
 .. code-block:: python
 
@@ -45,8 +45,8 @@ Core components
     # 4. Define rollouts storage
     storage_factory = OnPolicyGAEBuffer.create_factory(size=1000, gae_lambda=0.95)
 
-Training scheme
----------------
+Defining training scheme
+------------------------
 
 .. code-block:: python
 
@@ -75,8 +75,8 @@ Training scheme
     
     scheme = Scheme(**scheme_parameters)
 
-Training loop
--------------
+Executing training loop
+-----------------------
 
 .. code-block:: python
 

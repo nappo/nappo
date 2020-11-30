@@ -7,7 +7,6 @@ NAPPO DOCUMENTATION:
 
    introduction
    installation
-   rapid_prototyping
 
 
 .. toctree::
@@ -30,3 +29,9 @@ NAPPO DOCUMENTATION:
    :caption: Code examples:
 
    minimal
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Benchmarks:
+
+   benchmarks
