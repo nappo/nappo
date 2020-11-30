@@ -15,6 +15,11 @@ Imports
     from nappo.core.actors import OnPolicyActorCritic, get_feature_extractor
     from nappo.envs import make_pybullet_train_env
 
+Specifying ray resources
+------------------------
+
+.. code-block:: python
+
     # 0. init ray
     ray.init(address="auto")
 
