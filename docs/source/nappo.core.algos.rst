@@ -1,35 +1,18 @@
-algos
-=====
+Algorithms (Algo class)
+=======================
 
-nappo.core.algos.base module
-----------------------------
-
-.. automodule:: nappo.core.algos.base
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-nappo.core.algos.ppo module
----------------------------
+Proximal Policy Optimization (PPO)
+----------------------------------
 
 .. automodule:: nappo.core.algos.ppo
    :members:
    :undoc-members:
    :show-inheritance:
 
-nappo.core.algos.sac module
----------------------------
+Soft Actor Critic (SAC)
+-----------------------
 
 .. automodule:: nappo.core.algos.sac
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: nappo.core.algos
    :members:
    :undoc-members:
    :show-inheritance:

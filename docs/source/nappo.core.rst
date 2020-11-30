@@ -1,10 +1,10 @@
-Nappo core components
-=====================
+Core components
+===============
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
-   nappo.core.actors
-   nappo.core.algos
    nappo.core.envs
+   nappo.core.algos
+   nappo.core.actors
    nappo.core.storages

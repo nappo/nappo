@@ -1,24 +1,24 @@
-nappo.core.actors.distributions
-===============================
+Action prob. distributions 
+==========================
 
-nappo.core.actors.distributions.categorical
--------------------------------------------
+Categorical
+-----------
 
 .. automodule:: nappo.core.actors.distributions.categorical
    :members:
    :undoc-members:
    :show-inheritance:
 
-nappo.core.actors.distributions.gaussian
-----------------------------------------
+Gaussian
+--------
 
 .. automodule:: nappo.core.actors.distributions.gaussian
    :members:
    :undoc-members:
    :show-inheritance:
 
-nappo.core.actors.distributions.squashed\_gaussian
----------------------------------------------------
+Squashed Gaussian
+-----------------
 
 .. automodule:: nappo.core.actors.distributions.squashed_gaussian
    :members:

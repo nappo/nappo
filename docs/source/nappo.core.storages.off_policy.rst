@@ -1,19 +1,16 @@
-nappo.core.storages.off\_policy package
-=======================================
+Off-policy
+==========
 
-Submodules
-----------
-
-nappo.core.storages.off\_policy.hindsight\_experience\_replay\_buffer module
-----------------------------------------------------------------------------
+Hindsight experience replay buffer (HER)
+----------------------------------------
 
 .. automodule:: nappo.core.storages.off_policy.hindsight_experience_replay_buffer
    :members:
    :undoc-members:
    :show-inheritance:
 
-nappo.core.storages.off\_policy.replay\_buffer module
------------------------------------------------------
+Off policy replay buffer
+------------------------
 
 .. automodule:: nappo.core.storages.off_policy.replay_buffer
    :members:

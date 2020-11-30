@@ -1,91 +1,168 @@
 
-<!DOCTYPE html>
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>nappo.schemes package &#8212; nappo 0.0.22 documentation</title>
-    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Nappo scalable training schemes &mdash; nappo 0.0.22 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
     
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="nappo.schemes.base package" href="nappo.schemes.base.html" />
-    <link rel="prev" title="nappo.envs.pybullet package" href="nappo.envs.pybullet.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="nappo.schemes.base.html" title="nappo.schemes.base package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="nappo.envs.pybullet.html" title="nappo.envs.pybullet package"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.22 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="nappo.html" accesskey="U">nappo package</a> &#187;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="nappo.core.storages.on_policy package" href="nappo.core.storages.on_policy.html" /> 
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> nappo
+          
+
+          
+          </a>
+
+          
             
-  <div class="section" id="nappo-schemes-package">
-<h1>nappo.schemes package<a class="headerlink" href="#nappo-schemes-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="nappo.schemes.base.html">nappo.schemes.base package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#module-nappo.schemes.base.utils">nappo.schemes.base.utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#module-nappo.schemes.base.worker">nappo.schemes.base.worker module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#module-nappo.schemes.base.worker_set">nappo.schemes.base.worker_set module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#module-nappo.schemes.base">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="nappo.schemes.collection.html">nappo.schemes.collection package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.collection.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.collection.html#module-nappo.schemes.collection.c_worker">nappo.schemes.collection.c_worker module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.collection.html#module-nappo.schemes.collection.c_worker_set">nappo.schemes.collection.c_worker_set module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.collection.html#module-nappo.schemes.collection">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="nappo.schemes.gradients.html">nappo.schemes.gradients package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.gradients.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.gradients.html#module-nappo.schemes.gradients.g_worker">nappo.schemes.gradients.g_worker module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.gradients.html#module-nappo.schemes.gradients.g_worker_set">nappo.schemes.gradients.g_worker_set module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.gradients.html#module-nappo.schemes.gradients">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="nappo.schemes.updates.html">nappo.schemes.updates package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.updates.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.updates.html#module-nappo.schemes.updates.u_worker">nappo.schemes.updates.u_worker module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.updates.html#module-nappo.schemes.updates">Module contents</a></li>
-</ul>
-</li>
-</ul>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nappo.core.html">Nappo core components</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Nappo scalable training schemes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-nappo.schemes.scheme">Scheme class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workers">Workers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nappo.schemes.base.html">nappo.schemes.base package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nappo.schemes.collection.html">nappo.schemes.collection package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nappo.schemes.gradients.html">nappo.schemes.gradients package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nappo.schemes.updates.html">nappo.schemes.updates package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">nappo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Nappo scalable training schemes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/nappo.schemes.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
 </div>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="nappo-scalable-training-schemes">
+<h1>Nappo scalable training schemes<a class="headerlink" href="#nappo-scalable-training-schemes" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-nappo.schemes.scheme">
-<span id="nappo-schemes-scheme-module"></span><h2>nappo.schemes.scheme module<a class="headerlink" href="#module-nappo.schemes.scheme" title="Permalink to this headline">¶</a></h2>
+<span id="scheme-class"></span><h2>Scheme class<a class="headerlink" href="#module-nappo.schemes.scheme" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="nappo.schemes.scheme.Scheme">
 <em class="property">class </em><code class="sig-prename descclassname">nappo.schemes.scheme.</code><code class="sig-name descname">Scheme</code><span class="sig-paren">(</span><em class="sig-param">algo_factory</em>, <em class="sig-param">actor_factory</em>, <em class="sig-param">storage_factory</em>, <em class="sig-param">train_envs_factory</em>, <em class="sig-param">test_envs_factory=&lt;function Scheme.&lt;lambda&gt;&gt;</em>, <em class="sig-param">col_remote_workers=0</em>, <em class="sig-param">col_communication='synchronous'</em>, <em class="sig-param">col_worker_resources={'num_cpus': 1</em>, <em class="sig-param">'num_gpus': 0.5}</em>, <em class="sig-param">sync_col_specs={'fraction_samples': 1.0</em>, <em class="sig-param">'fraction_workers': 1.0}</em>, <em class="sig-param">grad_remote_workers=0</em>, <em class="sig-param">grad_communication='synchronous'</em>, <em class="sig-param">grad_worker_resources={'num_cpus': 1</em>, <em class="sig-param">'num_gpus': 0.5}</em>, <em class="sig-param">local_device=None</em>, <em class="sig-param">update_execution='centralised'</em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.scheme.Scheme" title="Permalink to this definition">¶</a></dt>
@@ -122,135 +199,90 @@ fraction_workers [0 - 1.0] required in synchronous data collection.</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-nappo.schemes.utils">
-<span id="nappo-schemes-utils-module"></span><h2>nappo.schemes.utils module<a class="headerlink" href="#module-nappo.schemes.utils" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="nappo.schemes.utils.average_gradients">
-<code class="sig-prename descclassname">nappo.schemes.utils.</code><code class="sig-name descname">average_gradients</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grads_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.utils.average_gradients" title="Permalink to this definition">¶</a></dt>
-<dd><p>Averages gradients coming from distributed workers.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>grads_list</strong> (<em>list of lists of tensors</em>) – List of actor gradients from different workers.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>avg_grads</strong> – Averaged actor gradients.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list of tensors</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="nappo.schemes.utils.broadcast_message">
-<code class="sig-prename descclassname">nappo.schemes.utils.</code><code class="sig-name descname">broadcast_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.utils.broadcast_message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="nappo.schemes.utils.check_message">
-<code class="sig-prename descclassname">nappo.schemes.utils.</code><code class="sig-name descname">check_message</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.utils.check_message" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="nappo.schemes.utils.ray_get_and_free">
-<code class="sig-prename descclassname">nappo.schemes.utils.</code><code class="sig-name descname">ray_get_and_free</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">object_ids</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.utils.ray_get_and_free" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call ray.get and then queue the object ids for deletion.
-This function should be used whenever possible in RLlib, to optimize
-memory usage. The only exception is when an object_id is shared among
-multiple readers.</p>
-<p>Adapted from <a class="reference external" href="https://github.com/ray-project/ray/blob/master/rllib/utils/memory.py">https://github.com/ray-project/ray/blob/master/rllib/utils/memory.py</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>object_ids</strong> (<em>ObjectID|List</em><em>[</em><em>ObjectID</em><em>]</em>) – Object ids to fetch and free.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>result</strong> – The result of ray.get(object_ids).</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>python objects</p>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="module-nappo.schemes">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nappo.schemes" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="nappo.schemes.get_scheme">
-<code class="sig-prename descclassname">nappo.schemes.</code><code class="sig-name descname">get_scheme</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scheme_name</span></em>, <em class="sig-param"><span class="n">algo_factory</span></em>, <em class="sig-param"><span class="n">actor_factory</span></em>, <em class="sig-param"><span class="n">storage_factory</span></em>, <em class="sig-param"><span class="n">train_envs_factory</span></em>, <em class="sig-param"><span class="n">test_envs_factory</span></em>, <em class="sig-param"><span class="n">col_workers</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">grad_workers</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">local_device</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">col_worker_resources</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.2}</span></em>, <em class="sig-param"><span class="n">grad_worker_resources</span><span class="o">=</span><span class="default_value">{'num_cpus': 1, 'num_gpus': 0.2}</span></em>, <em class="sig-param"><span class="n">col_specs</span><span class="o">=</span><span class="default_value">{'fraction_samples': 1.0, 'fraction_workers': 1.0}</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nappo.schemes.get_scheme" title="Permalink to this definition">¶</a></dt>
-<dd><p>_</p>
-</dd></dl>
-
-</div>
-</div>
-
-
-          </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">nappo.schemes package</a><ul>
-<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-nappo.schemes.scheme">nappo.schemes.scheme module</a></li>
-<li><a class="reference internal" href="#module-nappo.schemes.utils">nappo.schemes.utils module</a></li>
-<li><a class="reference internal" href="#module-nappo.schemes">Module contents</a></li>
+<div class="section" id="workers">
+<h2>Workers<a class="headerlink" href="#workers" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="nappo.schemes.base.html">nappo.schemes.base package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#module-nappo.schemes.base.utils">nappo.schemes.base.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#module-nappo.schemes.base.worker">nappo.schemes.base.worker module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#module-nappo.schemes.base.worker_set">nappo.schemes.base.worker_set module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.base.html#module-nappo.schemes.base">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nappo.schemes.collection.html">nappo.schemes.collection package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.collection.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.collection.html#module-nappo.schemes.collection.c_worker">nappo.schemes.collection.c_worker module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.collection.html#module-nappo.schemes.collection.c_worker_set">nappo.schemes.collection.c_worker_set module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.collection.html#module-nappo.schemes.collection">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nappo.schemes.gradients.html">nappo.schemes.gradients package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.gradients.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.gradients.html#module-nappo.schemes.gradients.g_worker">nappo.schemes.gradients.g_worker module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.gradients.html#module-nappo.schemes.gradients.g_worker_set">nappo.schemes.gradients.g_worker_set module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.gradients.html#module-nappo.schemes.gradients">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nappo.schemes.updates.html">nappo.schemes.updates package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.updates.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.updates.html#module-nappo.schemes.updates.u_worker">nappo.schemes.updates.u_worker module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nappo.schemes.updates.html#module-nappo.schemes.updates">Module contents</a></li>
 </ul>
 </li>
 </ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="nappo.envs.pybullet.html"
-                        title="previous chapter">nappo.envs.pybullet package</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="nappo.schemes.base.html"
-                        title="next chapter">nappo.schemes.base package</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/nappo.schemes.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="nappo.schemes.base.html" class="btn btn-neutral float-right" title="nappo.schemes.base package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="nappo.core.storages.on_policy.html" class="btn btn-neutral float-left" title="nappo.core.storages.on_policy package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, nappo
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="nappo.schemes.base.html" title="nappo.schemes.base package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="nappo.envs.pybullet.html" title="nappo.envs.pybullet package"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">nappo 0.0.22 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="nappo.html" >nappo package</a> &#187;</li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, nappo.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
-    </div>
-  </body>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
 </html>
