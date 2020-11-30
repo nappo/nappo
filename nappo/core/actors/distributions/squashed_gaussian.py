@@ -72,7 +72,7 @@ class SquashedGaussian(nn.Module):
         action_mean = self.mean(x)
         action_logstd = self.log_std(x) if self.predict_log_std else\
             torch.zeros(action_mean.size()).to(x.device) + self.log_std
-        action_logstd = torch.clamp(action_logstd, self.LOG_STD_MIN, self.LOG_STD_MAX)
+        action_logstd = torch.clamp(action_logstd, LOG_STD_MIN, LOG_STD_MAX)
 
         # Create distribution and sample action
         action_dist = Normal(action_mean, action_logstd.exp())
