@@ -196,7 +196,7 @@ class GWorker(W):
         if self.iter % (self.algo.num_epochs * self.algo.num_mini_batch) != 0:
             return
 
-        if self.communication == "synchronous": self.collector.step()
+        if self.col_communication == "synchronous": self.collector.step()
         self.data, self.col_info = self.inqueue.get(timeout=300)
 
     def compute_gradients(self, batch, distribute_gradients):
