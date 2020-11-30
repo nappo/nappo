@@ -1,7 +1,7 @@
 Distributed training schemes
 ============================
 
-Single operation executors (Worker class)
+Single operation prcesses (Worker class)
 -----------------------------------------
 
 .. toctree::
