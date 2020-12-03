@@ -89,7 +89,7 @@ class GWorker(W):
         dev = device or "cuda" if torch.cuda.is_available() else "cpu"
 
         # Create CWorkerSet instance
-        self.col_workers = col_workers_factory(dev, initial_weights)
+        self.col_workers = col_workers_factory(dev, initial_weights, index_worker)
         self.local_worker = self.col_workers.local_worker()
         self.remote_workers = self.col_workers.remote_workers()
         self.num_workers = len(self.remote_workers)
@@ -193,11 +193,12 @@ class GWorker(W):
     def get_data(self):
         """Pulls data from `self.inqueue`"""
 
-        if self.iter % (self.algo.num_epochs * self.algo.num_mini_batch) != 0:
-            return
+        import ipdb; ipdb.set_trace()
+        if self.iter % (self.algo.num_epochs * self.algo.num_mini_batch) == 0:
 
-        if self.col_communication == "synchronous": self.collector.step()
-        self.data, self.col_info = self.inqueue.get(timeout=300)
+            import ipdb; ipdb.set_trace()
+            if self.col_communication == "synchronous": self.collector.step()
+            self.data, self.col_info = self.inqueue.get(timeout=300)
 
     def compute_gradients(self, batch, distribute_gradients):
         """

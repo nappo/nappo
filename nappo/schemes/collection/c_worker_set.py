@@ -46,6 +46,7 @@ class CWorkerSet(WS):
 
     def __init__(self,
                  num_workers,
+                 index_parent,
                  algo_factory,
                  actor_factory,
                  storage_factory,
@@ -76,6 +77,7 @@ class CWorkerSet(WS):
             num_workers=self.num_workers,
             initial_weights=initial_weights,
             worker_params=self.worker_params,
+            index_parent_worker=index_parent,
             worker_remote_config=self.remote_config,
             total_parent_workers=total_parent_workers)
 
@@ -120,7 +122,7 @@ class CWorkerSet(WS):
             creates a new CWorkerSet class instance.
         """
 
-        def collection_worker_set_factory(device, initial_weights):
+        def collection_worker_set_factory(device, initial_weights, index_parent):
             """
             Creates and returns a CWorkerSet class instance.
 
@@ -139,6 +141,7 @@ class CWorkerSet(WS):
             return cls(
                 local_device=device,
                 num_workers=num_workers,
+                index_parent=index_parent,
                 algo_factory=algo_factory,
                 actor_factory=actor_factory,
                 storage_factory=storage_factory,

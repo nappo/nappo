@@ -35,6 +35,7 @@ class WorkerSet:
     def __init__(self,
                  worker,
                  worker_params,
+                 index_parent_worker,
                  worker_remote_config=default_remote_config,
                  num_workers=1,
                  local_device=None,
@@ -52,15 +53,16 @@ class WorkerSet:
             local_params.update(
                 {"device": local_device, "initial_weights": initial_weights})
 
-            # If multiple collection workers, local collection worker
-            # does not need to collect samples.
-            if worker.__name__ == "CWorker" and num_workers > 0:
+            # If multiple grad workers, and multiple col workers
+            # local collection workers don't need to collect
+            if worker.__name__ == "CWorker" and total_parent_workers > 0 and num_workers > 0:
                 _ = local_params.pop("test_envs_factory")
                 _ = local_params.pop("train_envs_factory")
 
-            # If single collection worker, but multiple grad workers, local
-            # grad worker does not need to collect samples.
-            elif worker.__name__ == "CWorker" and num_workers == 0 and total_parent_workers != 0:
+            # If multiple grad workers, and only one collection worker col workers,
+            # the collection worker of grad worker with index 0 should not collect
+            elif worker.__name__ == "CWorker" and total_parent_workers > 0 and \
+                            num_workers > 0 and index_parent_worker == 0:
                 _ = local_params.pop("test_envs_factory")
                 _ = local_params.pop("train_envs_factory")
 
