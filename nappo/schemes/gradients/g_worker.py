@@ -192,11 +192,7 @@ class GWorker(W):
 
     def get_data(self):
         """Pulls data from `self.inqueue`"""
-
-        import ipdb; ipdb.set_trace()
         if self.iter % (self.algo.num_epochs * self.algo.num_mini_batch) == 0:
-
-            import ipdb; ipdb.set_trace()
             if self.col_communication == "synchronous": self.collector.step()
             self.data, self.col_info = self.inqueue.get(timeout=300)
 
