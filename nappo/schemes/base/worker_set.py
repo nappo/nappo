@@ -59,10 +59,10 @@ class WorkerSet:
                 _ = local_params.pop("test_envs_factory")
                 _ = local_params.pop("train_envs_factory")
 
-            # If multiple grad workers, and only one collection worker col workers,
-            # the collection worker of grad worker with index 0 should not collect
-            elif worker.__name__ == "CWorker" and total_parent_workers > 0 and \
-                            num_workers > 0 and index_parent_worker == 0:
+            # If multiple grad workers the collection workers of grad worker with index 0 should not collect
+            elif worker.__name__ == "CWorker" and total_parent_workers > 0 and index_parent_worker == 0:
+
+                num_workers = 0
                 _ = local_params.pop("test_envs_factory")
                 _ = local_params.pop("train_envs_factory")
 
