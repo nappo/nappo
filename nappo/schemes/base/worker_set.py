@@ -39,7 +39,8 @@ class WorkerSet:
                  num_workers=1,
                  local_device=None,
                  initial_weights=None,
-                 add_local_worker=True):
+                 add_local_worker=True,
+                 total_parent_workers=None):
 
         self.worker_class = worker
         self.worker_params = worker_params
@@ -51,11 +52,17 @@ class WorkerSet:
             local_params.update(
                 {"device": local_device, "initial_weights": initial_weights})
 
-            if num_workers > 0:
-                if "test_envs_factory" in local_params:
-                    _ = local_params.pop("test_envs_factory")
-                if "train_envs_factory" in local_params:
-                    _ = local_params.pop("train_envs_factory")
+            # If multiple collection workers, local collection worker
+            # does not need to collect samples.
+            if worker.__name__ == "CWorker" and num_workers > 0:
+                _ = local_params.pop("test_envs_factory")
+                _ = local_params.pop("train_envs_factory")
+
+            # If single collection worker, but multiple grad workers, local
+            # grad worker does not need to collect samples.
+            elif worker.__name__ == "CWorker" and num_workers == 0 and total_parent_workers != 0:
+                _ = local_params.pop("test_envs_factory")
+                _ = local_params.pop("train_envs_factory")
 
             self._local_worker = self._make_worker(
                 self.worker_class, index_worker=0,

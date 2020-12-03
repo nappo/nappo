@@ -32,6 +32,8 @@ class OnPolicyBuffer(S):
 
         self.device = device
         self.max_size = size
+        self.data = {k: None for k in self.on_policy_data_fields}  # lazy init
+
         self.reset()
 
     @classmethod
@@ -73,9 +75,11 @@ class OnPolicyBuffer(S):
         self.data["done"] = torch.zeros(self.max_size + 1, *sample["done"].shape).to(self.device)
         self.data["logp"] = torch.zeros(self.max_size, *sample["logp"].shape).to(self.device)
 
-    def get_data(self):
+    def get_data(self, data_to_cpu=False):
         """Return currently stored data."""
-        return {k: v.cpu() for k, v in self.data.items() if v is not None}
+        if data_to_cpu: data = {k: v for k, v in self.data.items() if v is not None}
+        else: data = {k: v for k, v in self.data.items() if v is not None}
+        return data
 
     def add_data(self, new_data):
         """
@@ -86,12 +90,11 @@ class OnPolicyBuffer(S):
         new_data : dict
             Dictionary of env transition samples to replace self.data with.
         """
-        self.data = {k: v.to(self.device) for k, v in new_data.items()}
+        for k, v in new_data.items(): self.data[k] = v
 
     def reset(self):
         """Set class counters to zero and remove stored data"""
         self.step, self.size = 0, 0
-        self.data = {k: None for k in self.on_policy_data_fields} # lazy init
 
     def insert(self, sample):
         """
@@ -102,7 +105,7 @@ class OnPolicyBuffer(S):
         sample : dict
             Data sample (containing all tensors of an environment transition)
         """
-        if self.size == 0: # data tensors lazy initialization
+        if self.size == 0 and self.data["obs"] is None: # data tensors lazy initialization
             self.init_tensors(sample)
 
         self.data["obs"][self.step + 1].copy_(sample["obs2"])

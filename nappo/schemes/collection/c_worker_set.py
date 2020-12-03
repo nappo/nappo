@@ -49,10 +49,11 @@ class CWorkerSet(WS):
                  algo_factory,
                  actor_factory,
                  storage_factory,
-                 train_envs_factory,
                  local_device=None,
                  initial_weights=None,
                  fraction_samples=1.0,
+                 total_parent_workers=0,
+                 train_envs_factory=lambda x, y: None,
                  test_envs_factory=lambda x, y, c: None,
                  worker_remote_config=default_remote_config):
 
@@ -75,7 +76,8 @@ class CWorkerSet(WS):
             num_workers=self.num_workers,
             initial_weights=initial_weights,
             worker_params=self.worker_params,
-            worker_remote_config=self.remote_config)
+            worker_remote_config=self.remote_config,
+            total_parent_workers=total_parent_workers)
 
     @classmethod
     def create_factory(cls,
@@ -85,6 +87,7 @@ class CWorkerSet(WS):
                        storage_factory,
                        test_envs_factory,
                        train_envs_factory,
+                       total_parent_workers=0,
                        col_fraction_samples=1.0,
                        col_worker_resources=default_remote_config):
         """
@@ -143,6 +146,7 @@ class CWorkerSet(WS):
                 fraction_samples=col_fraction_samples,
                 test_envs_factory=test_envs_factory,
                 train_envs_factory=train_envs_factory,
+                total_parent_workers=total_parent_workers,
                 worker_remote_config=col_worker_resources)
 
         return collection_worker_set_factory

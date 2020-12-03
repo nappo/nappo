@@ -209,15 +209,15 @@ class PPO(Algo):
         create_algo_instance : func
             creates a new PPO class instance.
         """
-        def create_algo_instance(actor_critic, device):
+        def create_algo_instance(device, actor):
             return cls(lr=lr,
                        eps=eps,
                        gamma=gamma,
                        device=device,
+                       actor_critic=actor,
                        test_every=test_every,
                        num_epochs=num_epochs,
                        clip_param=clip_param,
-                       actor_critic=actor_critic,
                        entropy_coef=entropy_coef,
                        max_grad_norm=max_grad_norm,
                        num_mini_batch=num_mini_batch,

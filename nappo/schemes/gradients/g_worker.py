@@ -423,11 +423,11 @@ class CollectorThread(threading.Thread):
 
         if self.col_execution == "centralised" and self.col_communication == "synchronous":
 
-            rollouts = self.local_worker.collect_data(listen_to=["sync"])
+            rollouts = self.local_worker.collect_data(listen_to=["sync"], data_to_cpu=False)
             self.inqueue.put(rollouts)
 
         elif self.col_execution == "centralised" and self.col_communication == "asynchronous":
-            rollouts = self.local_worker.collect_data()
+            rollouts = self.local_worker.collect_data(data_to_cpu=False)
             self.inqueue.put(rollouts)
 
         elif self.col_execution == "decentralised" and self.col_communication == "synchronous":

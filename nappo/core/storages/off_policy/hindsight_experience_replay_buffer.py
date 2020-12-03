@@ -74,9 +74,11 @@ class HindsightExperienceReplayBuffer:
         self.data["rew"] = np.zeros((self.max_size, *sample["rew"].shape), dtype=np.float32)
         self.data["done"] = np.zeros((self.max_size, *sample["done"].shape), dtype=np.float32)
 
-    def get_data(self):
+    def get_data(self, data_to_cpu=False):
         """Return currently stored data."""
-        return {k: v[0:self.step] for k, v in self.data.items()}
+        if data_to_cpu: data = {k: v for k, v in self.data.items() if v is not None}
+        else: data = {k: v for k, v in self.data.items() if v is not None}
+        return data
 
     def reset(self):
         """Set class counters to zero and remove stored data"""

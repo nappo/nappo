@@ -36,7 +36,7 @@ class Scheme:
     grad_worker_resources : dict
         Ray resource specs for gradient remote workers.
     local_device : str
-        "cpu" or specific GPU "cuda:number`" to use for computation.
+        "cpu" or specific GPU "cuda:`number`" to use for computation.
     update_execution : str
         Execution patterns for update steps.
     """
@@ -82,6 +82,9 @@ class Scheme:
             num_workers=col_remote_workers,
             col_worker_resources=col_worker_resources,
             col_fraction_samples=sync_col_specs.get("fraction_samples"),
+
+            # grad specs
+            total_parent_workers=grad_remote_workers,
         )
 
         grad_workers_factory = GWorkerSet.create_factory(

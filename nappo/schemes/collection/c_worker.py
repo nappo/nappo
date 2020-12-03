@@ -93,10 +93,9 @@ class CWorker(W):
 
         # Create Actor Critic instance
         self.actor = actor_factory(self.device)
-        self.actor.to(self.device)
 
         # Create Algorithm instance
-        self.algo = algo_factory(self.actor, self.device)
+        self.algo = algo_factory(self.device, self.actor)
 
         # Create Storage instance and set world initial state
         self.storage = storage_factory(self.device)
@@ -132,7 +131,7 @@ class CWorker(W):
         # Print worker information
         self.print_worker_info()
 
-    def collect_data(self, listen_to=[]):
+    def collect_data(self, listen_to=[], data_to_cpu=True):
         """
         Perform a data collection operation, returning rollouts and
         other relevant information about the process.
@@ -155,7 +154,7 @@ class CWorker(W):
         col_time, train_perf = self.collect_train_data(listen_to=listen_to)
 
         # Get collected rollout and reset storage
-        data = self.storage.get_data()
+        data = self.storage.get_data(data_to_cpu)
         self.storage.reset()
 
         # Add information to info dict
@@ -282,12 +281,41 @@ class CWorker(W):
 
     def update_algo_parameter(self, parameter_name, new_parameter_value):
         """
-        If `parameter_name` is an attribute of Worker.algo, change its value to
+        If `parameter_name` is an attribute of self.algo, change its value to
         `new_parameter_value value`.
 
         Parameters
         ----------
         parameter_name : str
             Algorithm attribute name
+        new_parameter_value : float
+            Algorithm new parameter value.
         """
         self.algo.update_algo_parameter(parameter_name, new_parameter_value)
+
+    def replace_core_component(self, component_name, new_component_factory):
+        """
+        If `component_name` is an attribute of c_worker, replaces it with
+        the component created by `new_component_factory`.
+
+        Parameters
+        ----------
+        component_name : str
+            Worker component name
+        new_component_factory : func
+            Function to create an instance of the new component.
+        """
+        if hasattr(self, component_name):
+            if component_name == "algo":
+                new_component_component = new_component_factory(
+                    self.device, self.actor)
+            elif component_name == "envs_train":
+                new_component_component = new_component_factory(
+                    self.device, self.index_worker)
+            elif component_name == "envs_test":
+                new_component_component = new_component_factory(
+                    self.device, self.index_worker, "test")
+            else:
+                new_component_component = new_component_factory(self.device)
+            setattr(self, component_name, new_component_component)
+

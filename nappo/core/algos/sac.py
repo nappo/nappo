@@ -257,18 +257,18 @@ class SAC(Algo):
             creates a new SAC class instance.
         """
 
-        def create_algo_instance(actor_critic, device):
+        def create_algo_instance(device, actor):
             return cls(lr_q=lr_q,
                        lr_pi=lr_pi,
                        lr_alpha=lr_alpha,
                        gamma=gamma,
                        device=device,
                        polyak=polyak,
+                       actor_critic=actor,
                        test_every=test_every,
                        start_steps=start_steps,
                        num_updates=num_updates,
                        update_every=update_every,
-                       actor_critic=actor_critic,
                        initial_alpha=initial_alpha,
                        reward_scaling=reward_scaling,
                        mini_batch_size=mini_batch_size,

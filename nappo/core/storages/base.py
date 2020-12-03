@@ -26,8 +26,11 @@ class Storage(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_data(self, *args):
-        """Return currently stored data."""
+    def get_data(self, data_to_cpu=False, *args):
+        """
+        Return currently stored data. If data_to_cpu, make sure to move
+        data tensors to cpu memory.
+        """
         raise NotImplementedError
 
     @abstractmethod

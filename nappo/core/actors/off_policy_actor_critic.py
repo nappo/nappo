@@ -170,6 +170,7 @@ class OffPolicyActorCritic(nn.Module):
             if restart_model:
                 policy.load_state_dict(
                     torch.load(restart_model, map_location=device))
+            policy.to(device)
             return policy
 
         return create_actor_critic_instance
