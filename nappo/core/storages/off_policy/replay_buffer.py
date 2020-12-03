@@ -32,6 +32,8 @@ class ReplayBuffer(S):
 
         self.device = device
         self.max_size = size
+        self.data = {k: None for k in self.off_policy_data_fields}  # lazy init
+
         self.reset()
 
     @classmethod
@@ -80,7 +82,6 @@ class ReplayBuffer(S):
     def reset(self):
         """Set class counters to zero and remove stored data"""
         self.step, self.size = 0, 0
-        self.data = {k: None for k in self.off_policy_data_fields} # lazy init
 
     def add_data(self, new_data):
         """

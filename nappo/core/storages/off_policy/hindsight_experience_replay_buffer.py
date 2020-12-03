@@ -35,6 +35,8 @@ class HindsightExperienceReplayBuffer:
         self.device = device
         self.max_size = size
         self.her_function = her_function
+        self.data = {k: None for k in self.off_policy_data_fields}  # lazy init
+
         self.reset()
 
     @classmethod
@@ -83,7 +85,6 @@ class HindsightExperienceReplayBuffer:
     def reset(self):
         """Set class counters to zero and remove stored data"""
         self.step, self.size, self.last_episode_start = 0, 0, 0
-        self.data = {k: None for k in self.off_policy_data_fields} # lazy init
 
     def add_data(self, new_data):
         """
