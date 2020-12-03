@@ -42,6 +42,7 @@ class GWorkerSet(WS):
 
     def __init__(self,
                  num_workers,
+                 index_parent,
                  local_device,
                  col_execution,
                  col_communication,
@@ -66,6 +67,7 @@ class GWorkerSet(WS):
             local_device=local_device,
             num_workers=self.num_workers,
             worker_params=self.worker_params,
+            index_parent_worker=index_parent,
             worker_remote_config=self.remote_config)
 
     @classmethod
@@ -101,7 +103,7 @@ class GWorkerSet(WS):
         grad_worker_set_factory : func
             creates a new GWorkerSet class instance.
         """
-        def grad_worker_set_factory(device):
+        def grad_worker_set_factory(device, index_parent):
             """
             Creates and returns a GWorkerSet class instance.
 
@@ -118,6 +120,7 @@ class GWorkerSet(WS):
             return cls(
                 local_device=device,
                 num_workers=num_workers,
+                index_parent=index_parent,
                 col_execution=col_execution,
                 col_communication=col_communication,
                 col_workers_factory=col_workers_factory,

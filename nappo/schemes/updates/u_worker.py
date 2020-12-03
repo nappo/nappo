@@ -74,7 +74,7 @@ class UWorker(W):
         # Computation device
         dev = local_device or "cuda" if torch.cuda.is_available() else "cpu"
 
-        self.grad_workers = grad_workers_factory(dev)
+        self.grad_workers = grad_workers_factory(dev, index_worker)
         self.local_worker = self.grad_workers.local_worker()
         self.remote_workers = self.grad_workers.remote_workers()
         self.num_workers = len(self.grad_workers.remote_workers())
