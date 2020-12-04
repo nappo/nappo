@@ -194,7 +194,7 @@ class CWorker(W):
             Average accumulated reward over recent train episodes.
         """
         t = time.time()
-        num_steps = num_steps or int(self.update_every)
+        num_steps = num_steps if num_steps is not None else int(self.update_every)
         min_steps = int(num_steps * self.fraction_samples)
 
         for step in range(num_steps):
