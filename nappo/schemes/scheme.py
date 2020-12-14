@@ -62,7 +62,9 @@ class Scheme:
 
                  # update
                  local_device=None,
-                 update_execution="centralised"):
+                 update_execution="centralised", # OMP_NUM_THREADS=1 python -m torch.distributed.launch --nproc_per_node=8 main.py
+
+                 ):
 
         # TODO. Add core components check, to make sure components match.
 

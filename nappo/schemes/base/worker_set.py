@@ -53,9 +53,8 @@ class WorkerSet:
             local_params.update(
                 {"device": local_device, "initial_weights": initial_weights})
 
-            # If multiple grad workers, and multiple col workers
-            # local collection workers don't need to collect
-            if worker.__name__ == "CWorker" and total_parent_workers > 0 and num_workers > 0:
+            # If multiple col workers, local collection workers don't need to collect
+            if worker.__name__ == "CWorker" and num_workers > 0:
                 _ = local_params.pop("test_envs_factory")
                 _ = local_params.pop("train_envs_factory")
 

@@ -7,7 +7,7 @@ NAPPO DOCUMENTATION:
 
    introduction
    installation
-
+   getting_started
 
 .. toctree::
    :maxdepth: 2

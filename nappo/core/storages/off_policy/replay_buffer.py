@@ -75,8 +75,8 @@ class ReplayBuffer(S):
 
     def get_data(self, data_to_cpu=False):
         """Return currently stored data."""
-        if data_to_cpu: data = {k: v for k, v in self.data.items() if v is not None}
-        else: data = {k: v for k, v in self.data.items() if v is not None}
+        if data_to_cpu: data = {k: v[:self.step] for k, v in self.data.items() if v is not None}
+        else: data = {k: v[:self.step] for k, v in self.data.items() if v is not None}
         return data
 
     def reset(self):
@@ -96,14 +96,12 @@ class ReplayBuffer(S):
 
             if self.data[k] is None:
                 self.data[k] = np.zeros((self.max_size, *v.shape[1:]), dtype=np.float32)
-
             len, num_proc = v.shape[0:2]
-
             if self.step + len <= self.max_size:
                 self.data[k][self.step:self.step + len] = v
             else:
                 self.data[k][self.step:self.max_size] = v[0:self.max_size - self.step]
-                self.data[k][0:len - self.max_size - self.step] = v[self.max_size - self.step:]
+                self.data[k][0:len - self.max_size + self.step] = v[self.max_size - self.step:]
 
         self.step = (self.step + len) % self.max_size
         self.size = min(self.size + len, self.max_size)

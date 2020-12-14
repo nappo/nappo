@@ -319,13 +319,13 @@ class UpdaterThread(threading.Thread):
                 t = time.time()
                 self.local_worker.apply_gradients(average_gradients(to_average))
                 avg_grads_t = time.time() - t
-                info.update({"avg_grads_time": avg_grads_t})
+                info.update({"time/avg_grads_time": avg_grads_t})
 
                 # Update workers with current weights
                 t = time.time()
                 self.sync_weights()
                 sync_grads_t = time.time() - t
-                info.update({"sync_grads_time": sync_grads_t})
+                info.update({"time/sync_grads_time": sync_grads_t})
 
             else:
                 self.local_worker.local_worker.actor_version += 1

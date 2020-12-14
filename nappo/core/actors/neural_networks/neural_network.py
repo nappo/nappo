@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
+from .feature_extractors.utils import init
 
 
 class NNBase(nn.Module):
@@ -45,7 +46,7 @@ class NNBase(nn.Module):
                  feature_extractor_kwargs,
                  recurrent=False,
                  output_shape=(256,),
-                 recurrent_hidden_size=512,
+                 recurrent_hidden_size=256,
                  activation=nn.ReLU,
                  final_activation=False):
 
@@ -67,7 +68,8 @@ class NNBase(nn.Module):
             self.gru = nn.GRU(feature_map_size, recurrent_hidden_size)
             feature_map_size = recurrent_hidden_size
 
-        output = [nn.Linear(feature_map_size + np.prod(action_shape), self._num_outputs)]
+        init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0), nn.init.calculate_gain('relu'))
+        output = [init_(nn.Linear(feature_map_size + np.prod(action_shape), self._num_outputs))]
         if final_activation: output += [activation()]
         self.output = nn.Sequential(*output)
 

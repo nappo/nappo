@@ -4,6 +4,7 @@ import torch.nn as nn
 from .utils import Scale, Unscale
 from .neural_networks import NNBase
 from .distributions import get_dist
+from .neural_networks.feature_extractors.utils import init
 from .neural_networks.feature_extractors import get_feature_extractor
 
 
@@ -59,7 +60,7 @@ class OnPolicyActorCritic(nn.Module):
                  feature_extractor_network=get_feature_extractor("MLP"),
                  feature_extractor_kwargs={},
                  recurrent_policy=False,
-                 recurrent_hidden_size=512,
+                 recurrent_hidden_size=256,
                  shared_policy_value_network=True):
 
         super(OnPolicyActorCritic, self).__init__()
@@ -80,7 +81,8 @@ class OnPolicyActorCritic(nn.Module):
             recurrent_hidden_size=recurrent_hidden_size, final_activation=True)
 
         if self.shared_policy_value_network:
-            self.value_net = nn.Linear(self.policy_net.num_outputs, 1)
+            init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0))
+            self.value_net = init_(nn.Linear(self.policy_net.num_outputs, 1))
             self.last_actor_features = None
 
         else:
@@ -110,9 +112,9 @@ class OnPolicyActorCritic(nn.Module):
             action_space,
             restart_model=None,
             recurrent_policy=False,
-            recurrent_hidden_size=512,
+            recurrent_hidden_size=256,
             feature_extractor_kwargs={},
-            shared_policy_value_network=False,
+            shared_policy_value_network=True,
             feature_extractor_network=get_feature_extractor("MLP")):
         """
         Returns a function that creates actor critic instances.
