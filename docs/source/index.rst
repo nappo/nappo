@@ -5,16 +5,17 @@ NAPPO DOCUMENTATION:
    :maxdepth: 2
    :caption: Getting started:
 
-   introduction
-   installation
-   getting_started
+   usage/introduction
+   usage/installation
+   usage/getting_started
 
 .. toctree::
    :maxdepth: 2
    :caption: Nappo API:
 
-   nappo.core
-   nappo.schemes
+   package/core/core
+   package/schemes/schemes
+   package/learner/learner
 
 .. toctree::
    :maxdepth: 2
@@ -22,7 +23,7 @@ NAPPO DOCUMENTATION:
 
    envs_tutorial
    feature_extractor_tutorial
-   scheme_tutorial
+   new_components_tutorial
 
 .. toctree::
    :maxdepth: 2
