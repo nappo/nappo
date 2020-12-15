@@ -2,7 +2,7 @@ import gym
 import pybullet_envs
 from ..common import FrameStack, FrameSkip
 
-def make_pybullet_train_env(env_id, index_worker=0, index_env=0, seed=0, frame_skip=0, frame_stack=1):
+def pybullet_train_env_factory(env_id, index_worker=0, index_env=0, seed=0, frame_skip=0, frame_stack=1):
     """
     Create train PyBullet environment.
 
@@ -38,7 +38,7 @@ def make_pybullet_train_env(env_id, index_worker=0, index_env=0, seed=0, frame_s
 
     return env
 
-def make_pybullet_test_env(env_id, index_worker=0, index_env=0, seed=0, frame_skip=0, frame_stack=1):
+def pybullet_test_env_factory(env_id, index_worker=0, index_env=0, seed=0, frame_skip=0, frame_stack=1):
     """
     Create test PyBullet environment.
 

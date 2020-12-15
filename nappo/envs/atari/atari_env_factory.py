@@ -2,7 +2,7 @@ from baselines.common.atari_wrappers import make_atari, wrap_deepmind
 from .wrappers import wrap_deepmind
 from ..common import FrameStack
 
-def make_atari_train_env(env_id, index_worker=0, index_env=0, seed=0, frame_stack=1):
+def atari_train_env_factory(env_id, index_worker=0, index_env=0, seed=0, frame_stack=1):
     """
     Create train Atari environment.
 
@@ -36,7 +36,7 @@ def make_atari_train_env(env_id, index_worker=0, index_env=0, seed=0, frame_stac
 
     return env
 
-def make_atari_test_env(env_id, index_worker=0, index_env=0, seed=0, frame_stack=1):
+def atari_test_env_factory(env_id, index_worker=0, index_env=0, seed=0, frame_stack=1):
     """
     Create test Atari environment.
 

@@ -2,7 +2,7 @@ import gym
 from ..common import FrameStack, FrameSkip
 
 
-def make_mujoco_train_env(env_id, index_worker=0, index_env=0, seed=0, frame_skip=0, frame_stack=1):
+def mujoco_train_env_factory(env_id, index_worker=0, index_env=0, seed=0, frame_skip=0, frame_stack=1):
     """
     Create train MuJoCo environment.
 
@@ -38,7 +38,7 @@ def make_mujoco_train_env(env_id, index_worker=0, index_env=0, seed=0, frame_ski
 
     return env
 
-def make_mujoco_test_env(env_id, index_worker=0, index_env=0, seed=0, frame_skip=0, frame_stack=1):
+def mujoco_test_env_factory(env_id, index_worker=0, index_env=0, seed=0, frame_skip=0, frame_stack=1):
     """
     Create test MuJoCo environment.
 

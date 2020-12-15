@@ -4,8 +4,8 @@ Storage
 .. toctree::
    :maxdepth: 2
 
-   nappo.core.storages.off_policy
-   nappo.core.storages.on_policy
+   off_policy
+   on_policy
 
 .. automodule:: nappo.core.storages
    :members:

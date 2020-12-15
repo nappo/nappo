@@ -4,12 +4,8 @@ VecEnv
 Environment Vector
 ------------------
 
-.. automodule:: nappo.core.envs.vec_env
+.. automodule:: nappo.core.env.vec_env
    :members:
    :undoc-members:
    :show-inheritance:
-
-.. automodule:: nappo.core.envs
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :exclude-members: make_env

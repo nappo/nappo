@@ -23,5 +23,5 @@ Neural Networks
 .. toctree::
    :maxdepth: 1
 
-   nappo.core.actors.distributions
-   nappo.core.actors.neural_networks
+   distributions
+   neural_networks

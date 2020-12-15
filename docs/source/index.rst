@@ -15,15 +15,15 @@ NAPPO DOCUMENTATION:
 
    package/core/core
    package/schemes/schemes
-   package/learner/learner
+   package/learner
 
 .. toctree::
    :maxdepth: 2
    :caption: Tutorials:
 
-   envs_tutorial
-   feature_extractor_tutorial
-   new_components_tutorial
+   tutorials/envs_tutorial
+   tutorials/feature_extractor_tutorial
+   tutorials/new_components_tutorial
 
 .. toctree::
    :maxdepth: 2
@@ -35,4 +35,4 @@ NAPPO DOCUMENTATION:
    :maxdepth: 2
    :caption: Benchmarks:
 
-   benchmarks
+   benchmarks/benchmarks

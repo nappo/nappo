@@ -1,2 +1,2 @@
-Use a custom environment
-========================
+Custom environment
+==================

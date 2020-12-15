@@ -1,5 +1,5 @@
-Training Scheme - Architecture configurations
-=============================================
+Training Scheme
+===============
 
 .. automodule:: nappo.schemes.scheme
    :members:

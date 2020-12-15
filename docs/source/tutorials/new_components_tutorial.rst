@@ -1,2 +1,2 @@
-Create a custom component
-=========================
+Create core component
+=====================

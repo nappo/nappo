@@ -9,7 +9,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../..')
 
 from nappo import utils
 from nappo import Learner
-from nappo.schemes import Scheme
+from nappo import Scheme
 from nappo.core.algos import PPO
 from nappo.core.envs import VecEnv
 from nappo.core.storages import OnPolicyGAEBuffer

@@ -54,65 +54,54 @@ class SAC(Algo):
 
     Attributes
     ----------
-    # start_steps : int
-    #     Number of steps collected with initial random policy (default to 0 for
-    #     On-policy algos).
-    # num_epochs : int
-    #     Times data in the buffer is re-used before data collection proceeds.
-    # update_every : int
-    #     Number of data samples collected between network update stages (depends
-    #     on storage capacity for On-policy algos).
-    # num_mini_batch : int
-    #     Number mini batches per epoch.
-    # mini_batch_size : int
-    #     Size of update mini batches.
-    # test_every : int
-    #     Number of network updates between test evaluations.
-    # num_test_episodes : int
-    #     Num episodes to complete in each test phase.
-    # device : torch.device
-    #     CPU or specific GPU where class computation take place.
-    # actor_critic : ActorCritic
-    #     ActorCritic Class containing Neural Network function approximators.
-    # gamma : float
-    #     Discount factor parameter.
-    # iter : int
-    #     Num actor_critic Adam updates.
-    # polyak : float
-    #     SAC polyak averaging parameter.
-    # reward_scaling : float
-    #     Reward scaling factor.
-    # target_update_interval : int
-    #     regularity of target nets updates with respect to actor_critic Adam updates.
-    # log_alpha : torch.tensor
-    #     Log entropy coefficient value.
-    # alpha : torch.tensor
-    #     Entropy coefficient value.
-    # pi_optimizer : torch.optimizer
-    #     Policy model optimizer.
-    # q_optimizer : torch.optimizer
-    #     Q critics model optimizer.
-    # alpha_optimizer : torch.optimizer
-    #     alpha parameter optimizer.
+    start_steps : int
+        Number of steps collected with initial random policy (default to 0 for
+        On-policy algos).
+    num_epochs : int
+        Times data in the buffer is re-used before data collection proceeds.
+    update_every : int
+        Number of data samples collected between network update stages (depends
+        on storage capacity for On-policy algos).
+    num_mini_batch : int
+        Number mini batches per epoch.
+    mini_batch_size : int
+        Size of update mini batches.
+    test_every : int
+        Number of network updates between test evaluations.
+    num_test_episodes : int
+        Num episodes to complete in each test phase.
+    device : torch.device
+        CPU or specific GPU where class computation take place.
+    actor_critic : ActorCritic
+        ActorCritic Class containing Neural Network function approximators.
+    gamma : float
+        Discount factor parameter.
+    iter : int
+        Num actor_critic Adam updates.
+    polyak : float
+        SAC polyak averaging parameter.
+    reward_scaling : float
+        Reward scaling factor.
+    target_update_interval : int
+        regularity of target nets updates with respect to actor_critic Adam updates.
+    log_alpha : torch.tensor
+        Log entropy coefficient value.
+    alpha : torch.tensor
+        Entropy coefficient value.
+    pi_optimizer : torch.optimizer
+        Policy model optimizer.
+    q_optimizer : torch.optimizer
+        Q critics model optimizer.
+    alpha_optimizer : torch.optimizer
+        alpha parameter optimizer.
 
     Examples
     --------
-    >>> ac = ActorCritic(...)
-    >>> create_algo = SAC.algo_factory(
+    >>> create_algo = SAC.create_factory(
             lr_q=1e-4, lr_pi=1e-4, lr_alpha=1e-4, gamma=0.99, polyak=0.995,
             num_updates=50, update_every=50, test_every=5000, start_steps=20000,
             mini_batch_size=64, alpha=1.0, reward_scaling=1.0, num_test_episodes=0,
              target_update_interval=1)
-    >>> sac1 = create_algo(actor_critic=ac, device=torch.device("cuda:1"))
-    >>> sac2 = create_algo(actor_critic=ac, device=torch.device("cuda:2"))
-
-    >>> ac = ActorCritic(...)
-    >>> sac = SAC(device=torch.device("cuda:1"), actor_critic=ac, lr_q=1e-4,
-                  lr_pi=1e-4, lr_alpha=1e-4 gamma=0.99, polyak=0.995,
-                  num_updates=50, update_every=50, test_every=5000,
-                  start_steps=20000, mini_batch_size=64, alpha=1.0,
-                  reward_scaling=1.0, num_test_episodes=0,
-                  target_update_interval=1)
     """
 
     def __init__(self,
