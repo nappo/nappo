@@ -90,7 +90,7 @@ Our current implementation contains the following components.
 
 New components can be created and combined with already existing ones. For more information about how to do it, see :ref:`Create a custom core component`.
 
-For our example, we can create an On-Policy Agent, using the Proximal Policy Optimization (PPO) algorithm, a Storage with Generalized Advantage Estimation (GAE) and an Actor Critic using MLP networks as feature extractors.
+For our example, we can create an On-Policy Agent, using the Proximal Policy Optimization (PPO) algorithm, a Storage with Generalized Advantage Estimation (GAE) and an Actor Critic using MLP networks as feature extractors. To see the list of available feature extractors check the :ref:`Feature Extractors` section.
 
 .. code-block:: python
 
@@ -111,7 +111,8 @@ For our example, we can create an On-Policy Agent, using the Proximal Policy Opt
         # Define rollouts storage
         storage_factory = OnPolicyGAEBuffer.create_factory(size=1000, gae_lambda=0.95)
 
-
+.. note::
+    Custom feature extractors can also be defined. For a more detailed explanation about how to do it, check :ref:`Create custom feature extractors`.
 
 4. Customizing training scheme
 ------------------------------
