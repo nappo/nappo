@@ -22,35 +22,14 @@ Our current implementation contains the following components.
 
 New components can be created and combined with already existing ones. For more information about how to do it, see :ref:`Create a custom component`.
 
-For our example, we can create an On-Policy Agent, using the Proximal Policy Optimization (PPO) algorithm, a Storage with Generalized Advantage Estimation (GAE) and an Actor Critic using MLP networks as feature extractors.
-
-.. code-block:: python
-
-    from nappo.core.algos import PPO
-    from nappo.core.storages import OnPolicyGAEBuffer
-    from nappo.core.actors import OnPolicyActorCritic, get_feature_extractor
-
-    # Define RL Actor
-    actor_factory = OnPolicyActorCritic.create_factory(
-    obs_space, action_space, feature_extractor_network=get_feature_extractor("MLP"))
-
-    # Define RL training algorithm
-    algo_factory = PPO.create_factory(
-        lr=1e-4, num_epochs=4, clip_param=0.2, entropy_coef=0.01,
-        value_loss_coef=.5, max_grad_norm=.5, num_mini_batch=4,
-        use_clipped_value_loss=True, gamma=0.99)
-
-    # Define rollouts storage
-    storage_factory = OnPolicyGAEBuffer.create_factory(size=1000, gae_lambda=0.95)
-
 .. note::
     Being able to scale to distributed regimes can require RL agent components to be instantiated multiple times in different processes. To do that, all NAPPO core components contain a specifically named class method, called ``create_factory``, which returns a function allowing to create component instances, a ``component factory``.
 
     Instead of directly defining a single RL agent instance, we can define a ``component factory`` for each component and pass them on to the training architecture component called ``Scheme``, which will handle the creation of any training architecture we specify later on.
 
-We also need to define an environment for the agent to interact with. However this a somewhat special type of component, because we would normally want multiples coipes of it. More specifically, we would normally want to stack multiple independent environments copies into a single one to make a more efficient use of compute resources during inference time.
+The first step to create an agent is defining an environment to interact with. However this a somewhat special type of component, because we would normally want multiples coipes of it. More specifically, we would normally want to stack multiple independent environments copies into a single one to make a more efficient use of compute resources during inference time.
 
-To do that, we start defining an ``env_factory``, a function that creates single copies of the environment under consideration. NAPPO already contains some basic environments, such as ``Pybullet``, ``Atari`` and ``MuJoCo``, so we can import one of those.
+To do that, we start defining an ``env_factory``, a function that creates single copies of the environment under consideration. Following, we can create a vectorized environment with the ``VecEnv`` component, which uses this function to create multiples instances of the environment and stack them. NAPPO already contains factories for some basic environments, such as ``Pybullet``, ``Atari`` and ``MuJoCo``, so we can import one of those.
 
 .. code-block:: python
 
@@ -84,6 +63,29 @@ Following, we can create a vectorized environment with the ``VecEnv`` component,
 
 .. note::
    The ``VecEnv`` class accepts an optional parameter called ``log_dir``. If provided, a ``gym.Monitor`` wrapper will be used to generate json log files for each individual environment in the vector.
+
+For our example, we can create an On-Policy Agent, using the Proximal Policy Optimization (PPO) algorithm, a Storage with Generalized Advantage Estimation (GAE) and an Actor Critic using MLP networks as feature extractors.
+
+.. code-block:: python
+
+    from nappo.core.algos import PPO
+    from nappo.core.storages import OnPolicyGAEBuffer
+    from nappo.core.actors import OnPolicyActorCritic, get_feature_extractor
+
+    # Define RL Actor
+    actor_factory = OnPolicyActorCritic.create_factory(
+    obs_space, action_space, feature_extractor_network=get_feature_extractor("MLP"))
+
+    # Define RL training algorithm
+    algo_factory = PPO.create_factory(
+        lr=1e-4, num_epochs=4, clip_param=0.2, entropy_coef=0.01,
+        value_loss_coef=.5, max_grad_norm=.5, num_mini_batch=4,
+        use_clipped_value_loss=True, gamma=0.99)
+
+    # Define rollouts storage
+    storage_factory = OnPolicyGAEBuffer.create_factory(size=1000, gae_lambda=0.95)
+
+
 
 3. Customize training scheme
 ----------------------------
