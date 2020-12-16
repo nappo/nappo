@@ -1,3 +1,3 @@
-from .atari.atari_env_factory import make_atari_train_env, make_atari_test_env
-from .mujoco.mujoco_env_factory import make_mujoco_train_env, make_mujoco_test_env
-from .pybullet.pybullet_env_factory import make_pybullet_train_env, make_pybullet_test_env
+from .atari.atari_env_factory import atari_train_env_factory, atari_test_env_factory
+from .mujoco.mujoco_env_factory import mujoco_train_env_factory, mujoco_test_env_factory
+from .pybullet.pybullet_env_factory import pybullet_train_env_factory, pybullet_test_env_factory
