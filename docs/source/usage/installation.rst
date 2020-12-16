@@ -6,8 +6,8 @@ Installing Anaconda or Miniconda
 
 If not already done, install conda (Miniconda is sufficient). To do so, see the `official documentation. <https://docs.conda.io/projects/conda/en/latest/user-guide/install/>`_
 
-Installing library
-------------------
+Installing Nappo library
+------------------------
 
 1. Set up conda environment ::
 
