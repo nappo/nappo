@@ -31,7 +31,7 @@ class OnPolicyBuffer(S):
     def __init__(self, size, device=torch.device("cpu")):
 
         self.device = device
-        self.max_size = size
+        self.max_size, self.size, self.step = size, 0, 0
         self.data = {k: None for k in self.on_policy_data_fields}  # lazy init
 
         self.reset()

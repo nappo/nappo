@@ -29,7 +29,7 @@ NAPPO DOCUMENTATION:
    :maxdepth: 2
    :caption: Code examples:
 
-   minimal
+   code_examples/obstacle
 
 .. toctree::
    :maxdepth: 2

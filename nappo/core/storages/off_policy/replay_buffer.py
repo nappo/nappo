@@ -31,7 +31,7 @@ class ReplayBuffer(S):
     def __init__(self, size, device):
 
         self.device = device
-        self.max_size = size
+        self.max_size, self.size, self.step = size, 0, 0
         self.data = {k: None for k in self.off_policy_data_fields}  # lazy init
 
         self.reset()
@@ -81,7 +81,8 @@ class ReplayBuffer(S):
 
     def reset(self):
         """Set class counters to zero and remove stored data"""
-        self.step, self.size = 0, 0
+        self.size -= self.step
+        self.step = 0
 
     def add_data(self, new_data):
         """
@@ -92,11 +93,11 @@ class ReplayBuffer(S):
         new_data : dict
             Dictionary of env transition samples to be added to self.data.
         """
-        for k, v in new_data.items():
 
+        for k, v in new_data.items():
+            len = v.shape[0]
             if self.data[k] is None:
                 self.data[k] = np.zeros((self.max_size, *v.shape[1:]), dtype=np.float32)
-            len, num_proc = v.shape[0:2]
             if self.step + len <= self.max_size:
                 self.data[k][self.step:self.step + len] = v
             else:
@@ -169,7 +170,7 @@ class ReplayBuffer(S):
         """
         num_proc = self.data["obs"].shape[1]
 
-        if recurrent_ac:  # Batches for a feed recurrent actor
+        if recurrent_ac:  # Batches to a feed recurrent actor
             raise NotImplementedError
 
         else: # Batches for a feed forward actor

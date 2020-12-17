@@ -153,7 +153,7 @@ class CWorker(W):
         # Collect train data
         col_time, train_perf = self.collect_train_data(listen_to=listen_to)
 
-        # Get collected rollout and reset storage
+        # Get collected rollouts
         data = self.storage.get_data(data_to_cpu)
         self.storage.reset()
 

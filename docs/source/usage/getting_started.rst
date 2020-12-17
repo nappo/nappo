@@ -205,7 +205,8 @@ And enjoy our Agent's performance with running this script:
     while not done:
         obs = torch.Tensor(obs).view(1, -1).to(device)
         done = torch.Tensor([done]).view(1, -1).to(device)
-        _, clipped_action, _, rhs, _ = policy.get_action(obs, rhs, done, deterministic=True)
+         with torch.no_grad():
+            _, clipped_action, _, rhs, _ = policy.get_action( obs, rhs, done, deterministic=True)
         obs, reward, done, info = env.step(clipped_action.squeeze().cpu().numpy())
         episode_reward += reward
 
