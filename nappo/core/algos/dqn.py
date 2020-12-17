@@ -38,6 +38,10 @@ class DQN(Algo):
         Number of episodes to complete in each test phase.
     test_every : int
         Regularity of test evaluations in actor_critic updates.
+    initial_epsilon : float
+        initial value for DQN epsilon parameter.
+    epsilon_decay : float
+        Exponential decay rate for epsilon parameter.
     """
 
     def __init__(self,
@@ -45,7 +49,6 @@ class DQN(Algo):
                  actor_critic,
                  lr=1e-4,
                  gamma=0.99,
-                 epsilon=1.0,
                  polyak=0.995,
                  num_updates=1,
                  update_every=50,
@@ -54,6 +57,8 @@ class DQN(Algo):
                  mini_batch_size=64,
                  reward_scaling=1.0,
                  num_test_episodes=5,
+                 initial_epsilon=1.0,
+                 epsilon_decay=0.999,
                  target_update_interval=1):
 
         # ---- General algo attributes ----------------------------------------
@@ -85,8 +90,9 @@ class DQN(Algo):
         self.gamma = gamma
         self.device = device
         self.polyak = polyak
-        self.epsilon = epsilon
+        self.epsilon = initial_epsilon
         self.actor_critic = actor_critic
+        self.epsilon_decay = epsilon_decay
         self.reward_scaling = reward_scaling
         self.target_update_interval = target_update_interval
 
@@ -113,6 +119,8 @@ class DQN(Algo):
                        mini_batch_size=64,
                        reward_scaling=1.0,
                        num_test_episodes=5,
+                       epsilon_decay=0.999,
+                       initial_epsilon=1.0,
                        target_update_interval=1):
         """
         Returns a function to create new DQN instances.
@@ -141,6 +149,10 @@ class DQN(Algo):
             Number of episodes to complete in each test phase.
         test_every : int
             Regularity of test evaluations in actor_critic updates.
+        initial_epsilon : float
+            initial value for DQN epsilon parameter.
+        epsilon_decay : float
+            Exponential decay rate for epsilon parameter.
 
         Returns
         -------
@@ -158,8 +170,10 @@ class DQN(Algo):
                        start_steps=start_steps,
                        num_updates=num_updates,
                        update_every=update_every,
+                       epsilon_decay=epsilon_decay,
                        reward_scaling=reward_scaling,
                        mini_batch_size=mini_batch_size,
+                       initial_epsilon=initial_epsilon,
                        num_test_episodes=num_test_episodes,
                        target_update_interval=target_update_interval)
         return create_algo_instance
@@ -293,7 +307,7 @@ class DQN(Algo):
                     p_targ.data.add_((1 - self.polyak) * p.data)
 
     def update_epsilon(self):
-        self.epsilon *= 0.99
+        self.epsilon *= self.epsilon_decay
         self.epsilon = np.clip(self.epsilon, 0.05, 1.0)
 
     def apply_gradients(self, gradients=None):
