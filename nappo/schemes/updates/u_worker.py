@@ -147,6 +147,7 @@ class UWorker(W):
     def stop(self):
         """Stop remote workers"""
         self.updater.stopped = True
+        self.grad_workers.local_worker.stop()
         for e in self.grad_workers.remote_workers():
             e.stop.remote()
 
