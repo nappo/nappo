@@ -1,5 +1,7 @@
-Actor component template
-========================
+Actor template
+==============
+
+As reference examples, see `OnPolicyActorCritic <https://github.com/nappo/nappo/blob/master/nappo/core/actors/on_policy_actor_critic.py>`_ and `OffPolicyActorCritic <https://github.com/nappo/nappo/blob/master/nappo/core/actors/off_policy_actor_critic.py>`_
 
 .. code-block:: python
 

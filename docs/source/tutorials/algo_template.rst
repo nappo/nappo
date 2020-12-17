@@ -1,5 +1,7 @@
-Algo component template
-=======================
+Algo template
+=============
+
+As reference examples, see `PPO <https://github.com/nappo/nappo/blob/master/nappo/core/algos/ppo.py>`_ and `SAC <https://github.com/nappo/nappo/blob/master/nappo/core/algos/sac.py>`_.
 
 .. code-block:: python
 
