@@ -112,7 +112,7 @@ class SAC(Algo):
                  lr_alpha=1e-4,
                  gamma=0.99,
                  polyak=0.995,
-                 num_updates=50,
+                 num_updates=1,
                  update_every=50,
                  test_every=5000,
                  initial_alpha=1.0,
