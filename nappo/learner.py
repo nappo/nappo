@@ -9,8 +9,8 @@ class Learner:
     """
     Task learner class.
 
-    Class to manage the training process. It pushes forward training calling
-    the update workers and tracks progress.
+    Class to manage the training process. It pushes forward the training
+    process by calling the update workers and tracks progress.
 
     Parameters
     ----------

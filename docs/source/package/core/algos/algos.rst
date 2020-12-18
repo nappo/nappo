@@ -1,18 +1,11 @@
 Algo
 ====
 
-Proximal Policy Optimization (PPO)
-----------------------------------
+.. toctree::
+   :maxdepth: 2
 
-.. automodule:: nappo.core.algos.ppo
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   off_policy
+   on_policy
 
-Soft Actor Critic (SAC)
------------------------
 
-.. automodule:: nappo.core.algos.sac
-   :members:
-   :undoc-members:
-   :show-inheritance:
+

@@ -1,8 +1,8 @@
-VecEnv
-======
+Env
+===
 
-Environment Vector
-------------------
+VecEnv
+------
 
 .. automodule:: nappo.core.env.vec_env
    :members:

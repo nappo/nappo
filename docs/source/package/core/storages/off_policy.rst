@@ -1,6 +1,14 @@
 Off-policy
 ==========
 
+Replay buffer
+-------------
+
+.. automodule:: nappo.core.storages.off_policy.replay_buffer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Hindsight experience replay buffer (HER)
 ----------------------------------------
 
@@ -9,19 +17,3 @@ Hindsight experience replay buffer (HER)
    :undoc-members:
    :show-inheritance:
 
-Off policy replay buffer
-------------------------
-
-.. automodule:: nappo.core.storages.off_policy.replay_buffer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: nappo.core.storages.off_policy
-   :members:
-   :undoc-members:
-   :show-inheritance:

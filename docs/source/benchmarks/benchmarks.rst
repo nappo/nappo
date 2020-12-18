@@ -1,4 +1,4 @@
-Obstacle Tower Unity3D Challenge Environment
-============================================
+Benchmarks
+==========
 
 Coming soon...

@@ -6,8 +6,3 @@ Storages
 
    off_policy
    on_policy
-
-.. automodule:: nappo.core.storages
-   :members:
-   :undoc-members:
-   :show-inheritance:

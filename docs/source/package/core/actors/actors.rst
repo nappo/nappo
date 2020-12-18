@@ -1,21 +1,19 @@
 Actor
 =====
 
-.. automodule:: nappo.core.actors.off_policy_actor_critic
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. toctree::
+   :maxdepth: 2
 
-.. automodule:: nappo.core.actors.on_policy_actor_critic
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   off_policy
+   on_policy
 
 Neural Networks
 ---------------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    distributions
-   neural_networks
+   neural_network
+   feature_extractors
+
