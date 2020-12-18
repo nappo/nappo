@@ -103,7 +103,7 @@ class PPO(Algo):
                  max_grad_norm=0.5,
                  entropy_coef=0.01,
                  value_loss_coef=0.5,
-                 num_test_episodes=0,
+                 num_test_episodes=5,
                  use_clipped_value_loss=True):
 
         # ---- General algo attributes ----------------------------------------
@@ -242,8 +242,7 @@ class PPO(Algo):
         rhs: torch.tensor
             Policy recurrent hidden state (if policy is not a RNN, rhs will contain zeroes).
         other: dict
-            Additional PPO predictions, value score and action log probability,
-            which are not used in other algorithms.
+            Additional PPO predictions, value score and action log probability.
         """
 
         with torch.no_grad():
