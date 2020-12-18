@@ -232,15 +232,20 @@ class VPG(Algo):
 
         # Compute policy gradients
         self.pi_optimizer.zero_grad()
-        action_loss.backward()
+        action_loss.backward(retain_graph=True)
+
+        for p in self.actor_critic.policy_net.parameters():
+            p.requires_grad = False
 
         # Compute value gradients
         self.v_optimizer.zero_grad()
         value_loss.backward()
 
+        for p in self.actor_critic.policy_net.parameters():
+            p.requires_grad = True
+
         # Clip gradients to max value
         nn.utils.clip_grad_norm_(self.actor_critic.parameters(), self.max_grad_norm)
-
 
         grads = []
         for p in self.actor_critic.parameters():
