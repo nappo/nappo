@@ -21,7 +21,6 @@ NAPPO DOCUMENTATION:
    :maxdepth: 2
    :caption: Tutorials:
 
-   tutorials/envs_tutorial
    tutorials/feature_extractor_tutorial
    tutorials/new_components_tutorial
 

@@ -1,8 +1,8 @@
 Feature Extractors
 ==================
 
-Multilayer Perceptron
----------------------
+Multilayer Perceptron (MLP)
+---------------------------
 
 .. automodule:: nappo.core.actors.neural_networks.feature_extractors.mlp
    :members:
@@ -17,8 +17,8 @@ Basic Convolutional Neural Netwok (CNN)
    :undoc-members:
    :show-inheritance:
 
-Residual CNN with Fixup initialization
---------------------------------------
+Residual CNN with Fixup initialization (Fixup)
+----------------------------------------------
 
 .. automodule:: nappo.core.actors.neural_networks.feature_extractors.fixup_cnn
    :members:

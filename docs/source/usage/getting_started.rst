@@ -80,11 +80,11 @@ Nappo distinguishes between 3 types of Agent components: the ``Algo``, which man
 
 Our current implementation contains the following components.
 
-.. image:: ../images/on_policy_agent.jpg
+.. image:: ../images/on_policy_agent_components.jpg
   :width: 700
   :alt: Agent core components
 
-.. image:: ../images/off_policy_agent.jpg
+.. image:: ../images/off_policy_agent_components.jpg
   :width: 700
   :alt: Agent core components
 
@@ -96,11 +96,6 @@ For our example, we can create an On-Policy Agent, using the Proximal Policy Opt
 
         from nappo.core.algos import PPO
         from nappo.core.storages import OnPolicyGAEBuffer
-        from nappo.core.actors import OnPolicyActorCritic, get_feature_extractor
-
-        # Define RL Actor
-        actor_factory = OnPolicyActorCritic.create_factory(
-        obs_space, action_space, feature_extractor_network=get_feature_extractor("MLP"))
 
         # Define RL training algorithm
         algo_factory = PPO.create_factory(
