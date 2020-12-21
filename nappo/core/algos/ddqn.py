@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from .base import Algo
 
 
-class DQN(Algo):
+class DDQN(Algo):
     """
     Deep Q Learning algorithm class.
 

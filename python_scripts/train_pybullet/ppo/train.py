@@ -5,14 +5,16 @@ import time
 import json
 import argparse
 
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../../..')
+
 from nappo import utils
 from nappo import Learner
-from nappo.schemes import Scheme
-from nappo.core.algos import SAC
-from nappo.core.envs import VecEnv
-from nappo.core.storages import ReplayBuffer
-from nappo.core.actors import OffPolicyActorCritic, get_feature_extractor
-from nappo.envs import make_pybullet_train_env, make_pybullet_test_env
+from nappo import Scheme
+from nappo.core.algos import PPO
+from nappo.core.env import VecEnv
+from nappo.core.storages import OnPolicyGAEBuffer
+from nappo.core.actors import OnPolicyActorCritic, get_feature_extractor
+from nappo.envs import pybullet_train_env_factory, pybullet_test_env_factory
 
 
 def main():
@@ -35,7 +37,7 @@ def main():
     # 1. Define Train Vector of Envs
     train_envs_factory, action_space, obs_space = VecEnv.create_factory(
         vec_env_size=args.num_env_processes, log_dir=args.log_dir,
-        env_fn=make_pybullet_train_env, env_kwargs={
+        env_fn=pybullet_train_env_factory, env_kwargs={
             "env_id": args.env_id,
             "frame_skip": args.frame_skip,
             "frame_stack": args.frame_stack})
@@ -43,27 +45,27 @@ def main():
     # 2. Define Test Vector of Envs (Optional)
     test_envs_factory, _, _ = VecEnv.create_factory(
         vec_env_size=args.num_env_processes, log_dir=args.log_dir,
-        env_fn=make_pybullet_test_env, env_kwargs={
+        env_fn=pybullet_test_env_factory, env_kwargs={
             "env_id": args.env_id,
             "frame_skip": args.frame_skip,
             "frame_stack": args.frame_stack})
 
     # 3. Define RL training algorithm
-    algo_factory = SAC.create_factory(
-        lr_pi=args.lr, lr_q=args.lr, lr_alpha=args.lr, initial_alpha=args.alpha,
-        gamma=args.gamma, polyak=args.polyak, num_updates=args.num_updates,
-        update_every=args.update_every, start_steps=args.start_steps,
-        mini_batch_size=args.mini_batch_size)
+    algo_factory = PPO.create_factory(
+        lr=args.lr, eps=args.eps, num_epochs=args.ppo_epoch, clip_param=args.clip_param,
+        entropy_coef=args.entropy_coef, value_loss_coef=args.value_loss_coef,
+        max_grad_norm=args.max_grad_norm, num_mini_batch=args.num_mini_batch,
+        use_clipped_value_loss=args.use_clipped_value_loss, gamma=args.gamma)
 
     # 4. Define RL Policy
-    actor_factory = OffPolicyActorCritic.create_factory(
+    actor_factory = OnPolicyActorCritic.create_factory(
         obs_space, action_space,
         feature_extractor_network=get_feature_extractor(args.nn),
         recurrent_policy=args.recurrent_policy,
         restart_model=args.restart_model)
 
     # 5. Define rollouts storage
-    storage_factory = ReplayBuffer.create_factory(size=args.buffer_size)
+    storage_factory = OnPolicyGAEBuffer.create_factory(size=args.num_steps, gae_lambda=args.gae_lambda)
 
     # 6. Define scheme
     params = {}
@@ -141,39 +143,45 @@ def get_args():
         '--frame-stack', type=int, default=0,
         help='Number of frame to stack in observation (default no stack)')
 
-    # SAC specs
+    # PPO specs
     parser.add_argument(
         '--lr', type=float, default=7e-4, help='learning rate (default: 7e-4)')
     parser.add_argument(
-        '--eps', type=float, default=1e-8,
-        help='Adam optimizer epsilon (default: 1e-8)')
+        '--eps', type=float, default=1e-5,
+        help='Adam optimizer epsilon (default: 1e-5)')
     parser.add_argument(
         '--gamma', type=float, default=0.99,
         help='discount factor for rewards (default: 0.99)')
     parser.add_argument(
-        '--alpha', type=float, default=0.2,
-        help='SAC alpha parameter (default: 0.2)')
+        '--use-gae', action='store_true', default=False,
+        help='use generalized advantage estimation')
     parser.add_argument(
-        '--polyak', type=float, default=0.995,
-        help='SAC polyak paramater (default: 0.995)')
+        '--gae-lambda', type=float, default=0.95,
+        help='gae lambda parameter (default: 0.95)')
     parser.add_argument(
-        '--start-steps', type=int, default=1000,
-        help='SAC num initial random steps (default: 1000)')
+        '--entropy-coef', type=float, default=0.01,
+        help='entropy term coefficient (default: 0.01)')
     parser.add_argument(
-        '--buffer-size', type=int, default=10000,
-        help='Rollouts storage size (default: 10000 transitions)')
+        '--value-loss-coef', type=float, default=0.5,
+        help='value loss coefficient (default: 0.5)')
     parser.add_argument(
-        '--update-every', type=int, default=50,
-        help='Num env collected steps between SAC network update stages (default: 50)')
+        '--max-grad-norm', type=float, default=0.5,
+        help='max norm of gradients (default: 0.5)')
     parser.add_argument(
-        '--num-updates', type=int, default=50,
-        help='Num network updates per SAC network update stage (default 50)')
+        '--use_clipped_value_loss', action='store_true', default=False,
+        help='clip value loss update')
     parser.add_argument(
-        '--mini-batch-size', type=int, default=32,
-        help='Mini batch size for network updates (default: 32)')
+        '--num-steps', type=int, default=20000,
+        help='number of forward steps in PPO (default: 20000)')
     parser.add_argument(
-        '--target-update-interval', type=int, default=1,
-        help='Num SAC network updates per target network updates (default: 1)')
+        '--ppo-epoch', type=int, default=4,
+        help='number of ppo epochs (default: 4)')
+    parser.add_argument(
+        '--num-mini-batch', type=int, default=32,
+        help='number of batches for ppo (default: 32)')
+    parser.add_argument(
+        '--clip-param', type=float, default=0.2,
+        help='ppo clip parameter (default: 0.2)')
 
     # Feature extractor model specs
     parser.add_argument(
@@ -217,8 +225,6 @@ def get_args():
     args = parser.parse_args()
     args.log_dir = os.path.expanduser(args.log_dir)
     return args
-
-
 
 if __name__ == "__main__":
     main()

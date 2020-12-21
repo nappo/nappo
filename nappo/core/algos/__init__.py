@@ -1,4 +1,4 @@
 from .ppo import PPO
 from .sac import SAC
-from .dqn import DQN
+from .ddqn import DDQN
 from .vpg import VPG

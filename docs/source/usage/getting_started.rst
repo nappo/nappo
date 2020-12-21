@@ -80,11 +80,11 @@ Nappo distinguishes between 3 types of Agent components: the ``Algo``, which man
 
 Our current implementation contains the following components.
 
-.. image:: ../images/on_policy_rl_agent.jpg
+.. image:: ../images/on_policy_rl_agents.jpg
   :width: 700
   :alt: Agent core components
 
-.. image:: ../images/off_policy_rl_agent.jpg
+.. image:: ../images/off_policy_rl_agents.jpg
   :width: 700
   :alt: Agent core components
 

@@ -1,10 +1,10 @@
 Off-policy
 ==========
 
-Deep Q-Learning (DQN)
----------------------
+Double Deep Q-Learning (DDQN)
+-----------------------------
 
-.. automodule:: nappo.core.algos.dqn
+.. automodule:: nappo.core.algos.ddqn
    :members:
    :undoc-members:
    :show-inheritance:
