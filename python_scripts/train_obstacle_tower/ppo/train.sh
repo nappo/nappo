@@ -1,6 +1,5 @@
 #!/bin/bash
 
-LOG_DIR=/tmp/obstacle_tower_ppo
 INTER=10000
 DEVICES="0,1,2,3"
 MAX_TIME=86400
@@ -11,7 +10,7 @@ STEPS=100000000000
 EPS=1e-5
 LR=4e-4
 MODEL=Fixup
-NUM_PROC=16
+NUM_PROC=8
 NUM_STEPS=800
 NUM_MINI_BATCH=6
 CLIP_PARAM=0.15
@@ -23,13 +22,13 @@ ENTROPY_COEF=0.01
 FRAME_SKIP=2
 FRAME_STACK=4
 
+###############################################################################
+
 NUM_GRAD_WORKERS=0
 COM_GRAD_WORKERS="synchronous"
 NUM_COL_WORKERS=0
 COM_COL_WORKERS="synchronous"
-
-
-###############################################################################
+LOG_DIR=/tmp/obstacle_tower_ppo
 
 CUDA_VISIBLE_DEVICES=$DEVICES python python_scripts/train_obstacle_tower/ppo/train.py  \
 --lr $LR --clip-param $CLIP_PARAM --num-steps $NUM_STEPS --num-mini-batch $NUM_MINI_BATCH \
