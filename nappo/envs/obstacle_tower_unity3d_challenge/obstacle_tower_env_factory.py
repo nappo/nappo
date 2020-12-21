@@ -1,12 +1,14 @@
 import os
+import numpy as np
 import obstacle_tower_env
 from obstacle_tower_env import ObstacleTowerEnv
 from ..common import FrameStack, FrameSkip
 from .wrappers import ReducedActionEnv, BasicObstacleEnv, RewardShapeObstacleEnv, BasicObstacleEnvTest
 
 
-def obstacle_train_env_factory(frame_skip=0, frame_stack=1, min_floor=0, max_floor=50,
-                               reduced_actions=True, reward_shape=True):
+def obstacle_train_env_factory(
+        index_worker=0, rank=0, frame_skip=0, frame_stack=1, min_floor=0,
+        max_floor=50, reduced_actions=True, reward_shape=True):
     """
     Create train Obstacle Tower Unity3D environment.
     Useful info_keywords 'floor', 'start', 'seed'.
@@ -38,7 +40,7 @@ def obstacle_train_env_factory(frame_skip=0, frame_stack=1, min_floor=0, max_flo
         obstacle_tower_env.__file__), 'ObstacleTower/obstacletower')
 
     env = ObstacleTowerEnv(
-        environment_filename=exe, retro=True, worker_id=0,
+        environment_filename=exe, retro=True, worker_id=index_worker + rank + np.random.randint(1, 10000),
         greyscale=False, docker_training=False, realtime_mode=False)
 
     if reduced_actions:
@@ -57,8 +59,9 @@ def obstacle_train_env_factory(frame_skip=0, frame_stack=1, min_floor=0, max_flo
 
     return env
 
-def obstacle_test_env_factory(frame_skip=0, frame_stack=1, realtime=False, min_floor=0,
-                              max_floor=50, reduced_actions=True):
+def obstacle_test_env_factory(
+        index_worker=0, rank=0, frame_skip=0, frame_stack=1, realtime=False,
+        min_floor=0, max_floor=50, reduced_actions=True):
     """
     Create test Obstacle Tower Unity3D environment.
     Useful info_keywords 'floor', 'start', 'seed'.
@@ -89,7 +92,7 @@ def obstacle_test_env_factory(frame_skip=0, frame_stack=1, realtime=False, min_f
         obstacle_tower_env.__file__), 'ObstacleTower/obstacletower')
 
     env = ObstacleTowerEnv(
-        environment_filename=exe, retro=True, worker_id=0,
+        environment_filename=exe, retro=True, worker_id=index_worker + rank + np.random.randint(1, 10000),
         greyscale=False, docker_training=False, realtime_mode=realtime)
 
     if reduced_actions:

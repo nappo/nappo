@@ -181,15 +181,23 @@ def get_args():
 
     # Scheme specs
     parser.add_argument(
-        '--scheme', default='3cs',
-        help='Distributed training scheme name (default: 3cs)')
-    parser.add_argument(
         '--num-env-processes', type=int, default=16,
         help='how many training CPU processes to use (default: 16)')
     parser.add_argument(
-        '--num-grad-workers', type=int, default=1, help='how many agent workers to use (default: 1)')
+        '--num-grad-workers', type=int, default=0,
+        help='how many agent workers to use (default: 1)')
     parser.add_argument(
-        '--cluster', action='store_true', default=False, help='script is running in a cluster')
+        '--com-grad-workers', default='synchronised',
+        help='communication patters grad workers (default: synchronised)')
+    parser.add_argument(
+        '--num-col-workers', type=int, default=0,
+        help='how many agent workers to use (default: 1)')
+    parser.add_argument(
+        '--com-col-workers', default='synchronised',
+        help='communication patters col workers (default: synchronised)')
+    parser.add_argument(
+        '--cluster', action='store_true', default=False,
+        help='script is running in a cluster')
 
     # General training specs
     parser.add_argument(
